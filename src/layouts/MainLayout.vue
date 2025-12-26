@@ -1,6 +1,6 @@
 <template>
-  <q-layout view="hHh lpR fFf" class="bg-grey-1">
-    <q-header elevated class="bg-white text-grey-8" height-hint="64">
+  <q-layout view="hHh lpR fFf" :class="isDarkMode ? 'bg-dark' : 'bg-grey-1'">
+    <q-header elevated :class="isDarkMode ? 'bg-dark text-white' : 'bg-white text-grey-8'" height-hint="64">
       <q-toolbar class="GNL__toolbar">
         <q-btn
           flat
@@ -84,6 +84,7 @@
           <q-btn v-if="$q.screen.gt.sm" round dense flat color="text-grey-7" icon="apps">
             <q-tooltip>Google Apps</q-tooltip>
           </q-btn>
+          <DarkModeToggle />
           <q-btn round dense flat color="grey-8" icon="notifications">
             <q-badge color="red" text-color="white" floating>
               2
@@ -104,11 +105,11 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
-      class="bg-white"
+      :class="isDarkMode ? 'bg-dark' : 'bg-white'"
       :width="280"
     >
       <q-scroll-area class="fit">
-        <q-list padding class="text-grey-8">
+        <q-list padding :class="isDarkMode ? 'text-white' : 'text-grey-8'">
           <q-item class="GNL__drawer-item" v-ripple v-for="link in links1" :key="link.text" clickable>
             <q-item-section avatar>
               <q-icon :name="link.icon" />
@@ -157,11 +158,17 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { fasEarthAmericas, fasFlask } from '@quasar/extras/fontawesome-v6'
+import { useDarkMode } from '../composables/useDarkMode'
+import DarkModeToggle from '../components/DarkModeToggle.vue'
 
 export default {
   name: 'GoogleNewsLayout',
+
+  components: {
+    DarkModeToggle
+  },
 
   setup () {
     const leftDrawerOpen = ref(false)
@@ -173,6 +180,14 @@ export default {
     const excludeWords = ref('')
     const byWebsite = ref('')
     const byDate = ref('Any time')
+
+    // Dark mode functionality
+    const { isDarkMode, loadDarkModePreference } = useDarkMode()
+
+    // Load dark mode preference on component mount
+    onMounted(() => {
+      loadDarkModePreference()
+    })
 
     function onClear () {
       exactPhrase.value = ''
@@ -201,6 +216,7 @@ export default {
       excludeWords,
       byWebsite,
       byDate,
+      isDarkMode,
 
       links1: [
         { icon: 'web', text: 'Top stories' },
