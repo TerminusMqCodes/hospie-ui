@@ -124,7 +124,29 @@
             <q-avatar size="26px">
               <img src="https://cdn.quasar.dev/img/boy-avatar.png">
             </q-avatar>
-            <q-tooltip>Saját fiók</q-tooltip>
+            <q-tooltip>{{ authStore.userName || 'Saját fiók' }}</q-tooltip>
+            <q-menu anchor="bottom end" self="top end">
+              <q-list style="min-width: 200px">
+                <q-item clickable v-close-popup @click="$router.push('/profile')">
+                  <q-item-section avatar>
+                    <q-icon name="person" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Profil</q-item-label>
+                    <q-item-label caption>{{ authStore.userEmail }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator />
+                <q-item clickable v-close-popup @click="handleLogout">
+                  <q-item-section avatar>
+                    <q-icon name="logout" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Kijelentkezés</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
           </q-btn>
         </div>
       </q-toolbar>
@@ -195,13 +217,16 @@
 
 <script>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 import { fasEarthAmericas, fasFlask } from '@quasar/extras/fontawesome-v6'
 import { useDarkMode } from '../composables/useDarkMode'
+import { useAuthStore } from '../stores/auth'
 import DarkModeToggle from '../components/DarkModeToggle.vue'
 import UnderDevelopmentModal from '../components/UnderDevelopmentModal.vue'
 
 export default {
-  name: 'GoogleNewsLayout',
+  name: 'MainLayout',
 
   components: {
     DarkModeToggle,
@@ -209,6 +234,10 @@ export default {
   },
 
   setup () {
+    const router = useRouter()
+    const $q = useQuasar()
+    const authStore = useAuthStore()
+    
     const leftDrawerOpen = ref(false)
     const search = ref('')
     const showAdvanced = ref(false)
@@ -230,6 +259,10 @@ export default {
     // Load dark mode preference on component mount
     onMounted(() => {
       loadDarkModePreference()
+      // Initialize auth state if needed
+      if (!authStore.isAuthenticated && localStorage.getItem('auth_token')) {
+        authStore.initializeAuth()
+      }
     })
 
     function onClear () {
@@ -261,7 +294,28 @@ export default {
       // Például: API hívás a backend felé
     }
 
+    async function handleLogout () {
+      try {
+        await authStore.logout()
+        
+        $q.notify({
+          type: 'positive',
+          message: 'Successfully logged out',
+          position: 'top'
+        })
+        
+        router.push('/login')
+      } catch (error) {
+        $q.notify({
+          type: 'negative',
+          message: 'Logout failed',
+          position: 'top'
+        })
+      }
+    }
+
     return {
+      authStore,
       leftDrawerOpen,
       search,
       showAdvanced,
@@ -304,21 +358,16 @@ export default {
       ],
 
       links1: [
-        { icon: 'web', text: 'Top stories' },
-        { icon: 'person', text: 'For you' },
-        { icon: 'star_border', text: 'Favourites' },
-        { icon: 'search', text: 'Saved searches' }
+        { icon: 'dashboard', text: 'Dashboard', route: '/dashboard' },
+        { icon: 'hotel', text: 'Reservations', route: '/reservations' },
+        { icon: 'meeting_room', text: 'Rooms', route: '/rooms' },
+        { icon: 'people', text: 'Guests', route: '/guests' }
       ],
       links2: [
-        { icon: 'flag', text: 'Canada' },
-        { icon: fasEarthAmericas, text: 'World' },
-        { icon: 'place', text: 'Local' },
-        { icon: 'domain', text: 'Business' },
-        { icon: 'memory', text: 'Technology' },
-        { icon: 'local_movies', text: 'Entertainment' },
-        { icon: 'directions_bike', text: 'Sports' },
-        { icon: fasFlask, text: 'Science' },
-        { icon: 'fitness_center', text: 'Health ' }
+        { icon: 'analytics', text: 'Reports' },
+        { icon: 'settings', text: 'Settings' },
+        { icon: 'support', text: 'Support' },
+        { icon: 'help', text: 'Help' }
       ],
       links3: [
         { icon: '', text: 'Language & region' },
@@ -333,7 +382,8 @@ export default {
       changeDate,
       toggleLeftDrawer,
       openApplication,
-      handleNotificationRequest
+      handleNotificationRequest,
+      handleLogout
     }
   }
 }
