@@ -13,13 +13,12 @@
         />
 
         <q-toolbar-title v-if="$q.screen.gt.xs" shrink class="row items-center no-wrap">
-          <img src="https://cdn.quasar.dev/img/layout-gallery/logo-google.svg">
-          <span class="q-ml-sm">News</span>
+          <span class="q-ml-sm">Hospie PMS</span>
         </q-toolbar-title>
 
         <q-space />
 
-        <q-input class="GNL__toolbar-input" outlined dense v-model="search" color="bg-grey-7 shadow-1" placeholder="Search for topics, locations & sources">
+        <q-input class="GNL__toolbar-input" outlined dense v-model="search" color="bg-grey-7 shadow-1" placeholder="Keresés...">
           <template v-slot:prepend>
             <q-icon v-if="search === ''" name="search" />
             <q-icon v-else name="clear" class="cursor-pointer" @click="search = ''" />
@@ -35,7 +34,7 @@
               <q-menu anchor="bottom end" self="top end">
                 <div class="q-pa-md" style="width: 400px">
                   <div class="text-body2 text-grey q-mb-md">
-                    Narrow your search results
+                    Részletes keresés
                   </div>
 
                   <div class="row items-center">
@@ -68,8 +67,8 @@
                     </div>
 
                     <div class="col-12 q-pt-lg row justify-end">
-                      <q-btn flat dense no-caps color="grey-7" size="md" style="min-width: 68px;" label="Search" v-close-popup />
-                      <q-btn flat dense no-caps color="grey-7" size="md" style="min-width: 68px;" @click="onClear" label="Clear" v-close-popup />
+                      <q-btn flat dense no-caps color="grey-7" size="md" style="min-width: 68px;" label="Keresés" v-close-popup />
+                      <q-btn flat dense no-caps color="grey-7" size="md" style="min-width: 68px;" @click="onClear" label="Törlés" v-close-popup />
                     </div>
                   </div>
                 </div>
@@ -82,20 +81,50 @@
 
         <div class="q-gutter-sm row items-center no-wrap">
           <q-btn v-if="$q.screen.gt.sm" round dense flat color="text-grey-7" icon="apps">
-            <q-tooltip>Google Apps</q-tooltip>
+            <q-tooltip>Alkalmazások</q-tooltip>
+            <q-menu anchor="bottom end" self="top end" class="apps-menu">
+              <div class="q-pa-md" style="width: 320px">
+                <div class="text-body2 text-grey q-mb-md text-center">
+                  Hospie SaaS Szolgáltatások
+                </div>
+                <div class="row q-gutter-sm">
+                  <div class="col-5" v-for="app in applications" :key="app.name">
+                    <q-card 
+                      flat 
+                      bordered 
+                      class="app-card cursor-pointer" 
+                      @click="openApplication(app)"
+                      :class="isDarkMode ? 'bg-grey-9 text-white' : 'bg-white'"
+                    >
+                      <q-card-section class="text-center q-pa-md">
+                        <q-icon 
+                          :name="app.icon" 
+                          size="32px" 
+                          :color="app.color"
+                          class="q-mb-sm"
+                        />
+                        <div class="text-caption text-weight-medium">
+                          {{ app.name }}
+                        </div>
+                      </q-card-section>
+                    </q-card>
+                  </div>
+                </div>
+              </div>
+            </q-menu>
           </q-btn>
           <DarkModeToggle />
-          <q-btn round dense flat color="grey-8" icon="notifications">
+          <q-btn round dense flat color="text-grey-7" icon="notifications">
             <q-badge color="red" text-color="white" floating>
               2
             </q-badge>
-            <q-tooltip>Notifications</q-tooltip>
+            <q-tooltip>Értesítések</q-tooltip>
           </q-btn>
           <q-btn round flat>
             <q-avatar size="26px">
               <img src="https://cdn.quasar.dev/img/boy-avatar.png">
             </q-avatar>
-            <q-tooltip>Account</q-tooltip>
+            <q-tooltip>Saját fiók</q-tooltip>
           </q-btn>
         </div>
       </q-toolbar>
@@ -103,7 +132,6 @@
 
     <q-drawer
       v-model="leftDrawerOpen"
-      show-if-above
       bordered
       :class="isDarkMode ? 'bg-dark' : 'bg-white'"
       :width="280"
@@ -140,11 +168,11 @@
 
           <div class="q-mt-md">
             <div class="flex flex-center q-gutter-xs">
-              <a class="GNL__drawer-footer-link" href="javascript:void(0)" aria-label="Privacy">Privacy</a>
+              <a class="GNL__drawer-footer-link" href="javascript:void(0)" aria-label="Privacy">Adatvédelem</a>
               <span> · </span>
-              <a class="GNL__drawer-footer-link" href="javascript:void(0)" aria-label="Terms">Terms</a>
+              <a class="GNL__drawer-footer-link" href="javascript:void(0)" aria-label="Terms">ÁSZF</a>
               <span> · </span>
-              <a class="GNL__drawer-footer-link" href="javascript:void(0)" aria-label="About">About Google</a>
+              <a class="GNL__drawer-footer-link" href="javascript:void(0)" aria-label="About">A Hospie-ról</a>
             </div>
           </div>
         </q-list>
@@ -154,6 +182,14 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <!-- Under Development Modal -->
+    <UnderDevelopmentModal 
+      v-model="showUnderDevelopmentModal"
+      :feature-name="selectedFeature"
+      :expected-date="expectedDate"
+      @notification-requested="handleNotificationRequest"
+    />
   </q-layout>
 </template>
 
@@ -162,12 +198,14 @@ import { ref, onMounted } from 'vue'
 import { fasEarthAmericas, fasFlask } from '@quasar/extras/fontawesome-v6'
 import { useDarkMode } from '../composables/useDarkMode'
 import DarkModeToggle from '../components/DarkModeToggle.vue'
+import UnderDevelopmentModal from '../components/UnderDevelopmentModal.vue'
 
 export default {
   name: 'GoogleNewsLayout',
 
   components: {
-    DarkModeToggle
+    DarkModeToggle,
+    UnderDevelopmentModal
   },
 
   setup () {
@@ -180,6 +218,11 @@ export default {
     const excludeWords = ref('')
     const byWebsite = ref('')
     const byDate = ref('Any time')
+
+    // Under Development Modal
+    const showUnderDevelopmentModal = ref(false)
+    const selectedFeature = ref('')
+    const expectedDate = ref('2026.01.01.')
 
     // Dark mode functionality
     const { isDarkMode, loadDarkModePreference } = useDarkMode()
@@ -206,6 +249,18 @@ export default {
       leftDrawerOpen.value = !leftDrawerOpen.value
     }
 
+    function openApplication (app) {
+      // Show under development modal instead of navigating
+      selectedFeature.value = app.name
+      showUnderDevelopmentModal.value = true
+    }
+
+    function handleNotificationRequest (featureName) {
+      console.log('Notification requested for:', featureName)
+      // Itt lehet implementálni az értesítés kérés logikáját
+      // Például: API hívás a backend felé
+    }
+
     return {
       leftDrawerOpen,
       search,
@@ -217,6 +272,36 @@ export default {
       byWebsite,
       byDate,
       isDarkMode,
+      showUnderDevelopmentModal,
+      selectedFeature,
+      expectedDate,
+
+      applications: [
+        { 
+          name: 'HospiePAY', 
+          icon: 'payment', 
+          color: 'primary',
+          route: '/hospiepay'
+        },
+        { 
+          name: 'ChannelManager', 
+          icon: 'hub', 
+          color: 'secondary',
+          route: '/channel-manager'
+        },
+        { 
+          name: 'Előfizetés', 
+          icon: 'subscriptions', 
+          color: 'info',
+          route: '/subscription'
+        },
+        { 
+          name: 'Beállítások', 
+          icon: 'settings', 
+          color: 'warning',
+          route: '/settings'
+        }
+      ],
 
       links1: [
         { icon: 'web', text: 'Top stories' },
@@ -246,7 +331,9 @@ export default {
 
       onClear,
       changeDate,
-      toggleLeftDrawer
+      toggleLeftDrawer,
+      openApplication,
+      handleNotificationRequest
     }
   }
 }
@@ -283,6 +370,15 @@ export default {
     font-weight: 500
     font-size: .75rem
 
-    &:hover
-      color: #000
+.app-card
+  transition: all 0.2s ease
+  min-height: 80px
+  
+  &:hover
+    transform: translateY(-2px)
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15)
+
+.apps-menu
+  .q-menu
+    border-radius: 8px
 </style>
