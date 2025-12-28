@@ -13,7 +13,54 @@ export const useAuthStore = defineStore('auth', {
     isAuthenticated: (state) => !!state.token && !!state.user,
     userName: (state) => state.user?.name || '',
     userEmail: (state) => state.user?.email || '',
-    userId: (state) => state.user?.id || null
+    userId: (state) => state.user?.id || null,
+    userRoles: (state) => state.user?.roles || [],
+    userPermissions: (state) => state.user?.permissions || [],
+    
+    // Role checking helpers
+    hasRole: (state) => (role) => {
+      return state.user?.roles?.includes(role) || false
+    },
+    
+    hasAnyRole: (state) => (roles) => {
+      if (!Array.isArray(roles)) roles = [roles]
+      return roles.some(role => state.user?.roles?.includes(role)) || false
+    },
+    
+    hasAllRoles: (state) => (roles) => {
+      if (!Array.isArray(roles)) roles = [roles]
+      return roles.every(role => state.user?.roles?.includes(role)) || false
+    },
+    
+    // Permission checking helpers
+    hasPermission: (state) => (permission) => {
+      return state.user?.permissions?.includes(permission) || false
+    },
+    
+    hasAnyPermission: (state) => (permissions) => {
+      if (!Array.isArray(permissions)) permissions = [permissions]
+      return permissions.some(permission => state.user?.permissions?.includes(permission)) || false
+    },
+    
+    hasAllPermissions: (state) => (permissions) => {
+      if (!Array.isArray(permissions)) permissions = [permissions]
+      return permissions.every(permission => state.user?.permissions?.includes(permission)) || false
+    },
+    
+    // Admin checking helpers
+    isAdmin: (state) => {
+      return state.user?.roles?.includes('admin') || state.user?.roles?.includes('super-admin') || false
+    },
+    
+    isSuperAdmin: (state) => {
+      return state.user?.roles?.includes('super-admin') || false
+    },
+    
+    // User type helpers
+    isManager: (state) => state.user?.roles?.includes('manager') || false,
+    isReceptionist: (state) => state.user?.roles?.includes('receptionist') || false,
+    isHousekeeping: (state) => state.user?.roles?.includes('housekeeping') || false,
+    isGuest: (state) => state.user?.roles?.includes('guest') || false
   },
 
   actions: {
@@ -177,6 +224,103 @@ export const useAuthStore = defineStore('auth', {
       if (token && user) {
         this.token = token
         this.user = JSON.parse(user)
+      }
+    },
+
+    // Role and Permission Management Actions
+    
+    // Get all available roles
+    async getRoles() {
+      try {
+        const response = await api.get('/roles')
+        return response.data.data
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Failed to fetch roles'
+        throw error
+      }
+    },
+
+    // Get all available permissions
+    async getPermissions() {
+      try {
+        const response = await api.get('/roles/permissions')
+        return response.data.data
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Failed to fetch permissions'
+        throw error
+      }
+    },
+
+    // Create a new role (admin only)
+    async createRole(roleData) {
+      try {
+        const response = await api.post('/roles', roleData)
+        return response.data.data
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Failed to create role'
+        throw error
+      }
+    },
+
+    // Update a role (admin only)
+    async updateRole(roleId, roleData) {
+      try {
+        const response = await api.put(`/roles/${roleId}`, roleData)
+        return response.data.data
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Failed to update role'
+        throw error
+      }
+    },
+
+    // Delete a role (admin only)
+    async deleteRole(roleId) {
+      try {
+        const response = await api.delete(`/roles/${roleId}`)
+        return response.data
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Failed to delete role'
+        throw error
+      }
+    },
+
+    // Assign role to user (admin only)
+    async assignRole(userId, role) {
+      try {
+        const response = await api.post('/roles/assign', {
+          user_id: userId,
+          role: role
+        })
+        
+        // If assigning to current user, update local state
+        if (userId === this.user?.id) {
+          await this.fetchUser()
+        }
+        
+        return response.data
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Failed to assign role'
+        throw error
+      }
+    },
+
+    // Remove role from user (admin only)
+    async removeRole(userId, role) {
+      try {
+        const response = await api.post('/roles/remove', {
+          user_id: userId,
+          role: role
+        })
+        
+        // If removing from current user, update local state
+        if (userId === this.user?.id) {
+          await this.fetchUser()
+        }
+        
+        return response.data
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Failed to remove role'
+        throw error
       }
     }
   }

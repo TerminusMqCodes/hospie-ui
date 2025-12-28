@@ -126,14 +126,45 @@
             </q-avatar>
             <q-tooltip>{{ authStore.userName || 'Saját fiók' }}</q-tooltip>
             <q-menu anchor="bottom end" self="top end">
-              <q-list style="min-width: 200px">
+              <q-list style="min-width: 250px">
+                <q-item>
+                  <q-item-section avatar>
+                    <q-avatar size="40px">
+                      <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+                    </q-avatar>
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label class="text-weight-bold">{{ authStore.userName }}</q-item-label>
+                    <q-item-label caption>{{ authStore.userEmail }}</q-item-label>
+                    <q-item-label caption v-if="authStore.userRoles.length > 0">
+                      <q-chip 
+                        v-for="role in authStore.userRoles" 
+                        :key="role" 
+                        size="sm" 
+                        color="primary" 
+                        text-color="white"
+                        class="q-mr-xs q-mt-xs"
+                      >
+                        {{ role }}
+                      </q-chip>
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator />
                 <q-item clickable v-close-popup @click="$router.push('/profile')">
                   <q-item-section avatar>
                     <q-icon name="person" />
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>Profil</q-item-label>
-                    <q-item-label caption>{{ authStore.userEmail }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item clickable v-close-popup @click="$router.push('/settings')">
+                  <q-item-section avatar>
+                    <q-icon name="settings" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Beállítások</q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-separator />
@@ -160,7 +191,14 @@
     >
       <q-scroll-area class="fit">
         <q-list padding :class="isDarkMode ? 'text-white' : 'text-grey-8'">
-          <q-item class="GNL__drawer-item" v-ripple v-for="link in links1" :key="link.text" clickable>
+          <q-item 
+            class="GNL__drawer-item" 
+            v-ripple 
+            v-for="link in filteredLinks1" 
+            :key="link.text" 
+            clickable
+            @click="navigateToRoute(link.route)"
+          >
             <q-item-section avatar>
               <q-icon :name="link.icon" />
             </q-item-section>
@@ -171,7 +209,14 @@
 
           <q-separator inset class="q-my-sm" />
 
-          <q-item class="GNL__drawer-item" v-ripple v-for="link in links2" :key="link.text" clickable>
+          <q-item 
+            class="GNL__drawer-item" 
+            v-ripple 
+            v-for="link in filteredLinks2" 
+            :key="link.text" 
+            clickable
+            @click="navigateToRoute(link.route)"
+          >
             <q-item-section avatar>
               <q-icon :name="link.icon" />
             </q-item-section>
@@ -216,10 +261,9 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { fasEarthAmericas, fasFlask } from '@quasar/extras/fontawesome-v6'
 import { useDarkMode } from '../composables/useDarkMode'
 import { useAuthStore } from '../stores/auth'
 import DarkModeToggle from '../components/DarkModeToggle.vue'
@@ -305,7 +349,7 @@ export default {
         })
         
         router.push('/login')
-      } catch (error) {
+      } catch {
         $q.notify({
           type: 'negative',
           message: 'Logout failed',
@@ -313,6 +357,55 @@ export default {
         })
       }
     }
+
+    // Computed properties for filtered navigation links
+    const filteredLinks1 = computed(() => {
+      return links1.filter(link => {
+        if (link.permission) {
+          return authStore.hasPermission(link.permission)
+        }
+        if (link.roles) {
+          return authStore.hasAnyRole(link.roles)
+        }
+        return true
+      })
+    })
+
+    const filteredLinks2 = computed(() => {
+      return links2.filter(link => {
+        if (link.permission) {
+          return authStore.hasPermission(link.permission)
+        }
+        if (link.roles) {
+          return authStore.hasAnyRole(link.roles)
+        }
+        return true
+      })
+    })
+
+    // Navigation function
+    function navigateToRoute(route) {
+      if (route) {
+        router.push(route)
+      }
+    }
+
+    // Define navigation links
+    const links1 = [
+      { icon: 'dashboard', text: 'Dashboard', route: '/dashboard' },
+      { icon: 'hotel', text: 'Reservations', route: '/reservations', permission: 'reservations.view' },
+      { icon: 'meeting_room', text: 'Rooms', route: '/rooms', permission: 'rooms.view' },
+      { icon: 'people', text: 'Guests', route: '/guests', permission: 'guests.view' }
+    ]
+
+    const links2 = [
+      { icon: 'account_balance_wallet', text: 'Finance', route: '/finance', permission: 'invoices.view' },
+      { icon: 'analytics', text: 'Reports', route: '/reports', permission: 'reports.view' },
+      { icon: 'admin_panel_settings', text: 'Admin', route: '/admin', roles: ['admin', 'super-admin'] },
+      { icon: 'settings', text: 'Settings', route: '/settings' },
+      { icon: 'support', text: 'Support', route: '/support' },
+      { icon: 'help', text: 'Help', route: '/help' }
+    ]
 
     return {
       authStore,
@@ -329,6 +422,9 @@ export default {
       showUnderDevelopmentModal,
       selectedFeature,
       expectedDate,
+      filteredLinks1,
+      filteredLinks2,
+      navigateToRoute,
 
       applications: [
         { 
@@ -359,15 +455,17 @@ export default {
 
       links1: [
         { icon: 'dashboard', text: 'Dashboard', route: '/dashboard' },
-        { icon: 'hotel', text: 'Reservations', route: '/reservations' },
-        { icon: 'meeting_room', text: 'Rooms', route: '/rooms' },
-        { icon: 'people', text: 'Guests', route: '/guests' }
+        { icon: 'hotel', text: 'Reservations', route: '/reservations', permission: 'reservations.view' },
+        { icon: 'meeting_room', text: 'Rooms', route: '/rooms', permission: 'rooms.view' },
+        { icon: 'people', text: 'Guests', route: '/guests', permission: 'guests.view' }
       ],
       links2: [
-        { icon: 'analytics', text: 'Reports' },
-        { icon: 'settings', text: 'Settings' },
-        { icon: 'support', text: 'Support' },
-        { icon: 'help', text: 'Help' }
+        { icon: 'account_balance_wallet', text: 'Finance', route: '/finance', permission: 'invoices.view' },
+        { icon: 'analytics', text: 'Reports', route: '/reports', permission: 'reports.view' },
+        { icon: 'admin_panel_settings', text: 'Admin', route: '/admin', roles: ['admin', 'super-admin'] },
+        { icon: 'settings', text: 'Settings', route: '/settings' },
+        { icon: 'support', text: 'Support', route: '/support' },
+        { icon: 'help', text: 'Help', route: '/help' }
       ],
       links3: [
         { icon: '', text: 'Language & region' },

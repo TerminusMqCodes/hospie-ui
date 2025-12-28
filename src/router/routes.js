@@ -34,6 +34,18 @@ const routes = [
     ],
   },
 
+  // Unauthorized access page
+  {
+    path: '/unauthorized',
+    component: () => import('layouts/AuthLayout.vue'),
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/UnauthorizedPage.vue')
+      }
+    ],
+  },
+
   // Protected routes (authenticated users only)
   {
     path: '/',
@@ -57,7 +69,47 @@ const routes = [
     ],
   },
 
-  // PMS specific routes (will be added later)
+  // Admin routes
+  {
+    path: '/admin',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { 
+      requiresAuth: true,
+      roles: ['admin', 'super-admin']
+    },
+    children: [
+      { 
+        path: '', 
+        redirect: '/admin/dashboard'
+      },
+      { 
+        path: 'dashboard', 
+        component: () => import('pages/admin/AdminDashboardPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          roles: ['admin', 'super-admin']
+        }
+      },
+      { 
+        path: 'users', 
+        component: () => import('pages/admin/UserManagementPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['users.view']
+        }
+      },
+      { 
+        path: 'roles', 
+        component: () => import('pages/admin/RoleManagementPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          roles: ['admin', 'super-admin']
+        }
+      }
+    ],
+  },
+
+  // PMS specific routes with role-based access
   {
     path: '/reservations',
     component: () => import('layouts/MainLayout.vue'),
@@ -66,7 +118,113 @@ const routes = [
       { 
         path: '', 
         component: () => import('pages/reservations/ReservationListPage.vue'),
-        meta: { requiresAuth: true }
+        meta: { 
+          requiresAuth: true,
+          permissions: ['reservations.view']
+        }
+      },
+      { 
+        path: 'create', 
+        component: () => import('pages/reservations/CreateReservationPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['reservations.create']
+        }
+      },
+      { 
+        path: ':id/edit', 
+        component: () => import('pages/reservations/EditReservationPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['reservations.update']
+        }
+      }
+    ],
+  },
+
+  // Room management routes
+  {
+    path: '/rooms',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/rooms/RoomListPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['rooms.view']
+        }
+      },
+      { 
+        path: 'status', 
+        component: () => import('pages/rooms/RoomStatusPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          roles: ['admin', 'manager', 'receptionist', 'housekeeping']
+        }
+      }
+    ],
+  },
+
+  // Guest management routes
+  {
+    path: '/guests',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/guests/GuestListPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['guests.view']
+        }
+      }
+    ],
+  },
+
+  // Financial routes
+  {
+    path: '/finance',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { 
+        path: 'invoices', 
+        component: () => import('pages/finance/InvoiceListPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['invoices.view']
+        }
+      },
+      { 
+        path: 'payments', 
+        component: () => import('pages/finance/PaymentListPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['payments.view']
+        }
+      }
+    ],
+  },
+
+  // Reports routes
+  {
+    path: '/reports',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { 
+      requiresAuth: true,
+      permissions: ['reports.view']
+    },
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/reports/ReportsPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['reports.view']
+        }
       }
     ],
   },

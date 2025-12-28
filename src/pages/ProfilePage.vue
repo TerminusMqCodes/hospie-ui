@@ -187,7 +187,7 @@ const onUpdateProfile = async () => {
       message: 'Profile updated successfully!',
       position: 'top'
     })
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Failed to update profile',
@@ -215,7 +215,7 @@ const onChangePassword = async () => {
       newPassword: '',
       confirmPassword: ''
     }
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Failed to change password',
@@ -235,7 +235,7 @@ const onLogout = async () => {
       position: 'top'
     })
     router.push('/login')
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Logout failed',
@@ -254,7 +254,7 @@ const onLogoutAll = async () => {
       position: 'top'
     })
     router.push('/login')
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Logout failed',
