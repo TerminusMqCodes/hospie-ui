@@ -191,6 +191,14 @@ const routes = [
     meta: { requiresAuth: true },
     children: [
       { 
+        path: '', 
+        component: () => import('pages/finance/FinancialDashboard.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['finance.view']
+        }
+      },
+      { 
         path: 'invoices', 
         component: () => import('pages/finance/InvoiceListPage.vue'),
         meta: { 
