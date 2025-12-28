@@ -35,12 +35,21 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   })
 
   // Navigation guards
-  Router.beforeEach((to, from, next) => {
+  Router.beforeEach(async (to, from, next) => {
     const authStore = useAuthStore()
     
     // Initialize auth state from localStorage if not already done
     if (!authStore.isAuthenticated && localStorage.getItem('auth_token')) {
       authStore.initializeAuth()
+    }
+    
+    // If user is authenticated but user data is stale, refresh it
+    if (authStore.isAuthenticated && authStore.user && !authStore.user.roles) {
+      try {
+        await authStore.fetchUser()
+      } catch (error) {
+        console.warn('Failed to refresh user data:', error)
+      }
     }
     
     // Check if route requires authentication
@@ -51,9 +60,45 @@ export default defineRouter(function (/* { store, ssrContext } */) {
           path: '/login',
           query: { redirect: to.fullPath }
         })
-      } else {
-        next()
+        return
       }
+      
+      // Check role requirements
+      const requiredRoles = to.meta.roles
+      if (requiredRoles && requiredRoles.length > 0) {
+        const hasRequiredRole = authStore.hasAnyRole(requiredRoles)
+        if (!hasRequiredRole) {
+          next({
+            path: '/unauthorized',
+            query: { message: 'Insufficient role permissions' }
+          })
+          return
+        }
+      }
+      
+      // Check permission requirements
+      const requiredPermissions = to.meta.permissions
+      if (requiredPermissions && requiredPermissions.length > 0) {
+        const hasRequiredPermission = authStore.hasAnyPermission(requiredPermissions)
+        if (!hasRequiredPermission) {
+          next({
+            path: '/unauthorized',
+            query: { message: 'Insufficient permissions' }
+          })
+          return
+        }
+      }
+      
+      // Check admin requirement
+      if (to.meta.requiresAdmin && !authStore.isAdmin) {
+        next({
+          path: '/unauthorized',
+          query: { message: 'Admin access required' }
+        })
+        return
+      }
+      
+      next()
     } else if (to.matched.some(record => record.meta.requiresGuest)) {
       // Routes that should only be accessible to guests (not logged in users)
       if (authStore.isAuthenticated) {

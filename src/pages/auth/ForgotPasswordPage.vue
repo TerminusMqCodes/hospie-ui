@@ -86,7 +86,7 @@ const onSubmit = async () => {
     setTimeout(() => {
       router.push('/login')
     }, 3000)
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: authStore.error || 'Failed to send reset link',

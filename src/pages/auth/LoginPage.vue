@@ -71,9 +71,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from 'src/stores/auth'
-import { useQuasar } from 'quasar'
 
-const $q = useQuasar()
 const router = useRouter()
 const authStore = useAuthStore()
 
@@ -97,21 +95,14 @@ const onSubmit = async () => {
       password: form.value.password
     })
 
-    $q.notify({
-      type: 'positive',
-      message: 'Login successful!',
-      position: 'top'
-    })
+    // Small delay to ensure store is updated
+    await new Promise(resolve => setTimeout(resolve, 100))
 
     // Redirect to intended page or dashboard
     const redirect = router.currentRoute.value.query.redirect || '/dashboard'
-    router.push(redirect)
+    await router.push(redirect)
   } catch (error) {
-    $q.notify({
-      type: 'negative',
-      message: authStore.error || 'Login failed',
-      position: 'top'
-    })
+    console.error('Login failed:', error)
   }
 }
 

@@ -118,7 +118,7 @@ const onSubmit = async () => {
 
     // Redirect to dashboard
     router.push('/dashboard')
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: authStore.error || 'Registration failed',

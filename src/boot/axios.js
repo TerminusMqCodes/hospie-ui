@@ -4,7 +4,7 @@ import axios from 'axios'
 // Laravel API base URL - adjust based on environment
 const baseURL = process.env.NODE_ENV === 'production' 
   ? 'https://your-production-domain.com/api'
-  : 'http://localhost/api'
+  : '/api' // Use relative URL for proxy to work
 
 // Create API instance for Laravel backend
 const api = axios.create({ 
