@@ -275,7 +275,59 @@ export const useBookingStore = defineStore('booking', {
       }
     },
 
-    // Get reservation statistics
+    // Get availability calendar
+    async fetchAvailabilityCalendar(month, roomType = null) {
+      this.loading = true
+      this.error = null
+      
+      try {
+        const params = { month }
+        if (roomType) {
+          params.room_type = roomType
+        }
+
+        const response = await api.get('/reservations/availability-calendar', { params })
+        
+        if (response.data.success) {
+          return response.data.data
+        }
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Failed to fetch availability calendar'
+        console.error('Error fetching availability calendar:', error)
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+
+    // Get calendar reservations for a specific date range
+    async fetchCalendarReservations(startDate, endDate, roomType = null) {
+      this.loading = true
+      this.error = null
+      
+      try {
+        const params = {
+          start_date: startDate,
+          end_date: endDate
+        }
+        
+        if (roomType) {
+          params.room_type = roomType
+        }
+
+        const response = await api.get('/reservations', { params })
+        
+        if (response.data.success) {
+          return response.data.data
+        }
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Failed to fetch calendar reservations'
+        console.error('Error fetching calendar reservations:', error)
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
     async fetchReservationStatistics(startDate = null, endDate = null) {
       try {
         const params = {}

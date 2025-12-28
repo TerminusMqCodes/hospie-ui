@@ -394,6 +394,7 @@ export default {
     const links1 = [
       { icon: 'dashboard', text: 'Dashboard', route: '/dashboard' },
       { icon: 'hotel', text: 'Reservations', route: '/reservations', permission: 'reservations.view' },
+      { icon: 'calendar_month', text: 'Calendar', route: '/reservations/calendar', permission: 'reservations.view' },
       { icon: 'meeting_room', text: 'Rooms', route: '/rooms', permission: 'rooms.view' },
       { icon: 'people', text: 'Guests', route: '/guests', permission: 'guests.view' }
     ]
@@ -456,6 +457,7 @@ export default {
       links1: [
         { icon: 'dashboard', text: 'Dashboard', route: '/dashboard' },
         { icon: 'hotel', text: 'Reservations', route: '/reservations', permission: 'reservations.view' },
+        { icon: 'calendar_month', text: 'Calendar', route: '/reservations/calendar', permission: 'reservations.view' },
         { icon: 'meeting_room', text: 'Rooms', route: '/rooms', permission: 'rooms.view' },
         { icon: 'people', text: 'Guests', route: '/guests', permission: 'guests.view' }
       ],

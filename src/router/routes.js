@@ -124,6 +124,14 @@ const routes = [
         }
       },
       { 
+        path: 'calendar', 
+        component: () => import('pages/reservations/CalendarPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['reservations.view']
+        }
+      },
+      { 
         path: 'create', 
         component: () => import('pages/reservations/CreateReservationPage.vue'),
         meta: { 
