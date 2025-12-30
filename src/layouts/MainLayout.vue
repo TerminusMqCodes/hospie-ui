@@ -18,7 +18,15 @@
 
         <q-space />
 
-        <q-input class="GNL__toolbar-input" outlined dense v-model="search" color="bg-grey-7 shadow-1" placeholder="Keresés...">
+        <q-input 
+          v-if="$q.screen.gt.sm" 
+          class="GNL__toolbar-input" 
+          outlined 
+          dense 
+          v-model="search" 
+          color="bg-grey-7 shadow-1" 
+          placeholder="Keresés..."
+        >
           <template v-slot:prepend>
             <q-icon v-if="search === ''" name="search" />
             <q-icon v-else name="clear" class="cursor-pointer" @click="search = ''" />
@@ -77,10 +85,30 @@
           </template>
         </q-input>
 
+        <!-- Mobile Search Button -->
+        <q-btn 
+          v-if="$q.screen.lt.md" 
+          flat 
+          round 
+          dense 
+          icon="search" 
+          @click="showMobileSearch = true"
+        >
+          <q-tooltip>Search</q-tooltip>
+        </q-btn>
+
         <q-space />
 
         <div class="q-gutter-sm row items-center no-wrap">
-          <q-btn v-if="$q.screen.gt.sm" round dense flat color="text-grey-7" icon="apps">
+          <!-- Mobile-optimized toolbar buttons -->
+          <q-btn 
+            v-if="$q.screen.gt.sm" 
+            round 
+            dense 
+            flat 
+            color="text-grey-7" 
+            icon="apps"
+          >
             <q-tooltip>Alkalmazások</q-tooltip>
             <q-menu anchor="bottom end" self="top end" class="apps-menu">
               <div class="q-pa-md" style="width: 320px">
@@ -113,13 +141,16 @@
               </div>
             </q-menu>
           </q-btn>
+          
           <DarkModeToggle />
+          
           <q-btn round dense flat color="text-grey-7" icon="notifications">
             <q-badge color="red" text-color="white" floating>
               2
             </q-badge>
             <q-tooltip>Értesítések</q-tooltip>
           </q-btn>
+          
           <q-btn round flat>
             <q-avatar size="26px">
               <img src="https://cdn.quasar.dev/img/boy-avatar.png">
@@ -188,6 +219,9 @@
       bordered
       :class="isDarkMode ? 'bg-dark' : 'bg-white'"
       :width="280"
+      :breakpoint="1024"
+      :overlay="$q.screen.lt.lg"
+      :persistent="$q.screen.gt.md"
     >
       <q-scroll-area class="fit">
         <q-list padding :class="isDarkMode ? 'text-white' : 'text-grey-8'">
@@ -257,6 +291,49 @@
       :expected-date="expectedDate"
       @notification-requested="handleNotificationRequest"
     />
+
+    <!-- Mobile Search Dialog -->
+    <q-dialog v-model="showMobileSearch" position="top">
+      <q-card style="width: 100%; max-width: 400px">
+        <q-card-section class="q-pb-none">
+          <q-input
+            v-model="search"
+            label="Search"
+            outlined
+            dense
+            autofocus
+            clearable
+            @keyup.enter="performMobileSearch"
+          >
+            <template v-slot:prepend>
+              <q-icon name="search" />
+            </template>
+            <template v-slot:append>
+              <q-btn 
+                flat 
+                round 
+                dense 
+                icon="close" 
+                @click="showMobileSearch = false"
+              />
+            </template>
+          </q-input>
+        </q-card-section>
+        
+        <q-card-actions align="right">
+          <q-btn 
+            flat 
+            label="Cancel" 
+            @click="showMobileSearch = false" 
+          />
+          <q-btn 
+            color="primary" 
+            label="Search" 
+            @click="performMobileSearch"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-layout>
 </template>
 
@@ -291,6 +368,7 @@ export default {
     const excludeWords = ref('')
     const byWebsite = ref('')
     const byDate = ref('Any time')
+    const showMobileSearch = ref(false)
 
     // Under Development Modal
     const showUnderDevelopmentModal = ref(false)
@@ -383,10 +461,19 @@ export default {
       })
     })
 
-    // Navigation function
+    function performMobileSearch() {
+      // Implement mobile search logic
+      console.log('Mobile search:', search.value)
+      showMobileSearch.value = false
+    }
+
     function navigateToRoute(route) {
       if (route) {
         router.push(route)
+        // Close drawer on mobile after navigation
+        if ($q.screen.lt.lg) {
+          leftDrawerOpen.value = false
+        }
       }
     }
 
@@ -423,9 +510,11 @@ export default {
       showUnderDevelopmentModal,
       selectedFeature,
       expectedDate,
+      showMobileSearch,
       filteredLinks1,
       filteredLinks2,
       navigateToRoute,
+      performMobileSearch,
 
       applications: [
         { 
@@ -497,6 +586,9 @@ export default {
 
   &__toolbar-input
     width: 55%
+    
+    @media (max-width: 768px)
+      width: 100%
 
   &__drawer-item
     line-height: 24px
@@ -531,4 +623,37 @@ export default {
 .apps-menu
   .q-menu
     border-radius: 8px
+
+// Mobile-specific styles
+@media (max-width: 768px)
+  .q-toolbar
+    padding: 0 8px
+    
+  .q-toolbar__title
+    font-size: 1rem
+    
+  .q-drawer
+    .q-list
+      padding: 8px 0
+      
+  .q-item
+    min-height: 48px
+    padding: 8px 16px
+    
+  .q-btn
+    min-width: 40px
+    
+  .q-avatar
+    font-size: 20px
+
+// Responsive grid improvements
+@media (max-width: 600px)
+  .row.q-gutter-md > div
+    margin-bottom: 16px
+    
+  .col-12.col-md-3,
+  .col-12.col-md-4,
+  .col-12.col-md-6
+    width: 100% !important
+    max-width: 100% !important
 </style>

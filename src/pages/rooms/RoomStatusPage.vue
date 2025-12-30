@@ -1,26 +1,26 @@
 <template>
-  <q-page class="q-pa-md">
+  <q-page class="q-pa-md room-status-page">
     <div class="row q-gutter-md">
       <!-- Header -->
       <div class="col-12">
         <q-card>
           <q-card-section>
-            <div class="row items-center justify-between">
-              <div>
+            <div class="row items-center justify-between header-row">
+              <div class="header-info">
                 <div class="text-h6">Room Status Dashboard</div>
                 <div class="text-subtitle2">Real-time room status management</div>
               </div>
-              <div class="row q-gutter-sm">
+              <div class="row q-gutter-sm header-actions">
                 <q-btn 
                   color="primary" 
                   icon="refresh" 
-                  label="Refresh" 
+                  :label="$q.screen.gt.xs ? 'Refresh' : ''"
                   @click="refreshRoomStatus"
                 />
                 <q-btn 
                   color="secondary" 
                   icon="settings" 
-                  label="Settings" 
+                  :label="$q.screen.gt.xs ? 'Settings' : ''"
                   outline
                 />
               </div>
@@ -34,91 +34,91 @@
         <q-card>
           <q-card-section>
             <div class="text-h6 q-mb-md">Room Status Summary</div>
-            <div class="row q-gutter-md">
-              <div class="col-6 col-md-2">
-                <div class="text-center">
+            <div class="row q-gutter-md status-summary">
+              <div class="col-6 col-sm-4 col-md-2">
+                <div class="text-center status-item">
                   <q-circular-progress
                     :value="roomStats.available"
                     size="80px"
                     :thickness="0.15"
                     color="positive"
                     track-color="grey-3"
-                    class="q-ma-md"
+                    class="q-ma-md status-progress"
                   >
-                    <div class="text-h6">{{ roomStats.available }}</div>
+                    <div class="text-h6 status-number">{{ roomStats.available }}</div>
                   </q-circular-progress>
-                  <div class="text-subtitle2">Available</div>
+                  <div class="text-subtitle2 status-label">Available</div>
                 </div>
               </div>
               
-              <div class="col-6 col-md-2">
-                <div class="text-center">
+              <div class="col-6 col-sm-4 col-md-2">
+                <div class="text-center status-item">
                   <q-circular-progress
                     :value="roomStats.occupied"
                     size="80px"
                     :thickness="0.15"
                     color="negative"
                     track-color="grey-3"
-                    class="q-ma-md"
+                    class="q-ma-md status-progress"
                   >
-                    <div class="text-h6">{{ roomStats.occupied }}</div>
+                    <div class="text-h6 status-number">{{ roomStats.occupied }}</div>
                   </q-circular-progress>
-                  <div class="text-subtitle2">Occupied</div>
+                  <div class="text-subtitle2 status-label">Occupied</div>
                 </div>
               </div>
               
-              <div class="col-6 col-md-2">
-                <div class="text-center">
+              <div class="col-6 col-sm-4 col-md-2">
+                <div class="text-center status-item">
                   <q-circular-progress
                     :value="roomStats.cleaning"
                     size="80px"
                     :thickness="0.15"
                     color="warning"
                     track-color="grey-3"
-                    class="q-ma-md"
+                    class="q-ma-md status-progress"
                   >
-                    <div class="text-h6">{{ roomStats.cleaning }}</div>
+                    <div class="text-h6 status-number">{{ roomStats.cleaning }}</div>
                   </q-circular-progress>
-                  <div class="text-subtitle2">Cleaning</div>
+                  <div class="text-subtitle2 status-label">Cleaning</div>
                 </div>
               </div>
               
-              <div class="col-6 col-md-2">
-                <div class="text-center">
+              <div class="col-6 col-sm-4 col-md-2">
+                <div class="text-center status-item">
                   <q-circular-progress
                     :value="roomStats.maintenance"
                     size="80px"
                     :thickness="0.15"
                     color="info"
                     track-color="grey-3"
-                    class="q-ma-md"
+                    class="q-ma-md status-progress"
                   >
-                    <div class="text-h6">{{ roomStats.maintenance }}</div>
+                    <div class="text-h6 status-number">{{ roomStats.maintenance }}</div>
                   </q-circular-progress>
-                  <div class="text-subtitle2">Maintenance</div>
+                  <div class="text-subtitle2 status-label">Maintenance</div>
                 </div>
               </div>
               
-              <div class="col-6 col-md-2">
-                <div class="text-center">
+              <div class="col-6 col-sm-4 col-md-2">
+                <div class="text-center status-item">
                   <q-circular-progress
                     :value="roomStats.outOfOrder"
                     size="80px"
                     :thickness="0.15"
                     color="grey"
                     track-color="grey-3"
-                    class="q-ma-md"
+                    class="q-ma-md status-progress"
                   >
-                    <div class="text-h6">{{ roomStats.outOfOrder }}</div>
+                    <div class="text-h6 status-number">{{ roomStats.outOfOrder }}</div>
                   </q-circular-progress>
-                  <div class="text-subtitle2">Out of Order</div>
+                  <div class="text-subtitle2 status-label">Out of Order</div>
                 </div>
               </div>
               
-              <div class="col-6 col-md-2">
-                <div class="text-center">
-                  <div class="text-h4 q-ma-md">{{ occupancyRate }}%</div>
-                  <div class="text-subtitle2">Occupancy Rate</div>
+              <div class="col-6 col-sm-4 col-md-2">
+                <div class="text-center status-item">
+                  <div class="text-h4 q-ma-md occupancy-rate">{{ occupancyRate }}%</div>
+                  <div class="text-subtitle2 status-label">Occupancy Rate</div>
                 </div>
               </div>
             </div>
@@ -130,7 +130,7 @@
       <div class="col-12">
         <q-card>
           <q-card-section>
-            <div class="row items-center justify-between q-mb-md">
+            <div class="row items-center justify-between q-mb-md floor-header">
               <div class="text-h6">Floor View</div>
               <q-select
                 v-model="selectedFloor"
@@ -138,7 +138,7 @@
                 label="Select Floor"
                 outlined
                 dense
-                style="min-width: 150px"
+                class="floor-select"
                 @update:model-value="filterRoomsByFloor"
               />
             </div>
@@ -173,52 +173,70 @@
         <q-card>
           <q-card-section>
             <div class="text-h6 q-mb-md">Room Actions - {{ selectedRoom.room_number }}</div>
-            <div class="row q-gutter-sm">
-              <q-btn 
-                v-if="selectedRoom.status === 'available'"
-                color="negative" 
-                icon="hotel" 
-                label="Mark Occupied" 
-                @click="updateRoomStatus('occupied')"
-              />
+            <div class="row q-gutter-sm room-actions">
+              <div class="col-12 col-sm-6 col-md-auto">
+                <q-btn 
+                  v-if="selectedRoom.status === 'available'"
+                  color="negative" 
+                  icon="hotel" 
+                  label="Mark Occupied" 
+                  class="full-width-mobile"
+                  @click="updateRoomStatus('occupied')"
+                />
+              </div>
               
-              <q-btn 
-                v-if="selectedRoom.status === 'occupied'"
-                color="warning" 
-                icon="cleaning_services" 
-                label="Start Cleaning" 
-                @click="updateRoomStatus('cleaning')"
-              />
+              <div class="col-12 col-sm-6 col-md-auto">
+                <q-btn 
+                  v-if="selectedRoom.status === 'occupied'"
+                  color="warning" 
+                  icon="cleaning_services" 
+                  label="Start Cleaning" 
+                  class="full-width-mobile"
+                  @click="updateRoomStatus('cleaning')"
+                />
+              </div>
               
-              <q-btn 
-                v-if="selectedRoom.status === 'cleaning'"
-                color="positive" 
-                icon="check_circle" 
-                label="Cleaning Complete" 
-                @click="updateRoomStatus('available')"
-              />
+              <div class="col-12 col-sm-6 col-md-auto">
+                <q-btn 
+                  v-if="selectedRoom.status === 'cleaning'"
+                  color="positive" 
+                  icon="check_circle" 
+                  label="Cleaning Complete" 
+                  class="full-width-mobile"
+                  @click="updateRoomStatus('available')"
+                />
+              </div>
               
-              <q-btn 
-                color="info" 
-                icon="build" 
-                label="Maintenance" 
-                @click="updateRoomStatus('maintenance')"
-              />
+              <div class="col-12 col-sm-6 col-md-auto">
+                <q-btn 
+                  color="info" 
+                  icon="build" 
+                  label="Maintenance" 
+                  class="full-width-mobile"
+                  @click="updateRoomStatus('maintenance')"
+                />
+              </div>
               
-              <q-btn 
-                color="grey" 
-                icon="block" 
-                label="Out of Order" 
-                @click="updateRoomStatus('out_of_order')"
-              />
+              <div class="col-12 col-sm-6 col-md-auto">
+                <q-btn 
+                  color="grey" 
+                  icon="block" 
+                  label="Out of Order" 
+                  class="full-width-mobile"
+                  @click="updateRoomStatus('out_of_order')"
+                />
+              </div>
               
-              <q-btn 
-                color="primary" 
-                icon="visibility" 
-                label="View Details" 
-                outline
-                @click="viewRoomDetails"
-              />
+              <div class="col-12 col-sm-6 col-md-auto">
+                <q-btn 
+                  color="primary" 
+                  icon="visibility" 
+                  label="View Details" 
+                  outline
+                  class="full-width-mobile"
+                  @click="viewRoomDetails"
+                />
+              </div>
             </div>
           </q-card-section>
         </q-card>
@@ -227,7 +245,7 @@
 
     <!-- Room Details Dialog -->
     <q-dialog v-model="showRoomDialog" persistent>
-      <q-card style="min-width: 500px">
+      <q-card class="room-details-dialog">
         <q-card-section>
           <div class="text-h6">Room {{ selectedRoom?.room_number }} Details</div>
         </q-card-section>
@@ -444,6 +462,58 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.room-status-page {
+  padding: 16px;
+}
+
+.header-row {
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.header-info {
+  flex: 1;
+  min-width: 200px;
+}
+
+.header-actions {
+  flex-wrap: wrap;
+}
+
+.status-summary {
+  justify-content: center;
+}
+
+.status-item {
+  padding: 8px;
+}
+
+.status-progress {
+  margin: 16px auto;
+}
+
+.status-number {
+  font-size: 1.2rem;
+}
+
+.status-label {
+  font-size: 0.9rem;
+}
+
+.occupancy-rate {
+  margin: 16px auto;
+  font-size: 2rem;
+}
+
+.floor-header {
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.floor-select {
+  min-width: 150px;
+}
+
 .room-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -510,5 +580,137 @@ onMounted(() => {
   font-size: 0.8em;
   color: #333;
   font-style: italic;
+}
+
+.room-actions {
+  flex-wrap: wrap;
+}
+
+.full-width-mobile {
+  width: 100%;
+}
+
+.room-details-dialog {
+  min-width: 300px;
+  max-width: 90vw;
+  width: 500px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .room-status-page {
+    padding: 8px;
+  }
+  
+  .header-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .header-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+  
+  .header-actions .q-btn {
+    flex: 1;
+  }
+  
+  .status-summary {
+    justify-content: space-around;
+  }
+  
+  .status-progress {
+    transform: scale(0.8);
+    margin: 8px auto;
+  }
+  
+  .status-number {
+    font-size: 1rem;
+  }
+  
+  .status-label {
+    font-size: 0.8rem;
+  }
+  
+  .occupancy-rate {
+    font-size: 1.5rem;
+    margin: 8px auto;
+  }
+  
+  .floor-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .floor-select {
+    width: 100%;
+  }
+  
+  .room-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  
+  .room-card {
+    padding: 12px;
+  }
+  
+  .room-number {
+    font-size: 1.2em;
+  }
+  
+  .room-actions {
+    flex-direction: column;
+  }
+  
+  .room-actions > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 8px;
+  }
+  
+  .room-details-dialog {
+    margin: 16px;
+    width: calc(100vw - 32px);
+  }
+}
+
+@media (max-width: 600px) {
+  .status-summary > div {
+    width: 50% !important;
+    max-width: 50% !important;
+  }
+  
+  .room-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+  }
+  
+  .room-card {
+    padding: 8px;
+  }
+  
+  .room-number {
+    font-size: 1em;
+  }
+  
+  .room-type {
+    font-size: 0.8em;
+  }
+}
+
+@media (max-width: 400px) {
+  .room-status-page {
+    padding: 4px;
+  }
+  
+  .status-progress {
+    transform: scale(0.7);
+  }
+  
+  .room-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 </style>

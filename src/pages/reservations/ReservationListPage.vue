@@ -1,19 +1,20 @@
 <template>
-  <q-page class="q-pa-md">
+  <q-page class="q-pa-md reservation-page">
     <div class="row q-gutter-md">
       <!-- Header -->
       <div class="col-12">
         <q-card>
           <q-card-section>
-            <div class="row items-center justify-between">
-              <div>
+            <div class="row items-center justify-between header-row">
+              <div class="header-info">
                 <div class="text-h6">Reservations</div>
                 <div class="text-subtitle2">Manage hotel reservations</div>
               </div>
               <q-btn 
                 color="primary" 
                 icon="add" 
-                label="New Reservation" 
+                :label="$q.screen.gt.xs ? 'New Reservation' : ''"
+                class="new-reservation-btn"
                 @click="$router.push('/reservations/create')"
               />
             </div>
@@ -25,8 +26,8 @@
       <div class="col-12">
         <q-card>
           <q-card-section>
-            <div class="row q-gutter-md items-end">
-              <div class="col-12 col-md-3">
+            <div class="row q-gutter-md items-end filters-row">
+              <div class="col-12 col-sm-6 col-md-3">
                 <q-input
                   v-model="bookingStore.filters.search"
                   label="Search guest name or confirmation"
@@ -41,7 +42,7 @@
                 </q-input>
               </div>
               
-              <div class="col-12 col-md-2">
+              <div class="col-12 col-sm-6 col-md-2">
                 <q-select
                   v-model="bookingStore.filters.status"
                   :options="statusOptions"
@@ -53,7 +54,7 @@
                 />
               </div>
               
-              <div class="col-12 col-md-2">
+              <div class="col-12 col-sm-6 col-md-2">
                 <q-input
                   v-model="bookingStore.filters.start_date"
                   label="From Date"
@@ -64,7 +65,7 @@
                 />
               </div>
               
-              <div class="col-12 col-md-2">
+              <div class="col-12 col-sm-6 col-md-2">
                 <q-input
                   v-model="bookingStore.filters.end_date"
                   label="To Date"
@@ -75,12 +76,13 @@
                 />
               </div>
               
-              <div class="col-12 col-md-2">
+              <div class="col-12 col-sm-12 col-md-2">
                 <q-btn
                   color="secondary"
                   icon="clear"
-                  label="Clear"
+                  :label="$q.screen.gt.xs ? 'Clear' : ''"
                   outline
+                  class="full-width-mobile"
                   @click="clearFilters"
                 />
               </div>
@@ -92,7 +94,122 @@
       <!-- Reservations Table -->
       <div class="col-12">
         <q-card>
+          <!-- Mobile Card View -->
+          <div v-if="$q.screen.lt.md" class="mobile-reservations">
+            <q-card-section v-if="bookingStore.loading" class="text-center">
+              <q-spinner size="40px" />
+              <div class="q-mt-sm">Loading reservations...</div>
+            </q-card-section>
+            
+            <div v-else>
+              <q-card 
+                v-for="reservation in bookingStore.reservations" 
+                :key="reservation.id"
+                class="q-ma-sm reservation-mobile-card"
+                bordered
+                flat
+              >
+                <q-card-section>
+                  <div class="row items-center justify-between">
+                    <div class="col">
+                      <div class="text-weight-bold">{{ reservation.guest?.name || 'N/A' }}</div>
+                      <div class="text-caption text-grey-6">{{ reservation.guest?.email }}</div>
+                    </div>
+                    <div class="col-auto">
+                      <q-badge 
+                        :color="getStatusColor(reservation.status)"
+                        :label="getStatusLabel(reservation.status)"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div class="q-mt-sm">
+                    <div class="text-body2">
+                      <q-icon name="calendar_today" size="xs" class="q-mr-xs" />
+                      {{ formatDate(reservation.check_in_date) }} - {{ formatDate(reservation.check_out_date) }}
+                    </div>
+                    <div class="text-body2 q-mt-xs">
+                      <q-icon name="hotel" size="xs" class="q-mr-xs" />
+                      {{ reservation.room_type?.name || 'N/A' }}
+                    </div>
+                    <div class="text-body2 q-mt-xs">
+                      <q-icon name="attach_money" size="xs" class="q-mr-xs" />
+                      ${{ reservation.total_amount }}
+                    </div>
+                  </div>
+                  
+                  <div class="row q-mt-md q-gutter-xs">
+                    <q-btn 
+                      flat 
+                      dense 
+                      icon="visibility" 
+                      size="sm"
+                      color="primary"
+                      @click="viewReservation(reservation)"
+                    >
+                      <q-tooltip>View</q-tooltip>
+                    </q-btn>
+                    
+                    <q-btn 
+                      flat 
+                      dense 
+                      icon="edit" 
+                      size="sm"
+                      color="secondary"
+                      @click="editReservation(reservation)"
+                    >
+                      <q-tooltip>Edit</q-tooltip>
+                    </q-btn>
+                    
+                    <q-btn 
+                      v-if="reservation.status === 'confirmed'"
+                      flat 
+                      dense 
+                      icon="login" 
+                      size="sm"
+                      color="positive"
+                      @click="checkInGuest(reservation)"
+                    >
+                      <q-tooltip>Check In</q-tooltip>
+                    </q-btn>
+                    
+                    <q-btn 
+                      v-if="reservation.status === 'checked_in'"
+                      flat 
+                      dense 
+                      icon="logout" 
+                      size="sm"
+                      color="info"
+                      @click="checkOutGuest(reservation)"
+                    >
+                      <q-tooltip>Check Out</q-tooltip>
+                    </q-btn>
+                    
+                    <q-btn 
+                      v-if="['pending', 'confirmed'].includes(reservation.status)"
+                      flat 
+                      dense 
+                      icon="cancel" 
+                      size="sm"
+                      color="negative"
+                      @click="cancelReservation(reservation)"
+                    >
+                      <q-tooltip>Cancel</q-tooltip>
+                    </q-btn>
+                  </div>
+                </q-card-section>
+              </q-card>
+              
+              <div v-if="bookingStore.reservations.length === 0" class="text-center q-pa-lg">
+                <q-icon size="3em" name="sentiment_dissatisfied" class="text-grey-5" />
+                <div class="text-grey-7 q-mt-sm">No reservations found</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Desktop Table View -->
           <q-table
+            v-else
             :rows="bookingStore.reservations"
             :columns="columns"
             :loading="bookingStore.loading"
@@ -206,7 +323,7 @@
 
     <!-- Reservation Details Dialog -->
     <q-dialog v-model="showDetailsDialog" persistent>
-      <q-card style="min-width: 600px">
+      <q-card class="details-dialog">
         <q-card-section>
           <div class="text-h6">Reservation Details</div>
         </q-card-section>
@@ -460,3 +577,108 @@ onMounted(() => {
   bookingStore.fetchReservations()
 })
 </script>
+
+<style scoped>
+.reservation-page {
+  padding: 16px;
+}
+
+.header-row {
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.header-info {
+  flex: 1;
+  min-width: 200px;
+}
+
+.new-reservation-btn {
+  min-width: 48px;
+}
+
+.filters-row {
+  align-items: stretch;
+}
+
+.full-width-mobile {
+  width: 100%;
+}
+
+.mobile-reservations {
+  padding: 8px;
+}
+
+.reservation-mobile-card {
+  margin-bottom: 8px;
+  border-left: 4px solid #e0e0e0;
+  transition: all 0.2s ease;
+}
+
+.reservation-mobile-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.details-dialog {
+  min-width: 300px;
+  max-width: 90vw;
+  width: 600px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .reservation-page {
+    padding: 8px;
+  }
+  
+  .header-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .new-reservation-btn {
+    width: 100%;
+    margin-top: 8px;
+  }
+  
+  .filters-row {
+    flex-direction: column;
+  }
+  
+  .filters-row > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 8px;
+  }
+  
+  .details-dialog {
+    margin: 16px;
+    width: calc(100vw - 32px);
+  }
+}
+
+@media (max-width: 600px) {
+  .reservation-mobile-card .q-card-section {
+    padding: 12px;
+  }
+  
+  .row.q-gutter-md > div {
+    margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 400px) {
+  .reservation-page {
+    padding: 4px;
+  }
+  
+  .mobile-reservations {
+    padding: 4px;
+  }
+  
+  .reservation-mobile-card {
+    margin: 4px;
+  }
+}
+</style>

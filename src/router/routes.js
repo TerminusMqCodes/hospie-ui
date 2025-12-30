@@ -65,6 +65,11 @@ const routes = [
         path: 'profile', 
         component: () => import('pages/ProfilePage.vue'),
         meta: { requiresAuth: true }
+      },
+      { 
+        path: 'mobile-test', 
+        component: () => import('pages/MobileTestPage.vue'),
+        meta: { requiresAuth: true }
       }
     ],
   },

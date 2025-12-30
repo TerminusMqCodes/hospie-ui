@@ -1,1 +1,413 @@
 // app global css in SCSS form
+
+// Mobile-first responsive design
+// Base styles for mobile devices
+body {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+// Global responsive utilities
+.full-width-mobile {
+  @media (max-width: 768px) {
+    width: 100% !important;
+  }
+}
+
+.hide-on-mobile {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+.show-on-mobile {
+  display: none !important;
+  
+  @media (max-width: 768px) {
+    display: block !important;
+  }
+}
+
+.mobile-only {
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: block;
+  }
+}
+
+.desktop-only {
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+// Responsive spacing
+.responsive-padding {
+  padding: 16px;
+  
+  @media (max-width: 768px) {
+    padding: 8px;
+  }
+  
+  @media (max-width: 400px) {
+    padding: 4px;
+  }
+}
+
+.responsive-margin {
+  margin: 16px;
+  
+  @media (max-width: 768px) {
+    margin: 8px;
+  }
+  
+  @media (max-width: 400px) {
+    margin: 4px;
+  }
+}
+
+// Responsive text sizes
+.responsive-title {
+  font-size: 2rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
+  
+  @media (max-width: 400px) {
+    font-size: 1.25rem;
+  }
+}
+
+.responsive-subtitle {
+  font-size: 1.25rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+  
+  @media (max-width: 400px) {
+    font-size: 0.9rem;
+  }
+}
+
+// Responsive button styles
+.q-btn {
+  @media (max-width: 768px) {
+    min-height: 40px;
+    font-size: 0.875rem;
+  }
+}
+
+// Responsive card styles
+.q-card {
+  @media (max-width: 768px) {
+    .q-card-section {
+      padding: 12px;
+    }
+  }
+  
+  @media (max-width: 400px) {
+    .q-card-section {
+      padding: 8px;
+    }
+  }
+}
+
+// Responsive table styles
+.q-table {
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+    
+    .q-table__container {
+      overflow-x: auto;
+    }
+    
+    .q-td, .q-th {
+      padding: 8px 4px;
+      font-size: 0.8rem;
+    }
+  }
+}
+
+// Responsive form styles
+.q-field {
+  @media (max-width: 768px) {
+    .q-field__control {
+      min-height: 40px;
+    }
+    
+    .q-field__label {
+      font-size: 0.875rem;
+    }
+  }
+}
+
+// Responsive dialog styles
+.q-dialog {
+  @media (max-width: 768px) {
+    .q-card {
+      margin: 16px;
+      max-width: calc(100vw - 32px);
+      width: auto;
+    }
+  }
+  
+  @media (max-width: 400px) {
+    .q-card {
+      margin: 8px;
+      max-width: calc(100vw - 16px);
+    }
+  }
+}
+
+// Responsive grid improvements
+.row {
+  @media (max-width: 768px) {
+    &.q-gutter-md > div {
+      margin-bottom: 8px;
+    }
+    
+    &.q-gutter-lg > div {
+      margin-bottom: 12px;
+    }
+  }
+}
+
+// Mobile-specific column overrides
+@media (max-width: 768px) {
+  .col-12.col-sm-6.col-md-3,
+  .col-12.col-sm-6.col-md-4,
+  .col-12.col-sm-6.col-md-6,
+  .col-12.col-md-3,
+  .col-12.col-md-4,
+  .col-12.col-md-6,
+  .col-12.col-lg-6 {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+// Touch-friendly improvements
+@media (max-width: 768px) {
+  .q-btn, .q-item, .q-tab {
+    min-height: 44px; // Apple's recommended touch target size
+  }
+  
+  .q-icon {
+    font-size: 1.2rem;
+  }
+}
+
+// Responsive navigation
+.q-drawer {
+  @media (max-width: 1024px) {
+    .q-item {
+      padding: 12px 16px;
+      min-height: 48px;
+    }
+    
+    .q-item__label {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// Responsive toolbar
+.q-toolbar {
+  @media (max-width: 768px) {
+    padding: 0 8px;
+    min-height: 56px;
+    
+    .q-toolbar__title {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+// Responsive page container
+.q-page {
+  @media (max-width: 768px) {
+    &.q-pa-lg {
+      padding: 8px;
+    }
+    
+    &.q-pa-md {
+      padding: 8px;
+    }
+  }
+  
+  @media (max-width: 400px) {
+    &.q-pa-lg,
+    &.q-pa-md {
+      padding: 4px;
+    }
+  }
+}
+
+// Responsive list styles
+.q-list {
+  @media (max-width: 768px) {
+    .q-item {
+      padding: 8px 12px;
+      min-height: 44px;
+    }
+    
+    .q-item__label {
+      font-size: 0.9rem;
+    }
+    
+    .q-item__label--caption {
+      font-size: 0.8rem;
+    }
+  }
+}
+
+// Responsive avatar and icon sizes
+@media (max-width: 768px) {
+  .q-avatar {
+    font-size: 1.5rem;
+  }
+  
+  .q-circular-progress {
+    transform: scale(0.8);
+  }
+}
+
+// Responsive menu styles
+.q-menu {
+  @media (max-width: 768px) {
+    .q-item {
+      padding: 12px 16px;
+      min-height: 44px;
+    }
+  }
+}
+
+// Responsive badge styles
+.q-badge {
+  @media (max-width: 768px) {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+}
+
+// Responsive chip styles
+.q-chip {
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+    height: 24px;
+  }
+}
+
+// Responsive timeline styles
+.q-timeline {
+  @media (max-width: 768px) {
+    .q-timeline__entry {
+      padding-left: 32px;
+    }
+    
+    .q-timeline__title {
+      font-size: 0.9rem;
+    }
+    
+    .q-timeline__subtitle {
+      font-size: 0.8rem;
+    }
+  }
+}
+
+// Responsive expansion item styles
+.q-expansion-item {
+  @media (max-width: 768px) {
+    .q-expansion-item__toggle-icon {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+// Responsive stepper styles
+.q-stepper {
+  @media (max-width: 768px) {
+    .q-stepper__step-inner {
+      padding: 12px;
+    }
+    
+    .q-stepper__title {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// Responsive tab styles
+.q-tabs {
+  @media (max-width: 768px) {
+    .q-tab {
+      min-height: 44px;
+      font-size: 0.875rem;
+      padding: 0 12px;
+    }
+  }
+}
+
+// Responsive input styles
+.q-input, .q-select {
+  @media (max-width: 768px) {
+    .q-field__control {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// Responsive notification styles
+.q-notification {
+  @media (max-width: 768px) {
+    margin: 8px;
+    font-size: 0.875rem;
+  }
+}
+
+// Responsive loading styles
+.q-loading {
+  @media (max-width: 768px) {
+    .q-spinner {
+      font-size: 2rem;
+    }
+  }
+}
+
+// Accessibility improvements for mobile
+@media (max-width: 768px) {
+  // Ensure text is readable
+  body {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+  }
+  
+  // Improve touch targets
+  button, .q-btn, .q-item, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  // Improve form usability
+  input, select, textarea {
+    font-size: 16px; // Prevents zoom on iOS
+  }
+}
+
+// Print styles
+@media print {
+  .q-drawer,
+  .q-header,
+  .q-footer,
+  .q-btn,
+  .hide-on-print {
+    display: none !important;
+  }
+  
+  .q-page {
+    padding: 0 !important;
+  }
+}
