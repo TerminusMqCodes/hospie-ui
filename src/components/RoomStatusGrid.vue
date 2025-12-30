@@ -139,6 +139,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
+import { useRoomUpdates } from 'src/composables/useWebSocket'
 
 const $q = useQuasar()
 
@@ -157,10 +158,39 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['cell-click', 'booking-click', 'room-select'])
+const emit = defineEmits(['cell-click', 'booking-click', 'room-select', 'room-updated'])
 
 // Mobile-specific reactive data
 const selectedDate = ref(new Date())
+
+// WebSocket integration for real-time room updates
+useRoomUpdates((roomData) => {
+  // Find the room in our current list and update it
+  const roomIndex = props.rooms.findIndex(room => room.id === roomData.room_id)
+  if (roomIndex !== -1) {
+    // Emit event to parent to update the room data
+    emit('room-updated', {
+      roomId: roomData.room_id,
+      oldStatus: roomData.old_status,
+      newStatus: roomData.new_status,
+      reason: roomData.reason,
+      changedBy: roomData.changed_by,
+      changedAt: roomData.changed_at
+    })
+    
+    // Show visual feedback for the status change
+    $q.notify({
+      type: getRoomStatusNotificationType(roomData.new_status),
+      message: `Room ${roomData.room_number} status changed`,
+      caption: `${roomData.old_status} → ${roomData.new_status}`,
+      position: 'top-right',
+      timeout: 3000,
+      actions: [
+        { icon: 'close', color: 'white', round: true, handler: () => {} }
+      ]
+    })
+  }
+})
 
 // Computed properties
 const dateOptions = computed(() => {
@@ -213,6 +243,17 @@ const getRoomStatusColor = (status) => {
     out_of_order: 'negative'
   }
   return colors[status] || 'grey'
+}
+
+const getRoomStatusNotificationType = (status) => {
+  const types = {
+    available: 'positive',
+    occupied: 'info',
+    maintenance: 'warning',
+    cleaning: 'info',
+    out_of_order: 'negative'
+  }
+  return types[status] || 'info'
 }
 
 const getMobileRoomClass = (status) => {

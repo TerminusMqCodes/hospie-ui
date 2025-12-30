@@ -11,6 +11,7 @@
                 <div class="text-subtitle2">Real-time room status management</div>
               </div>
               <div class="row q-gutter-sm header-actions">
+                <WebSocketStatus />
                 <q-btn 
                   color="primary" 
                   icon="refresh" 
@@ -305,6 +306,8 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useQuasar } from 'quasar'
+import { useRoomUpdates } from 'src/composables/useWebSocket'
+import WebSocketStatus from 'src/components/WebSocketStatus.vue'
 
 const $q = useQuasar()
 
@@ -325,6 +328,38 @@ const rooms = ref([
   { id: 7, room_number: '301', floor: 3, status: 'occupied', room_type: { name: 'Suite' }, guest_name: 'Jane Smith', amenities: ['WiFi', 'TV', 'AC', 'Minibar', 'Balcony'] },
   { id: 8, room_number: '302', floor: 3, status: 'available', room_type: { name: 'Standard' }, amenities: ['WiFi', 'TV', 'AC'] }
 ])
+
+// WebSocket integration for real-time room updates
+useRoomUpdates((roomData) => {
+  // Find and update the room in our local data
+  const roomIndex = rooms.value.findIndex(room => room.id === roomData.room_id)
+  if (roomIndex !== -1) {
+    const oldStatus = rooms.value[roomIndex].status
+    rooms.value[roomIndex].status = roomData.new_status
+    
+    // Update selected room if it's the one that changed
+    if (selectedRoom.value && selectedRoom.value.id === roomData.room_id) {
+      selectedRoom.value.status = roomData.new_status
+    }
+    
+    // Show notification with animation
+    $q.notify({
+      type: getRoomStatusNotificationType(roomData.new_status),
+      message: `Room ${roomData.room_number} status updated`,
+      caption: `${oldStatus} → ${roomData.new_status}${roomData.reason ? ` (${roomData.reason})` : ''}`,
+      position: 'top-right',
+      timeout: 4000,
+      actions: [
+        { 
+          icon: 'close', 
+          color: 'white', 
+          round: true, 
+          handler: () => {} 
+        }
+      ]
+    })
+  }
+})
 
 // Computed properties
 const floorOptions = computed(() => {
@@ -432,16 +467,38 @@ const getRoomStatusLabel = (status) => {
   return labels[status] || status
 }
 
+const getRoomStatusNotificationType = (status) => {
+  const types = {
+    available: 'positive',
+    occupied: 'info',
+    cleaning: 'warning',
+    maintenance: 'info',
+    out_of_order: 'negative'
+  }
+  return types[status] || 'info'
+}
+
 const updateRoomStatus = async (newStatus) => {
   if (!selectedRoom.value) return
   
   try {
-    // In real app, call API
+    // In real app, call API to update room status
+    // The API call would trigger the WebSocket event automatically
+    
+    // For demo purposes, simulate the update locally
+    const oldStatus = selectedRoom.value.status
     selectedRoom.value.status = newStatus
+    
+    // Find and update in rooms array
+    const roomIndex = rooms.value.findIndex(room => room.id === selectedRoom.value.id)
+    if (roomIndex !== -1) {
+      rooms.value[roomIndex].status = newStatus
+    }
     
     $q.notify({
       type: 'positive',
-      message: `Room ${selectedRoom.value.room_number} status updated to ${getRoomStatusLabel(newStatus)}`
+      message: `Room ${selectedRoom.value.room_number} status updated to ${getRoomStatusLabel(newStatus)}`,
+      caption: `Previous status: ${getRoomStatusLabel(oldStatus)}`
     })
   } catch {
     $q.notify({
@@ -458,6 +515,7 @@ const viewRoomDetails = () => {
 // Lifecycle
 onMounted(() => {
   // In real app, fetch rooms from API
+  console.log('Room Status Page mounted with WebSocket integration')
 })
 </script>
 
@@ -478,6 +536,7 @@ onMounted(() => {
 
 .header-actions {
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .status-summary {
