@@ -80,6 +80,11 @@
         </q-card>
       </div>
 
+      <!-- Automated Invoicing Dashboard -->
+      <div class="col-12">
+        <AutomatedInvoicingDashboard />
+      </div>
+
       <!-- Quick Actions -->
       <div class="col-12 col-lg-6">
         <q-card>
@@ -319,6 +324,7 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from 'src/stores/auth'
 import { useQuasar } from 'quasar'
+import AutomatedInvoicingDashboard from 'src/components/AutomatedInvoicingDashboard.vue'
 
 const authStore = useAuthStore()
 const $q = useQuasar()

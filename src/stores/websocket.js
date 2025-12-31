@@ -22,7 +22,10 @@ export const useWebSocketStore = defineStore('websocket', () => {
   }
 
   function setupConnectionHandlers() {
-    if (!pusher.value) return
+    if (!pusher.value) {
+      console.warn('WebSocket disabled - Pusher not configured')
+      return
+    }
 
     pusher.value.connection.bind('connected', () => {
       isConnected.value = true
@@ -57,7 +60,7 @@ export const useWebSocketStore = defineStore('websocket', () => {
 
   function subscribeToChannel(channelName, callbacks = {}) {
     if (!pusher.value) {
-      console.error('Pusher not initialized')
+      console.warn('WebSocket disabled - Cannot subscribe to channel:', channelName)
       return null
     }
 

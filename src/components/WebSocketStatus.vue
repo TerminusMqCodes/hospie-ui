@@ -115,6 +115,10 @@ const {
 const connectionInfo = computed(() => getConnectionInfo())
 
 const statusColor = computed(() => {
+  if (!isConnected.value && connectionState.value === 'disconnected' && channelCount.value === 0) {
+    return 'grey-6' // Disabled state
+  }
+  
   switch (connectionState.value) {
     case 'connected':
       return 'positive'
@@ -131,6 +135,10 @@ const statusColor = computed(() => {
 })
 
 const statusIcon = computed(() => {
+  if (!isConnected.value && connectionState.value === 'disconnected' && channelCount.value === 0) {
+    return 'wifi_off' // Disabled state
+  }
+  
   switch (connectionState.value) {
     case 'connected':
       return 'wifi'
@@ -147,6 +155,10 @@ const statusIcon = computed(() => {
 })
 
 const statusText = computed(() => {
+  if (!isConnected.value && connectionState.value === 'disconnected' && channelCount.value === 0) {
+    return 'Disabled' // Disabled state
+  }
+  
   switch (connectionState.value) {
     case 'connected':
       return 'Connected'

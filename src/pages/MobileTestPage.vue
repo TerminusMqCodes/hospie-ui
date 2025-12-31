@@ -7,4 +7,3 @@
 <script setup>
 import MobileTestComponent from 'src/components/MobileTestComponent.vue'
 </script>
-</template>
