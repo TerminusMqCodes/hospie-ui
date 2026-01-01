@@ -258,19 +258,13 @@ const generateTodayInvoices = async () => {
       auto_finalize: true
     })
 
-    $q.notify({
-      type: 'positive',
-      message: `Generated ${response.data.generated || 0} invoices successfully`
-    })
+    console.log(`Generated ${response.data.generated || 0} invoices successfully`)
 
     loadStats()
     loadRecentActivity()
 
   } catch (error) {
-    $q.notify({
-      type: 'negative',
-      message: error.response?.data?.message || 'Failed to generate invoices'
-    })
+    console.error('Failed to generate invoices:', error.response?.data?.message || error.message)
   } finally {
     generating.value.today = false
   }
@@ -281,18 +275,12 @@ const sendOverdueReminders = async () => {
   try {
     const response = await api.post('/invoices/send-overdue-reminders')
 
-    $q.notify({
-      type: 'positive',
-      message: `Sent ${response.data.sent || 0} overdue reminders`
-    })
+    console.log(`Sent ${response.data.sent || 0} overdue reminders`)
 
     loadStats()
 
   } catch {
-    $q.notify({
-      type: 'negative',
-      message: 'Failed to send overdue reminders'
-    })
+    console.error('Failed to send overdue reminders')
   } finally {
     generating.value.reminders = false
   }
@@ -300,10 +288,7 @@ const sendOverdueReminders = async () => {
 
 const generateForDate = async () => {
   if (!selectedDate.value) {
-    $q.notify({
-      type: 'negative',
-      message: 'Please select a date'
-    })
+    console.error('Please select a date')
     return
   }
 
@@ -314,10 +299,7 @@ const generateForDate = async () => {
       auto_finalize: autoFinalize.value
     })
 
-    $q.notify({
-      type: 'positive',
-      message: `Generated ${response.data.generated || 0} invoices for ${selectedDate.value}`
-    })
+    console.log(`Generated ${response.data.generated || 0} invoices for ${selectedDate.value}`)
 
     showDateDialog.value = false
     selectedDate.value = ''
@@ -325,10 +307,7 @@ const generateForDate = async () => {
     loadRecentActivity()
 
   } catch (error) {
-    $q.notify({
-      type: 'negative',
-      message: error.response?.data?.message || 'Failed to generate invoices'
-    })
+    console.error('Failed to generate invoices:', error.response?.data?.message || error.message)
   } finally {
     generating.value.date = false
   }

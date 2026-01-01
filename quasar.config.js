@@ -95,7 +95,7 @@ export default defineConfig((ctx) => {
       open: true, // opens browser window automatically
       proxy: {
         '/api': {
-          target: 'http://localhost',
+          target: 'http://localhost:80', // Laravel development server
           changeOrigin: true,
           secure: false
         }

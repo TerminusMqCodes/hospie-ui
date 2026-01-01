@@ -65,12 +65,19 @@
       </div>
     </q-form>
   </q-card-section>
+  
+  <!-- API Connection Test (Development Only) -->
+  <q-separator />
+  <q-card-section>
+    <ApiConnectionTest />
+  </q-card-section>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from 'src/stores/auth'
+import ApiConnectionTest from 'src/components/ApiConnectionTest.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()

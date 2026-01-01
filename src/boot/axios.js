@@ -9,7 +9,9 @@ const baseURL = process.env.NODE_ENV === 'production'
 // Create API instance for Laravel backend
 const api = axios.create({ 
   baseURL,
-  timeout: 10000,
+  timeout: 0, // Disable timeout (wait indefinitely) - set to a number in ms if you want a timeout
+  // timeout: 30000, // Alternative: 30 second timeout
+  // timeout: 60000, // Alternative: 60 second timeout
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
