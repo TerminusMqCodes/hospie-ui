@@ -90,7 +90,7 @@ export async function testAuthEndpoints() {
   try {
     console.log('🔍 Testing auth endpoints...')
     // Test if we can reach the auth endpoints (this should return validation errors, not 500)
-    const response = await api.post('/auth/login', {}) // Removed timeout
+    await api.post('/auth/login', {}) // Removed timeout
     return { success: true, message: 'Auth endpoints accessible' }
   } catch (error) {
     if (error.response && error.response.status === 422) {

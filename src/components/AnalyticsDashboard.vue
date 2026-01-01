@@ -313,11 +313,8 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
-import { useQuasar } from 'quasar'
 import analyticsService from 'src/services/analyticsService'
 import Chart from 'chart.js/auto'
-
-const $q = useQuasar()
 
 // Reactive data
 const loading = ref(false)

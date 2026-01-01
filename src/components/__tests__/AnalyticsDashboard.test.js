@@ -44,7 +44,7 @@ describe('AnalyticsDashboard Component', () => {
   
   try {
     componentContent = fs.readFileSync(componentPath, 'utf8');
-  } catch (error) {
+  } catch {
     console.log('Could not read component file for testing');
     return;
   }

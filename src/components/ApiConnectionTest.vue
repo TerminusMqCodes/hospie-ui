@@ -136,7 +136,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { testApiConnection, testDirectConnection, testAuthEndpoints, runFullApiTest } from 'src/utils/apiTest'
+import { testApiConnection, testDirectConnection, runFullApiTest } from 'src/utils/apiTest'
 
 const testing = ref(false)
 const testingDirect = ref(false)

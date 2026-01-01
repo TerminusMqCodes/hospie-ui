@@ -323,12 +323,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from 'src/stores/auth'
-import { useQuasar } from 'quasar'
 import AutomatedInvoicingDashboard from 'src/components/AutomatedInvoicingDashboard.vue'
 import analyticsService from 'src/services/analyticsService'
 
 const authStore = useAuthStore()
-const $q = useQuasar()
 
 // Reactive data
 const showCheckInDialog = ref(false)

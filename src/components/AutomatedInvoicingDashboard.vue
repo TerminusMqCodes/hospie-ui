@@ -163,10 +163,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { useQuasar } from 'quasar'
 import { api } from 'src/boot/axios'
-
-const $q = useQuasar()
 
 // Data
 const todayStats = ref({})
