@@ -237,9 +237,21 @@ export default defineConfig((ctx) => {
       // noIosLegacyBuildFlag: true, // uncomment only if you know what you are doing
     },
 
-    // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-capacitor-apps/configuring-capacitor
+    // https://v2.quasar.dev/quasar-cli-vite/developing-capacitor-apps/configuring-capacitor
     capacitor: {
       hideSplashscreen: true,
+      
+      // iOS specific configuration
+      iosStatusBarPadding: true,
+      
+      // Android specific configuration
+      androidVersionCode: '10001',
+      
+      // Capacitor plugins configuration
+      capacitorCliPreparationHooks: [
+        'capacitor:copy:before',
+        'capacitor:copy:after'
+      ]
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/configuring-electron

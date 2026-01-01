@@ -12,8 +12,12 @@
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
     "dev:pwa": "quasar dev -m pwa",
+    "dev:mobile": "quasar dev -m cordova -T android",
+    "dev:ios": "quasar dev -m cordova -T ios",
     "build": "quasar build",
     "build:pwa": "quasar build -m pwa",
+    "build:mobile": "quasar build -m cordova -T android",
+    "build:ios": "quasar build -m cordova -T ios",
     "postinstall": "quasar prepare"
   },
   "dependencies": {
