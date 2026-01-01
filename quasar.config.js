@@ -180,12 +180,56 @@ export default defineConfig((ctx) => {
       workboxMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       // swFilename: 'sw.js',
       // manifestFilename: 'manifest.json',
-      // extendManifestJson (json) {},
       // useCredentialsForManifestTag: true,
       // injectPwaMetaTags: false,
-      // extendPWACustomSWConf (esbuildConf) {},
-      // extendGenerateSWOptions (cfg) {},
-      // extendInjectManifestOptions (cfg) {}
+      
+      // PWA Manifest configuration
+      extendManifestJson (json) {
+        json.name = 'Hospie PMS'
+        json.short_name = 'Hospie'
+        json.description = 'Modern Property Management System for Hotels and Hospitality'
+        json.display = 'standalone'
+        json.orientation = 'any'
+        json.theme_color = '#c45865'
+        json.background_color = '#ffffff'
+      },
+
+      // Workbox configuration for offline capabilities
+      extendGenerateSWOptions (cfg) {
+        cfg.skipWaiting = true
+        cfg.clientsClaim = true
+        cfg.runtimeCaching = [
+          {
+            urlPattern: /^https:\/\/api\.hospie\.com\//,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'hospie-api-cache',
+              networkTimeoutSeconds: 10,
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          },
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'hospie-images-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+              }
+            }
+          },
+          {
+            urlPattern: /\.(?:js|css)$/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'hospie-static-cache'
+            }
+          }
+        ]
+      }
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-cordova-apps/configuring-cordova

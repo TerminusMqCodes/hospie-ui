@@ -46,6 +46,18 @@ const routes = [
     ],
   },
 
+  // Offline page
+  {
+    path: '/offline',
+    component: () => import('layouts/AuthLayout.vue'),
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/OfflinePage.vue')
+      }
+    ],
+  },
+
   // Protected routes (authenticated users only)
   {
     path: '/',

@@ -100,6 +100,32 @@
         <q-space />
 
         <div class="q-gutter-sm row items-center no-wrap">
+          <!-- PWA Install Button -->
+          <q-btn 
+            v-if="isInstallable && !isInstalled" 
+            round 
+            dense 
+            flat 
+            color="primary" 
+            icon="get_app"
+            @click="installPWA"
+          >
+            <q-tooltip>Install Hospie PMS</q-tooltip>
+          </q-btn>
+
+          <!-- Offline Indicator -->
+          <q-btn 
+            v-if="!isOnline" 
+            round 
+            dense 
+            flat 
+            color="warning" 
+            icon="wifi_off"
+            @click="$router.push('/offline')"
+          >
+            <q-tooltip>You are offline</q-tooltip>
+          </q-btn>
+
           <!-- Mobile-optimized toolbar buttons -->
           <q-btn 
             v-if="$q.screen.gt.sm" 
@@ -343,21 +369,28 @@ import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useDarkMode } from '../composables/useDarkMode'
 import { useAuthStore } from '../stores/auth'
+import { useOfflineStore } from '../stores/offline'
+import { usePWA } from '../composables/usePWA'
 import DarkModeToggle from '../components/DarkModeToggle.vue'
 import UnderDevelopmentModal from '../components/UnderDevelopmentModal.vue'
+import OfflineStatus from '../components/OfflineStatus.vue'
 
 export default {
   name: 'MainLayout',
 
   components: {
     DarkModeToggle,
-    UnderDevelopmentModal
+    UnderDevelopmentModal,
+    OfflineStatus
   },
 
   setup () {
     const router = useRouter()
     const $q = useQuasar()
     const authStore = useAuthStore()
+    
+    // PWA functionality
+    const { isOnline, isInstallable, isInstalled, installPWA, checkForUpdates } = usePWA()
     
     const leftDrawerOpen = ref(false)
     const search = ref('')
@@ -513,6 +546,12 @@ export default {
       showMobileSearch,
       filteredLinks1,
       filteredLinks2,
+      // PWA functionality
+      isOnline,
+      isInstallable,
+      isInstalled,
+      installPWA,
+      checkForUpdates,
       navigateToRoute,
       performMobileSearch,
 
