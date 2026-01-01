@@ -547,106 +547,299 @@ const loadDashboardData = async () => {
 <style scoped>
 .dashboard-page {
   padding: 16px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
 }
 
 .welcome-card {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    animation: welcomeShimmer 4s ease-in-out infinite;
+  }
+}
+
+@keyframes welcomeShimmer {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
 }
 
 .welcome-title {
-  font-size: 2rem;
+  font-size: 2.2rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
 }
 
 .welcome-subtitle {
-  font-size: 1rem;
+  font-size: 1.1rem;
+  opacity: 0.9;
+  position: relative;
+  z-index: 1;
 }
 
 .stat-card {
-  height: 120px;
+  height: 140px;
   cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-2px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.6s ease;
+  }
+  
+  &:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    
+    &::before {
+      left: 100%;
+    }
+    
+    .stat-icon {
+      transform: scale(1.2) rotate(10deg);
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+    }
+    
+    .stat-value {
+      transform: scale(1.05);
+    }
+  }
+  
+  &:active {
+    transform: translateY(-4px) scale(1.01);
+  }
 }
 
 .stat-title {
   font-size: 1rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .stat-value {
-  font-size: 1.8rem;
+  font-size: 2rem;
+  font-weight: 800;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .stat-icon {
-  font-size: 40px;
+  font-size: 48px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.8;
 }
 
-.quick-actions .q-btn {
-  min-height: 48px;
+.quick-actions {
+  .q-btn {
+    min-height: 56px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transition: all 0.4s ease;
+      transform: translate(-50%, -50%);
+    }
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      
+      &::before {
+        width: 200px;
+        height: 200px;
+      }
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
 }
 
 .activity-item {
-  padding: 8px 0;
+  padding: 12px 0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background: linear-gradient(135deg, var(--q-primary), var(--q-secondary));
+    transition: width 0.3s ease;
+    border-radius: 8px 0 0 8px;
+  }
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.02);
+    transform: translateX(4px);
+    
+    &::after {
+      width: 4px;
+    }
+  }
 }
 
 .activity-title {
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e293b;
 }
 
 .activity-description {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  color: #64748b;
 }
 
 .schedule-timeline {
   padding-left: 0;
+  
+  .q-timeline__entry {
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: -20px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--q-primary), var(--q-secondary));
+      border-radius: 1px;
+    }
+  }
 }
 
 .schedule-entry {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateX(4px);
+  }
 }
 
 .schedule-description {
   font-size: 0.9rem;
-  color: #666;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .room-status-grid {
   justify-content: center;
+  gap: 16px;
 }
 
 .room-status-item {
-  padding: 8px;
+  padding: 16px;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
+  
+  &:hover {
+    transform: translateY(-4px);
+    background: rgba(0, 0, 0, 0.02);
+    
+    .q-circular-progress {
+      transform: scale(1.1);
+    }
+  }
+  
+  .q-circular-progress {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
 }
 
 .dialog-card {
-  min-width: 300px;
+  min-width: 320px;
   max-width: 90vw;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .full-width-mobile {
   width: 100%;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
 }
 
-/* Mobile responsiveness */
+/* Enhanced mobile responsiveness */
 @media (max-width: 768px) {
   .dashboard-page {
-    padding: 8px;
+    padding: 12px;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   }
   
   .welcome-title {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
   }
   
   .welcome-subtitle {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
   
   .stat-card {
-    height: 100px;
+    height: 120px;
+    
+    &:hover {
+      transform: translateY(-4px) scale(1.02);
+    }
   }
   
   .stat-title {
@@ -654,30 +847,32 @@ const loadDashboardData = async () => {
   }
   
   .stat-value {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
   }
   
   .stat-icon {
-    font-size: 32px;
+    font-size: 36px;
   }
   
   .quick-actions .q-btn {
-    font-size: 0.8rem;
-    min-height: 40px;
+    font-size: 0.85rem;
+    min-height: 48px;
+    border-radius: 10px;
   }
   
   .room-status-item .q-circular-progress {
-    transform: scale(0.8);
+    transform: scale(0.85);
   }
   
   .dialog-card {
-    margin: 16px;
+    margin: 20px;
+    border-radius: 12px;
   }
 }
 
 @media (max-width: 600px) {
   .row.q-gutter-lg > div {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
   
   .col-12.col-sm-6.col-md-3,
@@ -688,29 +883,176 @@ const loadDashboardData = async () => {
   
   .quick-actions {
     flex-direction: column;
+    gap: 12px;
   }
   
   .quick-actions .q-btn {
     width: 100%;
-    margin-bottom: 8px;
-  }
-}
-
-@media (max-width: 400px) {
-  .stat-card .q-card-section {
-    padding: 12px;
-  }
-  
-  .welcome-card .q-card-section {
-    padding: 16px;
+    margin-bottom: 0;
   }
   
   .room-status-grid {
     justify-content: space-around;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .dashboard-page {
+    padding: 8px;
+  }
+  
+  .stat-card .q-card-section {
+    padding: 16px;
+  }
+  
+  .welcome-card .q-card-section {
+    padding: 20px;
   }
   
   .room-status-item .q-circular-progress {
-    transform: scale(0.7);
+    transform: scale(0.75);
+  }
+  
+  .welcome-title {
+    font-size: 1.5rem;
+  }
+  
+  .stat-value {
+    font-size: 1.4rem;
+  }
+}
+
+/* Enhanced animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.dashboard-page {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.stat-card:nth-child(1) {
+  animation: slideInLeft 0.6s ease-out 0.1s both;
+}
+
+.stat-card:nth-child(2) {
+  animation: slideInLeft 0.6s ease-out 0.2s both;
+}
+
+.stat-card:nth-child(3) {
+  animation: slideInRight 0.6s ease-out 0.3s both;
+}
+
+.stat-card:nth-child(4) {
+  animation: slideInRight 0.6s ease-out 0.4s both;
+}
+
+/* Enhanced dark mode support */
+.body--dark {
+  .dashboard-page {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  }
+  
+  .stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+  
+  .stat-title {
+    color: #94a3b8;
+  }
+  
+  .activity-title {
+    color: #f1f5f9;
+  }
+  
+  .activity-description {
+    color: #94a3b8;
+  }
+  
+  .schedule-description {
+    color: #94a3b8;
+  }
+  
+  .dialog-card {
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Enhanced accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .stat-card,
+  .quick-actions .q-btn,
+  .activity-item,
+  .schedule-entry,
+  .room-status-item {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  .welcome-card::before {
+    animation: none !important;
+  }
+}
+
+/* Enhanced focus states */
+.stat-card:focus,
+.quick-actions .q-btn:focus {
+  outline: 3px solid var(--q-primary);
+  outline-offset: 2px;
+}
+
+/* Enhanced loading states */
+.loading-card {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 16px;
+  height: 140px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
   }
 }
 </style>
