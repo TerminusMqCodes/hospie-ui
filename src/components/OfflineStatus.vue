@@ -182,7 +182,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { useOfflineStore } from '../stores/offline'
 
@@ -290,7 +290,7 @@ const syncNow = async () => {
       icon: 'cloud_done',
       timeout: 3000
     })
-  } catch (error) {
+  } catch {
     $q.notify({
       message: 'Sync failed. Please try again.',
       color: 'negative',
@@ -332,7 +332,7 @@ const clearOfflineData = async () => {
       })
       
       showSyncDialog.value = false
-    } catch (error) {
+    } catch {
       $q.notify({
         message: 'Failed to clear offline data',
         color: 'negative',
@@ -348,8 +348,8 @@ const clearOfflineData = async () => {
 const loadStorageInfo = async () => {
   try {
     storageInfo.value = await offlineStore.getStorageInfo()
-  } catch (error) {
-    console.error('Failed to load storage info:', error)
+  } catch {
+    console.error('Failed to load storage info')
   }
 }
 
@@ -368,9 +368,7 @@ const formatDate = (dateString) => {
 }
 
 // Lifecycle
-onMounted(async () => {
-  await offlineStore.initialize()
-})
+// Removed onMounted as offlineStore initialization is handled elsewhere
 </script>
 
 <style scoped>

@@ -227,7 +227,7 @@ import { useAuthStore } from '../stores/auth'
 import { useDarkMode } from '../composables/useDarkMode'
 
 // Props
-const props = defineProps({
+defineProps({
   showBottomNav: {
     type: Boolean,
     default: true
@@ -257,7 +257,7 @@ const showMobileMenu = ref(false)
 const searchQuery = ref('')
 const searchSuggestions = ref([])
 const isSwipeEnabled = ref(true)
-const swipeThreshold = ref(50)
+
 
 // Touch gesture cleanup function
 let gestureCleanup = null
@@ -475,7 +475,7 @@ const handleLogout = async () => {
       position: 'top'
     })
     router.push('/login')
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Logout failed',

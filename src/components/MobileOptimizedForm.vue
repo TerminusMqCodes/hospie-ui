@@ -64,7 +64,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { useMobile } from '../composables/useMobile'
 
 // Props
@@ -124,7 +124,7 @@ const { isMobile, isKeyboardOpen, hapticFeedback } = useMobile()
 // Reactive state
 const formData = ref({ ...props.modelValue })
 const isFormValid = ref(true)
-const focusedField = ref(null)
+
 
 // Watch for external model changes
 watch(() => props.modelValue, (newValue) => {

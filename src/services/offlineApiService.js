@@ -44,9 +44,7 @@ class OfflineApiService {
   // Generic API call with offline fallback
   async apiCall(method, endpoint, data = null, options = {}) {
     const { 
-      useCache = true, 
-      cacheMaxAge = 5 * 60 * 1000, // 5 minutes
-      offlineAction = null 
+      useCache = true
     } = options
 
     // Try online first
@@ -78,11 +76,11 @@ class OfflineApiService {
   }
 
   async handleOfflineRequest(method, endpoint, data, options) {
-    const { useCache = true, cacheMaxAge = 5 * 60 * 1000, offlineAction = null } = options
+    const { useCache = true } = options
 
     // For GET requests, try to return cached data
     if (method === 'get' && useCache) {
-      const cached = await offlineStorage.getCachedApiResponse(endpoint, cacheMaxAge)
+      const cached = await offlineStorage.getCachedApiResponse(endpoint, 5 * 60 * 1000)
       if (cached) {
         return cached
       }
@@ -90,23 +88,21 @@ class OfflineApiService {
 
     // For write operations, queue for later sync
     if (['post', 'put', 'patch', 'delete'].includes(method)) {
-      if (offlineAction) {
-        await offlineStorage.addToSyncQueue(offlineAction, {
-          method,
-          endpoint,
-          data,
-          timestamp: new Date().toISOString()
-        })
+      await offlineStorage.addToSyncQueue('offline_action', {
+        method,
+        endpoint,
+        data,
+        timestamp: new Date().toISOString()
+      })
 
-        Notify.create({
-          message: 'Changes saved offline. Will sync when online.',
-          color: 'info',
-          icon: 'cloud_off',
-          timeout: 3000
-        })
+      Notify.create({
+        message: 'Changes saved offline. Will sync when online.',
+        color: 'info',
+        icon: 'cloud_off',
+        timeout: 3000
+      })
 
-        return { success: true, offline: true }
-      }
+      return { success: true, offline: true }
     }
 
     // If no offline handling available, throw error
@@ -120,7 +116,7 @@ class OfflineApiService {
         const data = await this.apiCall('get', '/api/reservations')
         await offlineStorage.bulkSaveReservations(data)
         return data
-      } catch (error) {
+      } catch {
         console.error('Failed to fetch reservations online, using offline data')
       }
     }
@@ -134,7 +130,7 @@ class OfflineApiService {
         const data = await this.apiCall('get', `/api/reservations/${id}`)
         await offlineStorage.saveReservation(data)
         return data
-      } catch (error) {
+      } catch {
         console.error('Failed to fetch reservation online, using offline data')
       }
     }
@@ -148,7 +144,7 @@ class OfflineApiService {
         const data = await this.apiCall('post', '/api/reservations', reservationData)
         await offlineStorage.saveReservation(data)
         return data
-      } catch (error) {
+      } catch {
         console.error('Failed to create reservation online, saving offline')
       }
     }
@@ -173,7 +169,7 @@ class OfflineApiService {
         const data = await this.apiCall('put', `/api/reservations/${id}`, reservationData)
         await offlineStorage.saveReservation(data)
         return data
-      } catch (error) {
+      } catch {
         console.error('Failed to update reservation online, saving offline')
       }
     }
@@ -199,7 +195,7 @@ class OfflineApiService {
         const data = await this.apiCall('get', '/api/rooms')
         await offlineStorage.bulkSaveRooms(data)
         return data
-      } catch (error) {
+      } catch {
         console.error('Failed to fetch rooms online, using offline data')
       }
     }
@@ -213,7 +209,7 @@ class OfflineApiService {
         const data = await this.apiCall('get', `/api/rooms/${id}`)
         await offlineStorage.saveRoom(data)
         return data
-      } catch (error) {
+      } catch {
         console.error('Failed to fetch room online, using offline data')
       }
     }
@@ -227,7 +223,7 @@ class OfflineApiService {
         const data = await this.apiCall('patch', `/api/rooms/${roomId}/status`, { status })
         await offlineStorage.saveRoom(data)
         return data
-      } catch (error) {
+      } catch {
         console.error('Failed to update room status online, saving offline')
       }
     }
@@ -245,7 +241,7 @@ class OfflineApiService {
         const data = await this.apiCall('get', '/api/guests')
         await offlineStorage.bulkSaveGuests(data)
         return data
-      } catch (error) {
+      } catch {
         console.error('Failed to fetch guests online, using offline data')
       }
     }
@@ -259,7 +255,7 @@ class OfflineApiService {
         const data = await this.apiCall('get', `/api/guests/${id}`)
         await offlineStorage.saveGuest(data)
         return data
-      } catch (error) {
+      } catch {
         console.error('Failed to fetch guest online, using offline data')
       }
     }
@@ -273,7 +269,7 @@ class OfflineApiService {
         const data = await this.apiCall('post', '/api/guests', guestData)
         await offlineStorage.saveGuest(data)
         return data
-      } catch (error) {
+      } catch {
         console.error('Failed to create guest online, saving offline')
       }
     }
@@ -302,7 +298,7 @@ class OfflineApiService {
           await offlineStorage.saveInvoice(invoice)
         }
         return data
-      } catch (error) {
+      } catch {
         console.error('Failed to fetch invoices online, using offline data')
       }
     }
@@ -319,7 +315,7 @@ class OfflineApiService {
           cacheMaxAge: 2 * 60 * 1000 // 2 minutes for dashboard
         })
         return data
-      } catch (error) {
+      } catch {
         console.error('Failed to fetch dashboard data online')
       }
     }

@@ -435,19 +435,16 @@ import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useDarkMode } from '../composables/useDarkMode'
 import { useAuthStore } from '../stores/auth'
-import { useOfflineStore } from '../stores/offline'
 import { usePWA } from '../composables/usePWA'
 import DarkModeToggle from '../components/DarkModeToggle.vue'
 import UnderDevelopmentModal from '../components/UnderDevelopmentModal.vue'
-import OfflineStatus from '../components/OfflineStatus.vue'
 
 export default {
   name: 'MainLayout',
 
   components: {
     DarkModeToggle,
-    UnderDevelopmentModal,
-    OfflineStatus
+    UnderDevelopmentModal
   },
 
   setup () {

@@ -352,7 +352,6 @@ class OfflineStorageService {
 
   // Database cleanup
   async clearAllData() {
-    const db = await this.initDB()
     const storeNames = ['reservations', 'rooms', 'guests', 'invoices', 'syncQueue']
     
     for (const storeName of storeNames) {
