@@ -8,7 +8,6 @@ export default boot(({ app }) => {
   const pusherCluster = process.env.VITE_PUSHER_APP_CLUSTER || 'mt1'
   const pusherHost = process.env.VITE_PUSHER_HOST || 'localhost'
   const pusherPort = process.env.VITE_PUSHER_PORT || '6001'
-  const pusherScheme = process.env.VITE_PUSHER_SCHEME || 'http'
 
   // Only initialize Pusher if we have a valid app key
   if (!pusherAppKey || pusherAppKey === 'your-pusher-app-key-here') {
@@ -36,13 +35,14 @@ export default boot(({ app }) => {
   try {
     // Configure Pusher with proper error handling
     const pusher = new Pusher(pusherAppKey, {
-      cluster: pusherCluster,
       wsHost: pusherHost,
       wsPort: parseInt(pusherPort),
       wssPort: parseInt(pusherPort),
-      forceTLS: pusherScheme === 'https',
-      enabledTransports: ['ws', 'wss'],
+      forceTLS: false,
+      encrypted: false,
+      enabledTransports: ['ws'],
       disableStats: true,
+      cluster: pusherCluster,
       auth: {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('auth_token') || ''}`

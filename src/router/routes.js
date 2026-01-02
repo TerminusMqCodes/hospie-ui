@@ -149,6 +149,14 @@ const routes = [
         path: 'mobile-test', 
         component: () => import('pages/MobileTestPage.vue'),
         meta: { requiresAuth: true }
+      },
+      { 
+        path: 'websocket-test', 
+        component: () => import('pages/WebSocketTestPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          roles: ['admin', 'manager']
+        }
       }
     ],
   },
