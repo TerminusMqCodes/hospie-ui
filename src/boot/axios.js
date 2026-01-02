@@ -21,10 +21,24 @@ const api = axios.create({
 // Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('auth_token')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+    // Check if we're making a guest portal request
+    const isGuestPortalRequest = config.url?.startsWith('/guest-portal') || 
+                                 window.location.pathname.startsWith('/guest-portal')
+    
+    if (isGuestPortalRequest) {
+      // Use guest portal token
+      const guestToken = localStorage.getItem('guest_portal_token')
+      if (guestToken) {
+        config.headers.Authorization = `Bearer ${guestToken}`
+      }
+    } else {
+      // Use regular auth token
+      const token = localStorage.getItem('auth_token')
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+      }
     }
+    
     return config
   },
   (error) => {
@@ -37,13 +51,25 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid - redirect to login
-      localStorage.removeItem('auth_token')
-      localStorage.removeItem('user')
+      // Check if we're in guest portal context
+      const isGuestPortal = window.location.pathname.startsWith('/guest-portal')
       
-      // Only redirect if not already on login page
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login'
+      if (isGuestPortal) {
+        // Clear guest portal auth data
+        localStorage.removeItem('guest_portal_token')
+        localStorage.removeItem('guest_portal_guest')
+        
+        // Don't redirect automatically - let the component handle it
+        console.warn('Guest portal authentication expired')
+      } else {
+        // Regular auth - redirect to main login
+        localStorage.removeItem('auth_token')
+        localStorage.removeItem('user')
+        
+        // Only redirect if not already on login page
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login'
+        }
       }
     }
     return Promise.reject(error)

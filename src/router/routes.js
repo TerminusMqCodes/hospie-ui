@@ -58,6 +58,73 @@ const routes = [
     ],
   },
 
+  // Guest Portal routes (separate authentication system)
+  {
+    path: '/guest-portal/login',
+    component: () => import('layouts/AuthLayout.vue'),
+    children: [
+      { 
+        path: '', 
+        name: 'guest-portal-login',
+        component: () => import('pages/GuestPortal/LoginPage.vue'),
+        meta: { requiresGuestAuth: false }
+      }
+    ],
+  },
+  {
+    path: '/guest-portal',
+    component: () => import('layouts/GuestPortalLayout.vue'),
+    meta: { requiresGuestAuth: true },
+    children: [
+      { 
+        path: '', 
+        redirect: '/guest-portal/dashboard'
+      },
+      { 
+        path: 'dashboard', 
+        name: 'guest-portal-dashboard',
+        component: () => import('pages/GuestPortal/DashboardPage.vue'),
+        meta: { requiresGuestAuth: true }
+      },
+      { 
+        path: 'profile', 
+        name: 'guest-portal-profile',
+        component: () => import('pages/GuestPortal/ProfilePage.vue'),
+        meta: { requiresGuestAuth: true }
+      },
+      { 
+        path: 'reservations', 
+        name: 'guest-portal-reservations',
+        component: () => import('pages/GuestPortal/ReservationsPage.vue'),
+        meta: { requiresGuestAuth: true }
+      },
+      { 
+        path: 'reservations/:id', 
+        name: 'guest-portal-reservation-detail',
+        component: () => import('pages/GuestPortal/ReservationDetailPage.vue'),
+        meta: { requiresGuestAuth: true }
+      },
+      { 
+        path: 'messages', 
+        name: 'guest-portal-messages',
+        component: () => import('pages/GuestPortal/MessagesPage.vue'),
+        meta: { requiresGuestAuth: true }
+      },
+      { 
+        path: 'loyalty', 
+        name: 'guest-portal-loyalty',
+        component: () => import('pages/GuestPortal/LoyaltyPage.vue'),
+        meta: { requiresGuestAuth: true }
+      },
+      { 
+        path: 'debug', 
+        name: 'guest-portal-debug',
+        component: () => import('pages/GuestPortal/DebugPage.vue'),
+        meta: { requiresGuestAuth: false }
+      }
+    ],
+  },
+
   // Protected routes (authenticated users only)
   {
     path: '/',

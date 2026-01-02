@@ -95,9 +95,10 @@ export default defineConfig((ctx) => {
       open: true, // opens browser window automatically
       proxy: {
         '/api': {
-          target: 'http://localhost:80', // Laravel development server
+          target: 'http://localhost:80', // Laravel development server via Docker
           changeOrigin: true,
-          secure: false
+          secure: false,
+          logLevel: 'debug' // Add logging to debug proxy issues
         }
       }
     },
@@ -131,7 +132,7 @@ export default defineConfig((ctx) => {
       // directives: [],
 
       // Quasar plugins
-      plugins: [],
+      plugins: ['Notify', 'Dialog'],
     },
 
     // animations: 'all', // --- includes all animations

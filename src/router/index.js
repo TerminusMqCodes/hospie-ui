@@ -35,8 +35,30 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   })
 
   // Navigation guards
-  Router.beforeEach(async (to, from, next) => {
+  Router.beforeEach(async (to, _from, next) => {
     const authStore = useAuthStore()
+    
+    // Handle guest portal routes separately
+    if (to.path.startsWith('/guest-portal')) {
+      const { useGuestPortalStore } = await import('src/stores/guestPortal')
+      const guestPortalStore = useGuestPortalStore()
+      
+      // Initialize guest auth from storage
+      await guestPortalStore.loadFromStorage()
+      
+      if (to.meta.requiresGuestAuth) {
+        if (!guestPortalStore.isLoggedIn) {
+          next('/guest-portal/login')
+          return
+        }
+      } else if (to.name === 'guest-portal-login' && guestPortalStore.isLoggedIn) {
+        next('/guest-portal/dashboard')
+        return
+      }
+      
+      next()
+      return
+    }
     
     // Initialize auth state from localStorage if not already done
     if (!authStore.isAuthenticated && localStorage.getItem('auth_token')) {
