@@ -1,6 +1,12 @@
 # Hospie UI (hu.terminusmq.hospie.ui)
 
-Hospie felhasználói felület
+Hospie PMS felhasználói felület - Modern, responsive web interface built with Quasar Framework.
+
+## 📚 Documentation
+
+- **🎨 [User Interface Guide](USER_INTERFACE_GUIDE.md)**: Complete guide to using the web interface
+- **📱 [Mobile Responsiveness](MOBILE_RESPONSIVENESS.md)**: Mobile optimization details
+- **🔧 [Quasar Setup](QUASAR_SETUP.md)**: Technical setup information
 
 ## Install the dependencies
 

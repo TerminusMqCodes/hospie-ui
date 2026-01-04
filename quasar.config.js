@@ -12,7 +12,7 @@ export default defineConfig((ctx) => {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['i18n', 'axios'],
+    boot: ['i18n', 'axios', 'dark-mode', 'websocket'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
     css: ['app.scss'],
@@ -38,7 +38,7 @@ export default defineConfig((ctx) => {
         node: 'node20',
       },
 
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
+      vueRouterMode: 'history', // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
@@ -91,12 +91,35 @@ export default defineConfig((ctx) => {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#devserver
     devServer: {
       // https: true,
+      port: 9001, // Set the development server port to 9001
       open: true, // opens browser window automatically
+      proxy: {
+        '/api': {
+          target: 'http://localhost:80', // Laravel development server via Docker
+          changeOrigin: true,
+          secure: false,
+          logLevel: 'debug' // Add logging to debug proxy issues
+        }
+      }
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework
     framework: {
-      config: {},
+      config: {
+        brand: {
+          primary: '#c45865',
+          secondary: '#d68691',
+          accent: '#9C27B0',
+
+          dark: '#1d1d1d',
+          'dark-page': '#121212',
+
+          positive: '#21BA45',
+          negative: '#C10015',
+          info: '#31CCEC',
+          warning: '#F2C037'
+        }
+      },
 
       // iconSet: 'material-icons', // Quasar icon set
       // lang: 'en-US', // Quasar language pack
@@ -109,7 +132,7 @@ export default defineConfig((ctx) => {
       // directives: [],
 
       // Quasar plugins
-      plugins: [],
+      plugins: ['Notify', 'Dialog'],
     },
 
     // animations: 'all', // --- includes all animations
@@ -158,12 +181,56 @@ export default defineConfig((ctx) => {
       workboxMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       // swFilename: 'sw.js',
       // manifestFilename: 'manifest.json',
-      // extendManifestJson (json) {},
       // useCredentialsForManifestTag: true,
       // injectPwaMetaTags: false,
-      // extendPWACustomSWConf (esbuildConf) {},
-      // extendGenerateSWOptions (cfg) {},
-      // extendInjectManifestOptions (cfg) {}
+      
+      // PWA Manifest configuration
+      extendManifestJson (json) {
+        json.name = 'Hospie PMS'
+        json.short_name = 'Hospie'
+        json.description = 'Modern Property Management System for Hotels and Hospitality'
+        json.display = 'standalone'
+        json.orientation = 'any'
+        json.theme_color = '#c45865'
+        json.background_color = '#ffffff'
+      },
+
+      // Workbox configuration for offline capabilities
+      extendGenerateSWOptions (cfg) {
+        cfg.skipWaiting = true
+        cfg.clientsClaim = true
+        cfg.runtimeCaching = [
+          {
+            urlPattern: /^https:\/\/api\.hospie\.com\//,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'hospie-api-cache',
+              networkTimeoutSeconds: 10,
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          },
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'hospie-images-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+              }
+            }
+          },
+          {
+            urlPattern: /\.(?:js|css)$/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'hospie-static-cache'
+            }
+          }
+        ]
+      }
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-cordova-apps/configuring-cordova
@@ -171,9 +238,21 @@ export default defineConfig((ctx) => {
       // noIosLegacyBuildFlag: true, // uncomment only if you know what you are doing
     },
 
-    // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-capacitor-apps/configuring-capacitor
+    // https://v2.quasar.dev/quasar-cli-vite/developing-capacitor-apps/configuring-capacitor
     capacitor: {
       hideSplashscreen: true,
+      
+      // iOS specific configuration
+      iosStatusBarPadding: true,
+      
+      // Android specific configuration
+      androidVersionCode: '10001',
+      
+      // Capacitor plugins configuration
+      capacitorCliPreparationHooks: [
+        'capacitor:copy:before',
+        'capacitor:copy:after'
+      ]
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/configuring-electron
