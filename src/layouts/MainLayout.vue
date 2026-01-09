@@ -263,6 +263,14 @@
                   </q-item-section>
                 </q-item>
                 <q-separator />
+                <q-item clickable v-close-popup @click="handleLockSession" class="menu-item">
+                  <q-item-section avatar>
+                    <q-icon name="lock" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Lock Session</q-item-label>
+                  </q-item-section>
+                </q-item>
                 <q-item clickable v-close-popup @click="handleLogout" class="menu-item">
                   <q-item-section avatar>
                     <q-icon name="logout" />
@@ -435,6 +443,7 @@ import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useDarkMode } from '../composables/useDarkMode'
 import { useAuthStore } from '../stores/auth'
+import { useSessionStore } from '../stores/session'
 import { usePWA } from '../composables/usePWA'
 import DarkModeToggle from '../components/DarkModeToggle.vue'
 import UnderDevelopmentModal from '../components/UnderDevelopmentModal.vue'
@@ -451,6 +460,7 @@ export default {
     const router = useRouter()
     const $q = useQuasar()
     const authStore = useAuthStore()
+    const sessionStore = useSessionStore()
     
     // PWA functionality
     const { isOnline, isInstallable, isInstalled, installPWA, checkForUpdates } = usePWA()
@@ -514,6 +524,9 @@ export default {
 
     async function handleLogout () {
       try {
+        // Cleanup session management before logout
+        sessionStore.destroy()
+        
         await authStore.logout()
         
         $q.notify({
@@ -527,6 +540,24 @@ export default {
         $q.notify({
           type: 'negative',
           message: 'Logout failed',
+          position: 'top'
+        })
+      }
+    }
+
+    async function handleLockSession () {
+      try {
+        await sessionStore.lockSession('manual')
+        
+        $q.notify({
+          type: 'info',
+          message: 'Session locked',
+          position: 'top'
+        })
+      } catch (error) {
+        $q.notify({
+          type: 'negative',
+          message: 'Failed to lock session',
           position: 'top'
         })
       }
@@ -579,7 +610,8 @@ export default {
       { icon: 'hotel', text: 'Reservations', route: '/reservations', permission: 'reservations.view' },
       { icon: 'calendar_month', text: 'Calendar', route: '/reservations/calendar', permission: 'reservations.view' },
       { icon: 'meeting_room', text: 'Rooms', route: '/rooms', permission: 'rooms.view' },
-      { icon: 'people', text: 'Guests', route: '/guests', permission: 'guests.view' }
+      { icon: 'people', text: 'Guests', route: '/guests', permission: 'guests.view' },
+      { icon: 'security', text: 'Session Test', route: '/session-test' }
     ]
 
     const links2 = [
@@ -650,7 +682,8 @@ export default {
         { icon: 'hotel', text: 'Reservations', route: '/reservations', permission: 'reservations.view' },
         { icon: 'calendar_month', text: 'Calendar', route: '/reservations/calendar', permission: 'reservations.view' },
         { icon: 'meeting_room', text: 'Rooms', route: '/rooms', permission: 'rooms.view' },
-        { icon: 'people', text: 'Guests', route: '/guests', permission: 'guests.view' }
+        { icon: 'people', text: 'Guests', route: '/guests', permission: 'guests.view' },
+        { icon: 'security', text: 'Session Test', route: '/session-test' }
       ],
       links2: [
         { icon: 'account_balance_wallet', text: 'Finance', route: '/finance', permission: 'invoices.view' },
@@ -674,7 +707,8 @@ export default {
       toggleLeftDrawer,
       openApplication,
       handleNotificationRequest,
-      handleLogout
+      handleLogout,
+      handleLockSession
     }
   }
 }

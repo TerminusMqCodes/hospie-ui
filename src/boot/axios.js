@@ -71,6 +71,9 @@ api.interceptors.response.use(
           window.location.href = '/login'
         }
       }
+    } else if (error.response?.status === 423) {
+      // Session is locked - this will be handled by the session store
+      console.info('Session is locked')
     }
     return Promise.reject(error)
   }

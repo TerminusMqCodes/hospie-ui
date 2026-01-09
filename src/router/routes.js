@@ -157,6 +157,13 @@ const routes = [
           requiresAuth: true,
           roles: ['admin', 'manager']
         }
+      },
+      { 
+        path: 'session-test', 
+        component: () => import('pages/SessionTestPage.vue'),
+        meta: { 
+          requiresAuth: true
+        }
       }
     ],
   },
