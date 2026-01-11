@@ -129,6 +129,9 @@
             <q-tooltip>You are offline</q-tooltip>
           </q-btn>
 
+          <!-- WebSocket Connection Status -->
+          <ConnectionStatus class="q-mr-sm" />
+
           <!-- Mobile-optimized toolbar buttons -->
           <q-btn 
             v-if="$q.screen.gt.sm" 
@@ -447,13 +450,15 @@ import { useSessionStore } from '../stores/session'
 import { usePWA } from '../composables/usePWA'
 import DarkModeToggle from '../components/DarkModeToggle.vue'
 import UnderDevelopmentModal from '../components/UnderDevelopmentModal.vue'
+import ConnectionStatus from '../components/WebSocket/ConnectionStatus.vue'
 
 export default {
   name: 'MainLayout',
 
   components: {
     DarkModeToggle,
-    UnderDevelopmentModal
+    UnderDevelopmentModal,
+    ConnectionStatus
   },
 
   setup () {
@@ -611,16 +616,17 @@ export default {
       { icon: 'calendar_month', text: 'Calendar', route: '/reservations/calendar', permission: 'reservations.view' },
       { icon: 'meeting_room', text: 'Rooms', route: '/rooms', permission: 'rooms.view' },
       { icon: 'people', text: 'Guests', route: '/guests', permission: 'guests.view' },
-      { icon: 'security', text: 'Session Test', route: '/session-test' }
+      { icon: 'spa', text: 'Spa Management', route: '/spa', permission: 'spa.view' },
+      { icon: 'event', text: 'Events', route: '/events', permission: 'events.view' }
     ]
 
     const links2 = [
       { icon: 'account_balance_wallet', text: 'Finance', route: '/finance', permission: 'invoices.view' },
       { icon: 'analytics', text: 'Reports', route: '/reports', permission: 'reports.view' },
+      { icon: 'eco', text: 'Sustainability', route: '/sustainability', permission: 'sustainability.view' },
+      { icon: 'insights', text: 'Analytics', route: '/analytics', permission: 'analytics.view' },
       { icon: 'admin_panel_settings', text: 'Admin', route: '/admin', roles: ['admin', 'super-admin'] },
-      { icon: 'settings', text: 'Settings', route: '/settings' },
-      { icon: 'support', text: 'Support', route: '/support' },
-      { icon: 'help', text: 'Help', route: '/help' }
+      { icon: 'settings', text: 'Settings', route: '/settings' }
     ]
 
     return {
@@ -683,15 +689,16 @@ export default {
         { icon: 'calendar_month', text: 'Calendar', route: '/reservations/calendar', permission: 'reservations.view' },
         { icon: 'meeting_room', text: 'Rooms', route: '/rooms', permission: 'rooms.view' },
         { icon: 'people', text: 'Guests', route: '/guests', permission: 'guests.view' },
-        { icon: 'security', text: 'Session Test', route: '/session-test' }
+        { icon: 'spa', text: 'Spa Management', route: '/spa', permission: 'spa.view' },
+        { icon: 'event', text: 'Events', route: '/events', permission: 'events.view' }
       ],
       links2: [
         { icon: 'account_balance_wallet', text: 'Finance', route: '/finance', permission: 'invoices.view' },
         { icon: 'analytics', text: 'Reports', route: '/reports', permission: 'reports.view' },
+        { icon: 'eco', text: 'Sustainability', route: '/sustainability', permission: 'sustainability.view' },
+        { icon: 'insights', text: 'Analytics', route: '/analytics', permission: 'analytics.view' },
         { icon: 'admin_panel_settings', text: 'Admin', route: '/admin', roles: ['admin', 'super-admin'] },
-        { icon: 'settings', text: 'Settings', route: '/settings' },
-        { icon: 'support', text: 'Support', route: '/support' },
-        { icon: 'help', text: 'Help', route: '/help' }
+        { icon: 'settings', text: 'Settings', route: '/settings' }
       ],
       links3: [
         { icon: '', text: 'Language & region' },

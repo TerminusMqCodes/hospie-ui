@@ -5,11 +5,22 @@
       <div class="col-12">
         <q-card class="welcome-card">
           <q-card-section>
-            <div class="text-h4 text-weight-light welcome-title">
-              Welcome back, {{ authStore.userName }}! 👋
-            </div>
-            <div class="text-subtitle1 text-grey-7 q-mt-sm welcome-subtitle">
-              Here's what's happening with your property today
+            <div class="row items-center justify-between">
+              <div class="col">
+                <div class="text-h4 text-weight-light welcome-title">
+                  Welcome back, {{ authStore.userName }}! 👋
+                </div>
+                <div class="text-subtitle1 text-grey-7 q-mt-sm welcome-subtitle">
+                  Here's what's happening with your property today
+                </div>
+              </div>
+              <div class="col-auto">
+                <ConnectionStatus />
+                <RealtimeUpdates 
+                  class="q-ml-md"
+                  @action-clicked="handleRealtimeAction"
+                />
+              </div>
             </div>
           </q-card-section>
         </q-card>
@@ -324,7 +335,10 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from 'src/stores/auth'
 import AutomatedInvoicingDashboard from 'src/components/AutomatedInvoicingDashboard.vue'
+import ConnectionStatus from 'src/components/WebSocket/ConnectionStatus.vue'
+import RealtimeUpdates from 'src/components/WebSocket/RealtimeUpdates.vue'
 import analyticsService from 'src/services/analyticsService'
+import { useRoomUpdates, useReservationUpdates } from 'src/composables/useWebSocket'
 
 const authStore = useAuthStore()
 
@@ -443,6 +457,21 @@ const formatTime = (date) => {
   return `${days} days ago`
 }
 
+const handleRealtimeAction = (action) => {
+  switch (action.type) {
+    case 'room_details':
+      // Navigate to room details
+      console.log('Navigate to room details:', action.roomId)
+      break
+    case 'reservation_details':
+      // Navigate to reservation details
+      console.log('Navigate to reservation details:', action.reservationId)
+      break
+    default:
+      console.log('Unknown action:', action)
+  }
+}
+
 const quickCheckIn = async () => {
   if (!selectedReservation.value) return
   
@@ -487,6 +516,154 @@ const quickCheckOut = async () => {
 onMounted(async () => {
   await loadDashboardData()
 })
+
+// WebSocket integration for real-time updates
+useRoomUpdates((roomData) => {
+  console.log('Dashboard: Room status changed:', roomData)
+  
+  // Update room stats based on status changes
+  updateRoomStatsFromWebSocket(roomData)
+  
+  // Add to recent activities
+  addRecentActivity({
+    id: `room-${roomData.room_id}-${Date.now()}`,
+    title: `Room ${roomData.room_number} status changed`,
+    description: `${roomData.old_status} → ${roomData.new_status}`,
+    time: new Date(),
+    icon: getRoomStatusIcon(roomData.new_status),
+    color: getRoomStatusColor(roomData.new_status)
+  })
+})
+
+useReservationUpdates((type, reservationData) => {
+  console.log('Dashboard: Reservation update:', type, reservationData)
+  
+  // Update dashboard stats based on reservation changes
+  updateReservationStatsFromWebSocket(type, reservationData)
+  
+  // Add to recent activities
+  const activityConfig = getReservationActivityConfig(type, reservationData)
+  if (activityConfig) {
+    addRecentActivity(activityConfig)
+  }
+})
+
+// WebSocket helper methods
+const updateRoomStatsFromWebSocket = (roomData) => {
+  const { old_status, new_status } = roomData
+  
+  // Decrease old status count
+  if (old_status === 'available') roomStats.value.available--
+  else if (old_status === 'occupied') roomStats.value.occupied--
+  else if (old_status === 'cleaning') roomStats.value.cleaning--
+  else if (old_status === 'maintenance') roomStats.value.maintenance--
+  
+  // Increase new status count
+  if (new_status === 'available') roomStats.value.available++
+  else if (new_status === 'occupied') roomStats.value.occupied++
+  else if (new_status === 'cleaning') roomStats.value.cleaning++
+  else if (new_status === 'maintenance') roomStats.value.maintenance++
+  
+  // Update occupancy percentage
+  const totalRooms = roomStats.value.available + roomStats.value.occupied + 
+                    roomStats.value.cleaning + roomStats.value.maintenance
+  if (totalRooms > 0) {
+    dashboardStats.value.occupancy = Math.round((roomStats.value.occupied / totalRooms) * 100)
+  }
+}
+
+const updateReservationStatsFromWebSocket = (type, reservationData) => {
+  const today = new Date().toDateString()
+  const checkInDate = new Date(reservationData.check_in_date).toDateString()
+  const checkOutDate = new Date(reservationData.check_out_date).toDateString()
+  
+  if (type === 'created') {
+    // If check-in is today, increment arrivals
+    if (checkInDate === today) {
+      dashboardStats.value.arrivals++
+    }
+    
+    // If check-out is today, increment departures
+    if (checkOutDate === today) {
+      dashboardStats.value.departures++
+    }
+    
+    // Update revenue (assuming total_amount is available)
+    if (reservationData.total_amount) {
+      dashboardStats.value.revenue += reservationData.total_amount
+    }
+  } else if (type === 'cancelled') {
+    // Decrease counts if applicable
+    if (checkInDate === today) {
+      dashboardStats.value.arrivals = Math.max(0, dashboardStats.value.arrivals - 1)
+    }
+    if (checkOutDate === today) {
+      dashboardStats.value.departures = Math.max(0, dashboardStats.value.departures - 1)
+    }
+  }
+}
+
+const getRoomStatusIcon = (status) => {
+  const icons = {
+    available: 'check_circle',
+    occupied: 'hotel',
+    cleaning: 'cleaning_services',
+    maintenance: 'build',
+    out_of_order: 'error'
+  }
+  return icons[status] || 'help'
+}
+
+const getRoomStatusColor = (status) => {
+  const colors = {
+    available: 'positive',
+    occupied: 'negative',
+    cleaning: 'warning',
+    maintenance: 'info',
+    out_of_order: 'negative'
+  }
+  return colors[status] || 'grey'
+}
+
+const getReservationActivityConfig = (type, reservationData) => {
+  const configs = {
+    created: {
+      id: `reservation-created-${reservationData.reservation_id}-${Date.now()}`,
+      title: 'New reservation created',
+      description: `${reservationData.guest_name} - Room ${reservationData.room_number}`,
+      time: new Date(),
+      icon: 'event',
+      color: 'primary'
+    },
+    cancelled: {
+      id: `reservation-cancelled-${reservationData.reservation_id}-${Date.now()}`,
+      title: 'Reservation cancelled',
+      description: `${reservationData.guest_name} - ${reservationData.confirmation_number}`,
+      time: new Date(),
+      icon: 'event_busy',
+      color: 'negative'
+    },
+    updated: {
+      id: `reservation-updated-${reservationData.reservation_id}-${Date.now()}`,
+      title: 'Reservation updated',
+      description: `${reservationData.guest_name} - Room ${reservationData.room_number}`,
+      time: new Date(),
+      icon: 'edit',
+      color: 'info'
+    }
+  }
+  return configs[type]
+}
+
+const addRecentActivity = (activity) => {
+  // Add to the beginning of the array
+  recentActivities.value.unshift(activity)
+  
+  // Keep only the latest 10 activities
+  if (recentActivities.value.length > 10) {
+    recentActivities.value = recentActivities.value.slice(0, 10)
+  }
+}
 
 // Methods
 const loadDashboardData = async () => {

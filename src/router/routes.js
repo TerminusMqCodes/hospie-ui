@@ -291,6 +291,74 @@ const routes = [
     ],
   },
 
+  // Spa management routes
+  {
+    path: '/spa',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/spa/SpaManagementPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['spa.view']
+        }
+      }
+    ],
+  },
+
+  // Event management routes
+  {
+    path: '/events',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/events/EventManagementPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['events.view']
+        }
+      }
+    ],
+  },
+
+  // Sustainability routes
+  {
+    path: '/sustainability',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/sustainability/SustainabilityPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['sustainability.view']
+        }
+      }
+    ],
+  },
+
+  // Analytics routes
+  {
+    path: '/analytics',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/analytics/AnalyticsPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['analytics.view']
+        }
+      }
+    ],
+  },
+
   // Financial routes
   {
     path: '/finance',

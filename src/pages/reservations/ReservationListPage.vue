@@ -395,6 +395,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useBookingStore } from 'src/stores/booking'
 import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
+import { useReservationUpdates } from 'src/composables/useWebSocket'
 
 const bookingStore = useBookingStore()
 const $q = useQuasar()
