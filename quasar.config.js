@@ -12,7 +12,7 @@ export default defineConfig((ctx) => {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['i18n', 'axios', 'dark-mode', 'websocket'],
+    boot: ['i18n', 'axios', 'dark-mode', 'websocket', 'firebase', 'pwa'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
     css: ['app.scss'],
@@ -178,11 +178,11 @@ export default defineConfig((ctx) => {
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
     pwa: {
-      workboxMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
-      // swFilename: 'sw.js',
-      // manifestFilename: 'manifest.json',
-      // useCredentialsForManifestTag: true,
-      // injectPwaMetaTags: false,
+      workboxMode: 'InjectManifest', // Use custom service worker
+      swFilename: 'sw.js',
+      manifestFilename: 'manifest.json',
+      useCredentialsForManifestTag: false,
+      injectPwaMetaTags: true,
       
       // PWA Manifest configuration
       extendManifestJson (json) {
@@ -193,40 +193,164 @@ export default defineConfig((ctx) => {
         json.orientation = 'any'
         json.theme_color = '#c45865'
         json.background_color = '#ffffff'
+        json.start_url = '/'
+        json.scope = '/'
+        json.categories = ['business', 'productivity', 'utilities']
+        json.lang = 'en-US'
+        
+        // Enhanced shortcuts
+        json.shortcuts = [
+          {
+            name: 'Dashboard',
+            short_name: 'Dashboard',
+            description: 'View main dashboard',
+            url: '/dashboard',
+            icons: [{ src: 'icons/icon-192x192.png', sizes: '192x192' }]
+          },
+          {
+            name: 'Reservations',
+            short_name: 'Bookings',
+            description: 'Manage reservations',
+            url: '/reservations',
+            icons: [{ src: 'icons/icon-192x192.png', sizes: '192x192' }]
+          },
+          {
+            name: 'Rooms',
+            short_name: 'Rooms',
+            description: 'Room management',
+            url: '/rooms',
+            icons: [{ src: 'icons/icon-192x192.png', sizes: '192x192' }]
+          },
+          {
+            name: 'Guests',
+            short_name: 'Guests',
+            description: 'Guest management',
+            url: '/guests',
+            icons: [{ src: 'icons/icon-192x192.png', sizes: '192x192' }]
+          }
+        ]
+        
+        // Protocol handlers for deep linking
+        json.protocol_handlers = [
+          {
+            protocol: 'web+hospie',
+            url: '/?handler=%s'
+          }
+        ]
+        
+        // File handlers
+        json.file_handlers = [
+          {
+            action: '/import',
+            accept: {
+              'text/csv': ['.csv'],
+              'application/vnd.ms-excel': ['.xls'],
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx']
+            }
+          }
+        ]
+        
+        // Share target for receiving shared content
+        json.share_target = {
+          action: '/share',
+          method: 'POST',
+          enctype: 'multipart/form-data',
+          params: {
+            title: 'title',
+            text: 'text',
+            url: 'url',
+            files: [
+              {
+                name: 'files',
+                accept: ['image/*', 'text/csv', '.pdf']
+              }
+            ]
+          }
+        }
       },
 
-      // Workbox configuration for offline capabilities
-      extendGenerateSWOptions (cfg) {
-        cfg.skipWaiting = true
-        cfg.clientsClaim = true
+      // Custom service worker with advanced features
+      extendInjectManifestOptions (cfg) {
+        cfg.exclude = cfg.exclude || []
+        cfg.exclude.push(/\.map$/)
+        cfg.exclude.push(/manifest\.json$/)
+        cfg.exclude.push(/firebase-messaging-sw\.js$/)
+        
+        // Include additional files for offline use
+        cfg.additionalManifestEntries = [
+          { url: '/offline.html', revision: null },
+          { url: '/firebase-messaging-sw.js', revision: null }
+        ]
+        
+        // Advanced caching strategies
         cfg.runtimeCaching = [
+          // API calls - Network First with offline fallback
           {
-            urlPattern: /^https:\/\/api\.hospie\.com\//,
+            urlPattern: /^https?:\/\/.*\/api\/.*/,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'hospie-api-cache',
               networkTimeoutSeconds: 10,
               cacheableResponse: {
                 statuses: [0, 200]
+              },
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 5 * 60 // 5 minutes
               }
             }
           },
+          
+          // Images - Cache First with long expiration
           {
-            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/,
             handler: 'CacheFirst',
             options: {
               cacheName: 'hospie-images-cache',
               expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+                maxEntries: 200,
+                maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
               }
             }
           },
+          
+          // Static assets - Stale While Revalidate
           {
-            urlPattern: /\.(?:js|css)$/,
+            urlPattern: /\.(?:js|css|woff|woff2|ttf|eot)$/,
             handler: 'StaleWhileRevalidate',
             options: {
-              cacheName: 'hospie-static-cache'
+              cacheName: 'hospie-static-cache',
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          },
+          
+          // Google Fonts - Stale While Revalidate
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'google-fonts-stylesheets'
+            }
+          },
+          
+          // Google Fonts WebFonts - Cache First
+          {
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-webfonts',
+              expiration: {
+                maxEntries: 30,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
             }
           }
         ]
@@ -252,7 +376,96 @@ export default defineConfig((ctx) => {
       capacitorCliPreparationHooks: [
         'capacitor:copy:before',
         'capacitor:copy:after'
-      ]
+      ],
+      
+      // Additional Capacitor configuration
+      extendCapacitorConf (capacitorConf) {
+        // iOS configuration
+        capacitorConf.ios = capacitorConf.ios || {}
+        capacitorConf.ios.scheme = 'hospie'
+        capacitorConf.ios.contentInset = 'automatic'
+        capacitorConf.ios.backgroundColor = '#c45865'
+        
+        // Android configuration
+        capacitorConf.android = capacitorConf.android || {}
+        capacitorConf.android.allowMixedContent = true
+        capacitorConf.android.captureInput = true
+        capacitorConf.android.webContentsDebuggingEnabled = true
+        capacitorConf.android.backgroundColor = '#c45865'
+        
+        // Server configuration for development
+        if (process.env.NODE_ENV === 'development') {
+          capacitorConf.server = {
+            url: 'http://localhost:9001',
+            cleartext: true
+          }
+        }
+        
+        // Plugins configuration
+        capacitorConf.plugins = capacitorConf.plugins || {}
+        
+        // Push Notifications
+        capacitorConf.plugins.PushNotifications = {
+          presentationOptions: ['badge', 'sound', 'alert']
+        }
+        
+        // Local Notifications
+        capacitorConf.plugins.LocalNotifications = {
+          smallIcon: 'ic_stat_icon_config_sample',
+          iconColor: '#c45865',
+          sound: 'beep.wav'
+        }
+        
+        // Camera
+        capacitorConf.plugins.Camera = {
+          permissions: ['camera', 'photos']
+        }
+        
+        // Geolocation
+        capacitorConf.plugins.Geolocation = {
+          permissions: ['location']
+        }
+        
+        // App
+        capacitorConf.plugins.App = {
+          launchUrl: 'hospie://app'
+        }
+        
+        // Status Bar
+        capacitorConf.plugins.StatusBar = {
+          style: 'dark',
+          backgroundColor: '#c45865'
+        }
+        
+        // Splash Screen
+        capacitorConf.plugins.SplashScreen = {
+          launchShowDuration: 2000,
+          backgroundColor: '#c45865',
+          showSpinner: true,
+          spinnerColor: '#ffffff'
+        }
+        
+        // Keyboard
+        capacitorConf.plugins.Keyboard = {
+          resize: 'body',
+          style: 'dark',
+          resizeOnFullScreen: true
+        }
+        
+        // Haptics
+        capacitorConf.plugins.Haptics = {}
+        
+        // Network
+        capacitorConf.plugins.Network = {}
+        
+        // Device
+        capacitorConf.plugins.Device = {}
+        
+        // File system
+        capacitorConf.plugins.Filesystem = {
+          iosDangerouslyAllowFileAccess: true
+        }
+      }
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/configuring-electron
