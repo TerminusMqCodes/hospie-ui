@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-md">
-    <div class="row justify-cente
+    <div class="row justify-center">
       <!-- Connection Status -->
       <div class="col-12">
         <q-card>

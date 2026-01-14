@@ -1,0 +1,12 @@
+{
+  "name": "hu.terminusmq.hospie.ui",
+  "version": "0.0.1",
+  "description": "Hospie felhasználói felület",
+  "author": "t3rm1nu5mq <admin@terminusmq.hu>",
+  "private": true,
+  "dependencies": {
+    "@capacitor/app": "^7.0.0",
+    "@capacitor/cli": "^7.0.0",
+    "@capacitor/core": "^7.0.0"
+  }
+}

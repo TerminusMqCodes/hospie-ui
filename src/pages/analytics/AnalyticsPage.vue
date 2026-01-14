@@ -678,7 +678,7 @@ export default {
           { id: 2, metric: 'Occupancy', change: '+2.3%', type: 'increase', time: '3 min ago' },
           { id: 3, metric: 'Cancellations', change: '+3', type: 'decrease', time: '5 min ago' }
         ]
-      } catch (error) {
+      } catch {
         $q.notify({
           type: 'negative',
           message: 'Failed to load analytics data'
@@ -698,7 +698,7 @@ export default {
         showCreateReportDialog.value = false
         newReport.value = { name: '', description: '', template_id: null, parameters: '{}' }
         loadData()
-      } catch (error) {
+      } catch {
         $q.notify({
           type: 'negative',
           message: 'Failed to create report'
@@ -716,7 +716,7 @@ export default {
         showScheduleDialog.value = false
         newSchedule.value = { report_id: null, frequency: '', recipients: '' }
         loadData()
-      } catch (error) {
+      } catch {
         $q.notify({
           type: 'negative',
           message: 'Failed to schedule report'
@@ -724,28 +724,28 @@ export default {
       }
     }
     
-    function runReport(report) {
+    function runReport() {
       $q.notify({
         type: 'info',
         message: 'Running report...'
       })
     }
     
-    function editReport(report) {
+    function editReport() {
       $q.notify({
         type: 'info',
         message: 'Edit functionality coming soon'
       })
     }
     
-    function downloadReport(report) {
+    function downloadReport() {
       $q.notify({
         type: 'info',
         message: 'Download functionality coming soon'
       })
     }
     
-    function deleteReport(report) {
+    function deleteReport() {
       $q.notify({
         type: 'info',
         message: 'Delete functionality coming soon'
@@ -759,14 +759,14 @@ export default {
       })
     }
     
-    function editScheduledReport(report) {
+    function editScheduledReport() {
       $q.notify({
         type: 'info',
         message: 'Edit functionality coming soon'
       })
     }
     
-    function deleteScheduledReport(report) {
+    function deleteScheduledReport() {
       $q.notify({
         type: 'info',
         message: 'Delete functionality coming soon'
@@ -778,7 +778,7 @@ export default {
       showCreateReportDialog.value = true
     }
     
-    function previewTemplate(template) {
+    function previewTemplate() {
       $q.notify({
         type: 'info',
         message: 'Preview functionality coming soon'

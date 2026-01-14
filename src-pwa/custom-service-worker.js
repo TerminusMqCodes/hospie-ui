@@ -7,7 +7,7 @@
 import { clientsClaim } from 'workbox-core'
 import { precacheAndRoute, cleanupOutdatedCaches, createHandlerBoundToURL } from 'workbox-precaching'
 import { registerRoute, NavigationRoute } from 'workbox-routing'
-import { NetworkFirst, CacheFirst, StaleWhileRevalidate, NetworkOnly } from 'workbox-strategies'
+import { NetworkFirst, CacheFirst, StaleWhileRevalidate } from 'workbox-strategies'
 import { ExpirationPlugin } from 'workbox-expiration'
 import { CacheableResponsePlugin } from 'workbox-cacheable-response'
 
@@ -285,7 +285,7 @@ async function getAuthToken() {
       }
       request.onerror = () => resolve(null)
     })
-  } catch (error) {
+  } catch {
     return null
   }
 }
@@ -296,7 +296,7 @@ registerRoute(
   async ({ event }) => {
     try {
       return await createHandlerBoundToURL('/index.html')({ event })
-    } catch (error) {
+    } catch {
       return caches.match('/offline.html')
     }
   }

@@ -135,7 +135,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import pushNotificationService from '../../services/pushNotificationService'
 

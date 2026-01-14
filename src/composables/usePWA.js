@@ -1,6 +1,5 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useQuasar } from 'quasar'
-import { Capacitor } from '@capacitor/core'
 
 export function usePWA() {
   const $q = useQuasar()
@@ -8,8 +7,25 @@ export function usePWA() {
   const isInstallable = ref(false)
   const deferredPrompt = ref(null)
   const isInstalled = ref(false)
-  const isNative = ref(Capacitor.isNativePlatform())
-  const platform = ref(Capacitor.getPlatform())
+  
+  // Initialize Capacitor values with fallbacks
+  const isNative = ref(false)
+  const platform = ref('web')
+  
+  // Try to import Capacitor dynamically
+  const initializeCapacitor = async () => {
+    try {
+      const { Capacitor } = await import('@capacitor/core')
+      isNative.value = Capacitor.isNativePlatform()
+      platform.value = Capacitor.getPlatform()
+      console.log(`Running on ${platform.value} platform, native: ${isNative.value}`)
+    } catch {
+      // Capacitor not available, use web defaults
+      console.log('Capacitor not available, running in web mode')
+      isNative.value = false
+      platform.value = 'web'
+    }
+  }
 
   // Check if app is installed
   const checkInstallStatus = () => {
@@ -149,8 +165,8 @@ export function usePWA() {
   const trackPWAInstall = (action) => {
     try {
       // Send analytics event
-      if (typeof gtag !== 'undefined') {
-        gtag('event', 'pwa_install', {
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'pwa_install', {
           event_category: 'PWA',
           event_label: action,
           value: 1
@@ -340,7 +356,10 @@ export function usePWA() {
     }
   }
 
-  onMounted(() => {
+  onMounted(async () => {
+    // Initialize Capacitor first
+    await initializeCapacitor()
+    
     checkInstallStatus()
     
     // Add event listeners

@@ -363,7 +363,7 @@ export default {
           activeSpaces: eventSpaces.value.filter(s => s.is_available).length,
           monthlyRevenue: '$' + (Math.random() * 50000).toFixed(0)
         }
-      } catch (error) {
+      } catch {
         $q.notify({
           type: 'negative',
           message: 'Failed to load event data'
@@ -383,7 +383,7 @@ export default {
         showCreateEventDialog.value = false
         newEvent.value = { name: '', start_date: '', end_date: '', event_type_id: null, description: '' }
         loadData()
-      } catch (error) {
+      } catch {
         $q.notify({
           type: 'negative',
           message: 'Failed to create event'
@@ -391,7 +391,7 @@ export default {
       }
     }
     
-    function editEvent(event) {
+    function editEvent() {
       // TODO: Implement edit functionality
       $q.notify({
         type: 'info',
@@ -399,7 +399,7 @@ export default {
       })
     }
     
-    function deleteEvent(event) {
+    function deleteEvent() {
       // TODO: Implement delete functionality
       $q.notify({
         type: 'info',

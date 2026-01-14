@@ -1,12 +1,11 @@
 import { initializeApp } from 'firebase/app'
 import { getMessaging, getToken, onMessage } from 'firebase/messaging'
-import { useQuasar } from 'quasar'
 
 class FirebaseService {
   constructor() {
     this.app = null
     this.messaging = null
-    this.vapidKey = process.env.FIREBASE_VAPID_KEY || 'YOUR_VAPID_KEY_HERE'
+    this.vapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY || 'YOUR_VAPID_KEY_HERE'
     this.isInitialized = false
     this.$q = null
   }
@@ -14,13 +13,13 @@ class FirebaseService {
   // Firebase configuration
   getFirebaseConfig() {
     return {
-      apiKey: process.env.FIREBASE_API_KEY || 'your-api-key',
-      authDomain: process.env.FIREBASE_AUTH_DOMAIN || 'hospie-pms.firebaseapp.com',
-      projectId: process.env.FIREBASE_PROJECT_ID || 'hospie-pms',
-      storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'hospie-pms.appspot.com',
-      messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || '123456789',
-      appId: process.env.FIREBASE_APP_ID || 'your-app-id',
-      measurementId: process.env.FIREBASE_MEASUREMENT_ID || 'G-XXXXXXXXXX'
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'your-api-key',
+      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'hospie-pms.firebaseapp.com',
+      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'hospie-pms',
+      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'hospie-pms.appspot.com',
+      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '123456789',
+      appId: import.meta.env.VITE_FIREBASE_APP_ID || 'your-app-id',
+      measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-XXXXXXXXXX'
     }
   }
 

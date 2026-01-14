@@ -256,7 +256,7 @@ const handleManualLock = async () => {
       message: 'Session locked manually',
       position: 'top'
     })
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Failed to lock session',

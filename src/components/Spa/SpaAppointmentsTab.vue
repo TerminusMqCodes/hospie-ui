@@ -217,7 +217,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { date } from 'quasar'
 import spaService from 'src/services/spaService'
@@ -389,7 +389,7 @@ const confirmAppointment = async (appointment) => {
       message: 'Appointment confirmed successfully'
     })
     emit('refresh')
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Failed to confirm appointment'
@@ -405,7 +405,7 @@ const checkInAppointment = async (appointment) => {
       message: 'Guest checked in successfully'
     })
     emit('refresh')
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Failed to check in guest'
@@ -421,7 +421,7 @@ const completeAppointment = async (appointment) => {
       message: 'Appointment completed successfully'
     })
     emit('refresh')
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Failed to complete appointment'

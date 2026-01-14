@@ -201,7 +201,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import SpaAppointmentsTab from 'src/components/Spa/SpaAppointmentsTab.vue'
 import SpaServicesTab from 'src/components/Spa/SpaServicesTab.vue'
@@ -256,7 +256,7 @@ const loadAppointments = async () => {
   try {
     const response = await spaService.getAppointments()
     appointments.value = response.data
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Failed to load appointments'
@@ -271,7 +271,7 @@ const loadServices = async () => {
   try {
     const response = await spaService.getServices()
     services.value = response.data
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Failed to load services'
@@ -286,7 +286,7 @@ const loadTherapists = async () => {
   try {
     const response = await spaService.getTherapists()
     therapists.value = response.data
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Failed to load therapists'
@@ -301,7 +301,7 @@ const loadRooms = async () => {
   try {
     const response = await spaService.getRooms()
     rooms.value = response.data
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Failed to load rooms'
@@ -316,7 +316,7 @@ const loadInventory = async () => {
   try {
     const response = await spaService.getInventory()
     inventory.value = response.data
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Failed to load inventory'
@@ -348,7 +348,7 @@ const cancelAppointment = async (appointmentId) => {
       message: 'Appointment cancelled successfully'
     })
     await loadAppointments()
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Failed to cancel appointment'
@@ -366,7 +366,7 @@ const saveAppointment = async (appointmentData) => {
     showNewAppointmentDialog.value = false
     await loadAppointments()
     await loadSpaStats()
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Failed to create appointment'
@@ -384,7 +384,7 @@ const updateAppointment = async (appointmentData) => {
     showEditAppointmentDialog.value = false
     selectedAppointment.value = null
     await loadAppointments()
-  } catch (error) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Failed to update appointment'

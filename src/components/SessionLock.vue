@@ -128,7 +128,7 @@ const handleUnlock = async () => {
     // Clear password
     password.value = ''
     
-  } catch (error) {
+  } catch {
     // Error is already handled in the store
     // Focus back to password input
     nextTick(() => {

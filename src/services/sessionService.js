@@ -44,13 +44,8 @@ export class SessionService {
    * Update session activity (heartbeat)
    */
   static async updateActivity() {
-    try {
-      const response = await api.post('/session/activity')
-      return response.data
-    } catch (error) {
-      // Don't log this error as it happens frequently
-      throw error
-    }
+    const response = await api.post('/session/activity')
+    return response.data
   }
 
   /**

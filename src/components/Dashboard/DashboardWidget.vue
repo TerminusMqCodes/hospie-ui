@@ -68,9 +68,8 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 
-const props = defineProps({
+defineProps({
   title: {
     type: String,
     required: true

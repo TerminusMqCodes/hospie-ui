@@ -1,27 +1,29 @@
 import { boot } from 'quasar/wrappers'
-import { usePWA } from '../composables/usePWA'
-import { useOfflineStore } from '../stores/offline'
 
 export default boot(async ({ app }) => {
-  // Initialize PWA composable
-  const pwa = usePWA()
+  // PWA features with usePWA composable
+  try {
+    // Try to initialize offline store
+    const { useOfflineStore } = await import('../stores/offline')
+    const offlineStore = useOfflineStore()
+    await offlineStore.initialize()
+    app.config.globalProperties.$offline = offlineStore
+    console.log('Offline store initialized')
+  } catch (error) {
+    console.log('Offline store not available:', error.message)
+  }
   
-  // Initialize offline store
-  const offlineStore = useOfflineStore()
-  await offlineStore.initialize()
-  
-  // Make PWA utilities available globally
-  app.config.globalProperties.$pwa = pwa
-  app.config.globalProperties.$offline = offlineStore
-  
-  // Setup global PWA event listeners
-  window.addEventListener('beforeinstallprompt', (e) => {
-    console.log('PWA install prompt available')
-  })
-  
-  window.addEventListener('appinstalled', () => {
-    console.log('PWA installed successfully')
-  })
+  // Setup basic PWA event listeners
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('beforeinstallprompt', () => {
+      console.log('PWA install prompt available')
+      // The usePWA composable will handle this in components
+    })
+    
+    window.addEventListener('appinstalled', () => {
+      console.log('PWA installed successfully')
+    })
+  }
   
   console.log('PWA boot completed')
 })

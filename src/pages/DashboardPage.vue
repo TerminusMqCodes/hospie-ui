@@ -1,6 +1,6 @@
 <template>
   <q-page class="q-pa-md dashboard-page">
-    <div class="row q-gutter-lg">
+    <div class="row q-col-gutter-lg">
       <!-- Welcome Section -->
       <div class="col-12">
         <q-card class="welcome-card">
@@ -10,7 +10,7 @@
                 <div class="text-h4 text-weight-light welcome-title">
                   Welcome back, {{ authStore.userName }}! 👋
                 </div>
-                <div class="text-subtitle1 text-grey-7 q-mt-sm welcome-subtitle">
+                <div class="text-subtitle1 q-mt-sm welcome-subtitle">
                   Here's what's happening with your property today
                 </div>
               </div>
@@ -27,68 +27,72 @@
       </div>
 
       <!-- Stats Cards -->
-      <div class="col-12 col-sm-6 col-md-3">
-        <q-card class="stat-card" @click="$router.push('/reservations')">
-          <q-card-section>
-            <div class="row items-center no-wrap">
-              <div class="col">
-                <div class="text-h6 stat-title">Today's Arrivals</div>
-                <div class="text-h4 text-primary stat-value">{{ dashboardStats.arrivals }}</div>
-              </div>
-              <div class="col-auto">
-                <q-icon name="flight_land" size="40px" color="primary" class="stat-icon" />
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
+      <div class="col-12">
+        <div class="row q-col-gutter-md stats-grid">
+          <div class="col-12 col-sm-6">
+            <q-card class="stat-card" @click="$router.push('/reservations')">
+              <q-card-section>
+                <div class="row items-center no-wrap">
+                  <div class="col">
+                    <div class="text-h6 stat-title">Today's Arrivals</div>
+                    <div class="text-h4 text-primary stat-value">{{ dashboardStats.arrivals }}</div>
+                  </div>
+                  <div class="col-auto">
+                    <q-icon name="flight_land" size="40px" color="primary" class="stat-icon" />
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
 
-      <div class="col-12 col-sm-6 col-md-3">
-        <q-card class="stat-card" @click="$router.push('/reservations')">
-          <q-card-section>
-            <div class="row items-center no-wrap">
-              <div class="col">
-                <div class="text-h6 stat-title">Departures</div>
-                <div class="text-h4 text-secondary stat-value">{{ dashboardStats.departures }}</div>
-              </div>
-              <div class="col-auto">
-                <q-icon name="flight_takeoff" size="40px" color="secondary" class="stat-icon" />
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
+          <div class="col-12 col-sm-6">
+            <q-card class="stat-card" @click="$router.push('/reservations')">
+              <q-card-section>
+                <div class="row items-center no-wrap">
+                  <div class="col">
+                    <div class="text-h6 stat-title">Departures</div>
+                    <div class="text-h4 text-secondary stat-value">{{ dashboardStats.departures }}</div>
+                  </div>
+                  <div class="col-auto">
+                    <q-icon name="flight_takeoff" size="40px" color="secondary" class="stat-icon" />
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
 
-      <div class="col-12 col-sm-6 col-md-3">
-        <q-card class="stat-card" @click="$router.push('/rooms/status')">
-          <q-card-section>
-            <div class="row items-center no-wrap">
-              <div class="col">
-                <div class="text-h6 stat-title">Occupancy</div>
-                <div class="text-h4 text-positive stat-value">{{ dashboardStats.occupancy }}%</div>
-              </div>
-              <div class="col-auto">
-                <q-icon name="hotel" size="40px" color="positive" class="stat-icon" />
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
+          <div class="col-12 col-sm-6">
+            <q-card class="stat-card" @click="$router.push('/rooms/status')">
+              <q-card-section>
+                <div class="row items-center no-wrap">
+                  <div class="col">
+                    <div class="text-h6 stat-title">Occupancy</div>
+                    <div class="text-h4 text-positive stat-value">{{ dashboardStats.occupancy }}%</div>
+                  </div>
+                  <div class="col-auto">
+                    <q-icon name="hotel" size="40px" color="positive" class="stat-icon" />
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
 
-      <div class="col-12 col-sm-6 col-md-3">
-        <q-card class="stat-card" @click="$router.push('/finance')">
-          <q-card-section>
-            <div class="row items-center no-wrap">
-              <div class="col">
-                <div class="text-h6 stat-title">Revenue</div>
-                <div class="text-h4 text-accent stat-value">${{ formatNumber(dashboardStats.revenue) }}</div>
-              </div>
-              <div class="col-auto">
-                <q-icon name="attach_money" size="40px" color="accent" class="stat-icon" />
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
+          <div class="col-12 col-sm-6">
+            <q-card class="stat-card" @click="$router.push('/finance')">
+              <q-card-section>
+                <div class="row items-center no-wrap">
+                  <div class="col">
+                    <div class="text-h6 stat-title">Revenue</div>
+                    <div class="text-h4 text-accent stat-value">${{ formatNumber(dashboardStats.revenue) }}</div>
+                  </div>
+                  <div class="col-auto">
+                    <q-icon name="attach_money" size="40px" color="accent" class="stat-icon" />
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
+        </div>
       </div>
 
       <!-- Automated Invoicing Dashboard -->
@@ -98,11 +102,11 @@
 
       <!-- Quick Actions -->
       <div class="col-12 col-lg-6">
-        <q-card>
+        <q-card class="full-height">
           <q-card-section>
             <div class="text-h6 q-mb-md">Quick Actions</div>
-            <div class="row q-gutter-sm quick-actions">
-              <div class="col-12 col-sm-6 col-md-3 col-lg-6">
+            <div class="row q-col-gutter-sm quick-actions">
+              <div class="col-6 col-sm-3 col-lg-6">
                 <q-btn 
                   color="primary" 
                   icon="add" 
@@ -111,7 +115,7 @@
                   @click="$router.push('/reservations/create')"
                 />
               </div>
-              <div class="col-12 col-sm-6 col-md-3 col-lg-6">
+              <div class="col-6 col-sm-3 col-lg-6">
                 <q-btn 
                   color="secondary" 
                   icon="hotel" 
@@ -121,7 +125,7 @@
                   @click="$router.push('/rooms/status')"
                 />
               </div>
-              <div class="col-12 col-sm-6 col-md-3 col-lg-6">
+              <div class="col-6 col-sm-3 col-lg-6">
                 <q-btn 
                   color="accent" 
                   icon="person_add" 
@@ -131,7 +135,7 @@
                   @click="showCheckInDialog = true"
                 />
               </div>
-              <div class="col-12 col-sm-6 col-md-3 col-lg-6">
+              <div class="col-6 col-sm-3 col-lg-6">
                 <q-btn 
                   color="info" 
                   icon="logout" 
@@ -148,7 +152,7 @@
 
       <!-- Recent Activity -->
       <div class="col-12 col-lg-6">
-        <q-card>
+        <q-card class="full-height">
           <q-card-section>
             <div class="text-h6 q-mb-md">Recent Activity</div>
             <q-list>
@@ -168,7 +172,7 @@
 
       <!-- Today's Schedule -->
       <div class="col-12 col-lg-6">
-        <q-card>
+        <q-card class="full-height">
           <q-card-section>
             <div class="text-h6 q-mb-md">Today's Schedule</div>
             <q-timeline color="primary" class="schedule-timeline">
@@ -190,11 +194,11 @@
 
       <!-- Room Status Overview -->
       <div class="col-12 col-lg-6">
-        <q-card>
+        <q-card class="full-height">
           <q-card-section>
             <div class="text-h6 q-mb-md">Room Status Overview</div>
-            <div class="row q-gutter-md room-status-grid">
-              <div class="col-6 col-sm-3 col-lg-6">
+            <div class="row q-gutter-sm room-status-grid">
+              <div class="col-6 col-sm-3">
                 <div class="text-center room-status-item">
                   <q-circular-progress
                     :value="roomStats.available"
@@ -209,7 +213,7 @@
                 </div>
               </div>
               
-              <div class="col-6 col-sm-3 col-lg-6">
+              <div class="col-6 col-sm-3">
                 <div class="text-center room-status-item">
                   <q-circular-progress
                     :value="roomStats.occupied"
@@ -224,7 +228,7 @@
                 </div>
               </div>
               
-              <div class="col-6 col-sm-3 col-lg-6">
+              <div class="col-6 col-sm-3">
                 <div class="text-center room-status-item">
                   <q-circular-progress
                     :value="roomStats.cleaning"
@@ -239,7 +243,7 @@
                 </div>
               </div>
               
-              <div class="col-6 col-sm-3 col-lg-6">
+              <div class="col-6 col-sm-3">
                 <div class="text-center room-status-item">
                   <q-circular-progress
                     :value="roomStats.maintenance"
@@ -817,6 +821,22 @@ const loadDashboardData = async () => {
   }
 }
 
+.stats-grid {
+  margin-bottom: 0;
+}
+
+.full-height {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  
+  .q-card__section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
 .stat-title {
   font-size: 1rem;
   font-weight: 600;
@@ -1160,18 +1180,43 @@ const loadDashboardData = async () => {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   }
   
+  .welcome-card {
+    background: linear-gradient(135deg, #4c1d95 0%, #5b21b6 100%);
+    color: white;
+    
+    .welcome-title {
+      color: white;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .welcome-subtitle {
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+  
   .stat-card {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
     
     &:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
     }
   }
   
   .stat-title {
-    color: #94a3b8;
+    color: #cbd5e1;
+  }
+  
+  .stat-value {
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  .activity-item {
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
   }
   
   .activity-title {
@@ -1186,9 +1231,28 @@ const loadDashboardData = async () => {
     color: #94a3b8;
   }
   
+  .room-status-item {
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .text-caption {
+      color: #cbd5e1;
+    }
+  }
+  
   .dialog-card {
-    background: rgba(15, 23, 42, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(15, 23, 42, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  
+  .q-card {
+    background: rgba(30, 41, 59, 0.8);
+    color: #f1f5f9;
+    
+    .text-h6 {
+      color: #f1f5f9;
+    }
   }
 }
 

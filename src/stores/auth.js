@@ -34,15 +34,39 @@ export const useAuthStore = defineStore('auth', {
     
     // Permission checking helpers
     hasPermission: (state) => (permission) => {
+      // Super-admin and admin have all permissions
+      if (state.user?.roles?.includes('super-admin') || state.user?.roles?.includes('admin')) {
+        return true
+      }
+      // Check for wildcard permission
+      if (state.user?.permissions?.includes('*')) {
+        return true
+      }
       return state.user?.permissions?.includes(permission) || false
     },
     
     hasAnyPermission: (state) => (permissions) => {
+      // Super-admin and admin have all permissions
+      if (state.user?.roles?.includes('super-admin') || state.user?.roles?.includes('admin')) {
+        return true
+      }
+      // Check for wildcard permission
+      if (state.user?.permissions?.includes('*')) {
+        return true
+      }
       if (!Array.isArray(permissions)) permissions = [permissions]
       return permissions.some(permission => state.user?.permissions?.includes(permission)) || false
     },
     
     hasAllPermissions: (state) => (permissions) => {
+      // Super-admin and admin have all permissions
+      if (state.user?.roles?.includes('super-admin') || state.user?.roles?.includes('admin')) {
+        return true
+      }
+      // Check for wildcard permission
+      if (state.user?.permissions?.includes('*')) {
+        return true
+      }
       if (!Array.isArray(permissions)) permissions = [permissions]
       return permissions.every(permission => state.user?.permissions?.includes(permission)) || false
     },

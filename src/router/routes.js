@@ -408,6 +408,135 @@ const routes = [
           requiresAuth: true,
           permissions: ['reports.view']
         }
+      },
+      { 
+        path: 'custom', 
+        component: () => import('pages/reports/CustomReportBuilderPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['reports.create']
+        }
+      }
+    ],
+  },
+
+  // Rate Management routes
+  {
+    path: '/rates',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/rates/RateManagementPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['rates.view']
+        }
+      }
+    ],
+  },
+
+  // Channel Manager routes
+  {
+    path: '/channel-manager',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/channel-manager/ChannelManagerPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['channel_manager.view']
+        }
+      }
+    ],
+  },
+
+  // Waitlist Management routes
+  {
+    path: '/waitlist',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/waitlist/WaitlistManagementPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['waitlist.view']
+        }
+      }
+    ],
+  },
+
+  // POS routes
+  {
+    path: '/pos',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/pos/PosManagementPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          permissions: ['pos.view']
+        }
+      }
+    ],
+  },
+
+  // GDPR Management routes
+  {
+    path: '/gdpr',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { 
+      requiresAuth: true,
+      roles: ['admin', 'super-admin']
+    },
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/gdpr/GdprManagementPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          roles: ['admin', 'super-admin']
+        }
+      }
+    ],
+  },
+
+  // PWA Settings
+  {
+    path: '/pwa-settings',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/PWASettingsPage.vue'),
+        meta: { 
+          requiresAuth: true
+        }
+      }
+    ],
+  },
+
+  // Housekeeping routes
+  {
+    path: '/housekeeping',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/housekeeping/HousekeepingDashboard.vue'),
+        meta: { 
+          requiresAuth: true,
+          roles: ['admin', 'manager', 'housekeeping']
+        }
       }
     ],
   },

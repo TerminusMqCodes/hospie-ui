@@ -202,8 +202,10 @@ class OfflineStorageService {
   async getSyncQueue() {
     const db = await this.initDB()
     const tx = db.transaction('syncQueue', 'readonly')
-    const index = tx.store.index('synced')
-    return await index.getAll(false) // Get unsynced items
+    const store = tx.objectStore('syncQueue')
+    const allItems = await store.getAll()
+    // Filter unsynced items manually
+    return allItems.filter(item => !item.synced)
   }
 
   async markAsSynced(queueId) {

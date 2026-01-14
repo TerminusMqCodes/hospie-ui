@@ -606,7 +606,7 @@ export default {
         esgReports.value = reportsData.data || []
         energyRecommendations.value = recommendationsData.data || []
         waterQualityMetrics.value = qualityData.data || []
-      } catch (error) {
+      } catch {
         $q.notify({
           type: 'negative',
           message: 'Failed to load sustainability data'
@@ -626,7 +626,7 @@ export default {
         showCreateGoalDialog.value = false
         newGoal.value = { title: '', description: '', target_value: null, unit: '', target_date: '' }
         loadData()
-      } catch (error) {
+      } catch {
         $q.notify({
           type: 'negative',
           message: 'Failed to create goal'
@@ -642,7 +642,7 @@ export default {
           message: 'ESG report generation started'
         })
         loadData()
-      } catch (error) {
+      } catch {
         $q.notify({
           type: 'negative',
           message: 'Failed to generate ESG report'
@@ -650,7 +650,7 @@ export default {
       }
     }
     
-    function downloadReport(report) {
+    function downloadReport() {
       // TODO: Implement download functionality
       $q.notify({
         type: 'info',
@@ -658,7 +658,7 @@ export default {
       })
     }
     
-    function viewReport(report) {
+    function viewReport() {
       // TODO: Implement view functionality
       $q.notify({
         type: 'info',

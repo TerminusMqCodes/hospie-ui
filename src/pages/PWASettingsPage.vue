@@ -371,6 +371,12 @@ const toggleNotifications = async (enabled) => {
       await pushNotificationService.disable()
     }
     notificationsEnabled.value = enabled
+    
+    $q.notify({
+      message: enabled ? 'Notifications enabled' : 'Notifications disabled',
+      color: 'positive',
+      icon: enabled ? 'notifications_active' : 'notifications_off'
+    })
   } catch (error) {
     console.error('Failed to toggle notifications:', error)
     $q.notify({
@@ -450,20 +456,6 @@ const clearOfflineData = () => {
   })
 }
 
-const checkUpdates = async () => {
-  checkingUpdates.value = true
-  try {
-    await checkForUpdates()
-    $q.notify({
-      message: 'Checked for updates',
-      color: 'info',
-      icon: 'system_update'
-    })
-  } finally {
-    checkingUpdates.value = false
-  }
-}
-
 const shareApp = async () => {
   const shareData = {
     title: 'Hospie PMS',
@@ -505,6 +497,16 @@ const loadNotificationSettings = async () => {
     notificationPreferences.value = await pushNotificationService.getNotificationPreferences()
   } catch (error) {
     console.error('Failed to load notification settings:', error)
+    // Set defaults on error
+    notificationsEnabled.value = false
+    notificationPreferences.value = {
+      reservations: false,
+      roomStatus: false,
+      guestMessages: false,
+      payments: false,
+      maintenance: false,
+      alerts: false
+    }
   }
 }
 

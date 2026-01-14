@@ -39,23 +39,92 @@ export default defineConfig((ctx) => {
       },
 
       vueRouterMode: 'history', // available values: 'hash', 'history'
-      // vueRouterBase,
-      // vueDevtools,
-      // vueOptionsAPI: false,
-
-      // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
-
-      // publicPath: '/',
-      // analyze: true,
-      // env: {},
-      // rawDefine: {}
-      // ignorePublicFolder: true,
-      // minify: false,
-      // polyfillModulePreload: true,
-      // distDir
-
-      // extendViteConf (viteConf) {},
-      // viteVuePluginOptions: {},
+      
+      // Production optimizations
+      minify: ctx.prod,
+      sourcemap: ctx.dev,
+      
+      // Bundle analysis
+      analyze: ctx.prod && process.env.ANALYZE === 'true',
+      
+      // Modern build for better performance
+      modern: ctx.prod,
+      
+      // Gzip compression
+      gzip: ctx.prod,
+      
+      // Chunk optimization for better caching
+      extendViteConf(viteConf) {
+        if (ctx.prod) {
+          // Optimize chunks
+          viteConf.build = viteConf.build || {}
+          viteConf.build.rollupOptions = viteConf.build.rollupOptions || {}
+          viteConf.build.rollupOptions.output = {
+            manualChunks: {
+              // Vendor chunks
+              'vendor-vue': ['vue', 'vue-router', 'pinia'],
+              'vendor-quasar': ['quasar'],
+              'vendor-utils': ['lodash-es', 'date-fns', 'axios'],
+              
+              // Feature-based chunks
+              'charts': ['chart.js', 'chartjs-adapter-date-fns'],
+              'icons': ['@quasar/extras'],
+            },
+            
+            // Optimize chunk file names for better caching
+            chunkFileNames: (chunkInfo) => {
+              const facadeModuleId = chunkInfo.facadeModuleId
+              if (facadeModuleId) {
+                if (facadeModuleId.includes('node_modules')) {
+                  return 'vendor/[name]-[hash].js'
+                }
+                if (facadeModuleId.includes('src/pages')) {
+                  return 'pages/[name]-[hash].js'
+                }
+                if (facadeModuleId.includes('src/components')) {
+                  return 'components/[name]-[hash].js'
+                }
+              }
+              return 'chunks/[name]-[hash].js'
+            },
+            
+            assetFileNames: (assetInfo) => {
+              const info = assetInfo.name.split('.')
+              const ext = info[info.length - 1]
+              if (/\.(png|jpe?g|svg|gif|tiff|bmp|ico)$/i.test(assetInfo.name)) {
+                return `images/[name]-[hash].${ext}`
+              }
+              if (/\.(woff2?|eot|ttf|otf)$/i.test(assetInfo.name)) {
+                return `fonts/[name]-[hash].${ext}`
+              }
+              return `assets/[name]-[hash].${ext}`
+            }
+          }
+          
+          // Preload optimization
+          viteConf.build.rollupOptions.external = viteConf.build.rollupOptions.external || []
+          
+          // Tree shaking optimization
+          viteConf.build.rollupOptions.treeshake = {
+            moduleSideEffects: false,
+            propertyReadSideEffects: false,
+            tryCatchDeoptimization: false
+          }
+        }
+        
+        // Development optimizations
+        if (ctx.dev) {
+          viteConf.optimizeDeps = viteConf.optimizeDeps || {}
+          viteConf.optimizeDeps.include = [
+            'vue',
+            'vue-router',
+            'pinia',
+            'quasar',
+            'axios',
+            'lodash-es'
+          ]
+        }
+      },
 
       vitePlugins: [
         [
@@ -271,89 +340,19 @@ export default defineConfig((ctx) => {
 
       // Custom service worker with advanced features
       extendInjectManifestOptions (cfg) {
-        cfg.exclude = cfg.exclude || []
-        cfg.exclude.push(/\.map$/)
-        cfg.exclude.push(/manifest\.json$/)
-        cfg.exclude.push(/firebase-messaging-sw\.js$/)
+        // Note: 'exclude' and 'runtimeCaching' are not supported in InjectManifest mode
+        // These are handled in the custom service worker (src-pwa/custom-service-worker.js)
         
-        // Include additional files for offline use
-        cfg.additionalManifestEntries = [
-          { url: '/offline.html', revision: null },
-          { url: '/firebase-messaging-sw.js', revision: null }
-        ]
+        // Glob patterns for files to include in precache
+        cfg.globPatterns = cfg.globPatterns || []
+        cfg.globPatterns.push('**/*.{js,css,html,png,jpg,jpeg,svg,gif,webp,ico,woff,woff2,ttf,eot}')
         
-        // Advanced caching strategies
-        cfg.runtimeCaching = [
-          // API calls - Network First with offline fallback
-          {
-            urlPattern: /^https?:\/\/.*\/api\/.*/,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'hospie-api-cache',
-              networkTimeoutSeconds: 10,
-              cacheableResponse: {
-                statuses: [0, 200]
-              },
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 5 * 60 // 5 minutes
-              }
-            }
-          },
-          
-          // Images - Cache First with long expiration
-          {
-            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'hospie-images-cache',
-              expiration: {
-                maxEntries: 200,
-                maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          
-          // Static assets - Stale While Revalidate
-          {
-            urlPattern: /\.(?:js|css|woff|woff2|ttf|eot)$/,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'hospie-static-cache',
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          
-          // Google Fonts - Stale While Revalidate
-          {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'google-fonts-stylesheets'
-            }
-          },
-          
-          // Google Fonts WebFonts - Cache First
-          {
-            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-webfonts',
-              expiration: {
-                maxEntries: 30,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          }
-        ]
+        // Ignore patterns (alternative to exclude)
+        cfg.globIgnores = cfg.globIgnores || []
+        cfg.globIgnores.push('**/*.map')
+        cfg.globIgnores.push('**/manifest.json')
+        cfg.globIgnores.push('**/firebase-messaging-sw.js')
+        cfg.globIgnores.push('**/offline.html') // Exclude from glob to avoid duplication
       }
     },
 

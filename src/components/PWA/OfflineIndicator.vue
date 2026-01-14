@@ -96,7 +96,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useOfflineStore } from '../../stores/offline'
 import { usePWA } from '../../composables/usePWA'
 
@@ -131,7 +131,7 @@ const checkConnection = async () => {
       // Connection is working, update online status
       offlineStore.updateOnlineStatus(true)
     }
-  } catch (error) {
+  } catch {
     console.log('Still offline')
   } finally {
     checking.value = false

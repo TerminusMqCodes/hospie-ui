@@ -559,7 +559,7 @@ export default {
           message: 'Session locked',
           position: 'top'
         })
-      } catch (error) {
+      } catch {
         $q.notify({
           type: 'negative',
           message: 'Failed to lock session',
@@ -615,18 +615,26 @@ export default {
       { icon: 'hotel', text: 'Reservations', route: '/reservations', permission: 'reservations.view' },
       { icon: 'calendar_month', text: 'Calendar', route: '/reservations/calendar', permission: 'reservations.view' },
       { icon: 'meeting_room', text: 'Rooms', route: '/rooms', permission: 'rooms.view' },
+      { icon: 'cleaning_services', text: 'Housekeeping', route: '/housekeeping', roles: ['admin', 'manager', 'housekeeping'] },
       { icon: 'people', text: 'Guests', route: '/guests', permission: 'guests.view' },
       { icon: 'spa', text: 'Spa Management', route: '/spa', permission: 'spa.view' },
       { icon: 'event', text: 'Events', route: '/events', permission: 'events.view' }
     ]
 
     const links2 = [
-      { icon: 'account_balance_wallet', text: 'Finance', route: '/finance', permission: 'invoices.view' },
+      { icon: 'account_balance_wallet', text: 'Finance', route: '/finance', permission: 'finance.view' },
+      { icon: 'receipt', text: 'Invoices', route: '/finance/invoices', permission: 'invoices.view' },
+      { icon: 'payment', text: 'Payments', route: '/finance/payments', permission: 'payments.view' },
+      { icon: 'point_of_sale', text: 'POS', route: '/pos', permission: 'pos.view' },
       { icon: 'analytics', text: 'Reports', route: '/reports', permission: 'reports.view' },
-      { icon: 'eco', text: 'Sustainability', route: '/sustainability', permission: 'sustainability.view' },
       { icon: 'insights', text: 'Analytics', route: '/analytics', permission: 'analytics.view' },
+      { icon: 'eco', text: 'Sustainability', route: '/sustainability', permission: 'sustainability.view' },
+      { icon: 'attach_money', text: 'Rate Management', route: '/rates', permission: 'rates.view' },
+      { icon: 'hub', text: 'Channel Manager', route: '/channel-manager', permission: 'channel_manager.view' },
+      { icon: 'list_alt', text: 'Waitlist', route: '/waitlist', permission: 'waitlist.view' },
+      { icon: 'shield', text: 'GDPR', route: '/gdpr', roles: ['admin', 'super-admin'] },
       { icon: 'admin_panel_settings', text: 'Admin', route: '/admin', roles: ['admin', 'super-admin'] },
-      { icon: 'settings', text: 'Settings', route: '/settings' }
+      { icon: 'settings', text: 'Settings', route: '/pwa-settings' }
     ]
 
     return {
@@ -688,17 +696,25 @@ export default {
         { icon: 'hotel', text: 'Reservations', route: '/reservations', permission: 'reservations.view' },
         { icon: 'calendar_month', text: 'Calendar', route: '/reservations/calendar', permission: 'reservations.view' },
         { icon: 'meeting_room', text: 'Rooms', route: '/rooms', permission: 'rooms.view' },
+        { icon: 'cleaning_services', text: 'Housekeeping', route: '/housekeeping', roles: ['admin', 'manager', 'housekeeping'] },
         { icon: 'people', text: 'Guests', route: '/guests', permission: 'guests.view' },
         { icon: 'spa', text: 'Spa Management', route: '/spa', permission: 'spa.view' },
         { icon: 'event', text: 'Events', route: '/events', permission: 'events.view' }
       ],
       links2: [
-        { icon: 'account_balance_wallet', text: 'Finance', route: '/finance', permission: 'invoices.view' },
+        { icon: 'account_balance_wallet', text: 'Finance', route: '/finance', permission: 'finance.view' },
+        { icon: 'receipt', text: 'Invoices', route: '/finance/invoices', permission: 'invoices.view' },
+        { icon: 'payment', text: 'Payments', route: '/finance/payments', permission: 'payments.view' },
+        { icon: 'point_of_sale', text: 'POS', route: '/pos', permission: 'pos.view' },
         { icon: 'analytics', text: 'Reports', route: '/reports', permission: 'reports.view' },
-        { icon: 'eco', text: 'Sustainability', route: '/sustainability', permission: 'sustainability.view' },
         { icon: 'insights', text: 'Analytics', route: '/analytics', permission: 'analytics.view' },
+        { icon: 'eco', text: 'Sustainability', route: '/sustainability', permission: 'sustainability.view' },
+        { icon: 'attach_money', text: 'Rate Management', route: '/rates', permission: 'rates.view' },
+        { icon: 'hub', text: 'Channel Manager', route: '/channel-manager', permission: 'channel_manager.view' },
+        { icon: 'list_alt', text: 'Waitlist', route: '/waitlist', permission: 'waitlist.view' },
+        { icon: 'shield', text: 'GDPR', route: '/gdpr', roles: ['admin', 'super-admin'] },
         { icon: 'admin_panel_settings', text: 'Admin', route: '/admin', roles: ['admin', 'super-admin'] },
-        { icon: 'settings', text: 'Settings', route: '/settings' }
+        { icon: 'settings', text: 'Settings', route: '/pwa-settings' }
       ],
       links3: [
         { icon: '', text: 'Language & region' },
@@ -1107,25 +1123,53 @@ export default {
 // Enhanced dark mode with better contrast and effects
 .body--dark
   .GNL__toolbar
-    background: rgba(18, 18, 18, 0.95)
-    border-bottom-color: rgba(255, 255, 255, 0.08)
+    background: rgba(18, 18, 18, 0.98)
+    border-bottom-color: rgba(255, 255, 255, 0.12)
     
     .GNL__toolbar-input .q-field__control
-      background: rgba(255, 255, 255, 0.08)
-      border-color: rgba(255, 255, 255, 0.2)
+      background: rgba(255, 255, 255, 0.1)
+      border-color: rgba(255, 255, 255, 0.25)
+      color: white
+      
+      input
+        color: white
+        
+      .q-icon
+        color: rgba(255, 255, 255, 0.7)
   
   .GNL__drawer-item
+    color: rgba(255, 255, 255, 0.9)
+    
+    .q-item__section--avatar .q-icon
+      color: rgba(255, 255, 255, 0.7)
+    
+    .q-item__label
+      color: rgba(255, 255, 255, 0.9)
+    
     &:hover
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.12))
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.16))
+      
+      .q-item__section--avatar .q-icon
+        color: var(--q-primary)
     
     &.active-nav-item
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.18))
+      background: linear-gradient(135deg, rgba(196, 88, 101, 0.25), rgba(196, 88, 101, 0.35))
+      border-left-color: var(--q-primary)
+      
+      .q-item__section--avatar .q-icon
+        color: var(--q-primary)
+      
+      .q-item__label
+        color: white
   
   .main-drawer .q-drawer__content
     background: linear-gradient(180deg, 
       rgba(18, 18, 18, 0.98) 0%, 
-      rgba(33, 33, 33, 0.95) 50%,
-      rgba(48, 48, 48, 0.92) 100%)
+      rgba(30, 30, 30, 0.95) 50%,
+      rgba(40, 40, 40, 0.92) 100%)
+  
+  .q-item-label[header]
+    color: rgba(255, 255, 255, 0.7)
   
   .toolbar-menu-btn,
   .install-pwa-btn,
@@ -1133,15 +1177,61 @@ export default {
   .apps-menu-btn,
   .notifications-btn,
   .user-menu-btn
+    color: rgba(255, 255, 255, 0.9)
+    
     &:hover
-      background: rgba(255, 255, 255, 0.08)
+      background: rgba(255, 255, 255, 0.12)
+  
+  .brand-text
+    color: white
   
   .apps-menu,
   .notifications-menu,
   .user-menu
     .q-menu
-      background: rgba(18, 18, 18, 0.95)
+      background: rgba(18, 18, 18, 0.98)
       border-color: rgba(255, 255, 255, 0.2)
+      
+      .q-item
+        color: rgba(255, 255, 255, 0.9)
+        
+        &:hover
+          background: rgba(255, 255, 255, 0.1)
+      
+      .q-item-label
+        color: rgba(255, 255, 255, 0.9)
+      
+      .q-item-label[caption]
+        color: rgba(255, 255, 255, 0.6)
+  
+  .app-card
+    background: rgba(255, 255, 255, 0.08)
+    border-color: rgba(255, 255, 255, 0.15)
+    color: rgba(255, 255, 255, 0.9)
+    
+    &:hover
+      background: rgba(255, 255, 255, 0.12)
+      border-color: rgba(255, 255, 255, 0.25)
+    
+    .text-caption
+      color: rgba(255, 255, 255, 0.8)
+  
+  .advanced-search-menu
+    background: rgba(18, 18, 18, 0.98)
+    border-color: rgba(255, 255, 255, 0.2)
+    
+    .text-body2,
+    .text-subtitle2
+      color: rgba(255, 255, 255, 0.9)
+    
+    .q-input
+      color: white
+  
+  .GNL__drawer-footer-link
+    color: rgba(255, 255, 255, 0.7)
+    
+    &:hover
+      color: var(--q-primary)
 
 // Enhanced accessibility improvements
 @media (prefers-reduced-motion: reduce)
