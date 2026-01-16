@@ -1,0 +1,662 @@
+/**
+ * Liquid Glass Theme - Hospie Brand Colors
+ * Light & Dark mode optimized glassmorphism
+ */
+
+// Import base liquid glass styles
+@import './liquid-glass.scss';
+
+// ===== HOSPIE BRAND COLORS =====
+$hospie-primary: #c45865;
+$hospie-secondary: #d68691;
+$hospie-accent: #9C27B0;
+$hospie-primary-light: #e08a96;
+$hospie-primary-dark: #a03d4a;
+
+// ===== LIGHT MODE BACKGROUND =====
+body {
+  position: relative;
+  background: #f8f9fa;
+  
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      135deg,
+      rgba($hospie-primary-light, 0.05) 0%,
+      rgba($hospie-secondary, 0.04) 25%,
+      rgba($hospie-accent, 0.03) 50%,
+      rgba($hospie-primary, 0.04) 75%,
+      rgba($hospie-primary-light, 0.05) 100%
+    );
+    background-size: 400% 400%;
+    animation: gradientFlow 20s ease infinite;
+    z-index: -1;
+  }
+}
+
+@keyframes gradientFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+// ===== LAYOUT COMPONENTS - LIGHT MODE =====
+
+.q-header {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border-bottom: 1px solid rgba($hospie-primary, 0.15) !important;
+  box-shadow: 0 2px 16px rgba($hospie-primary, 0.08) !important;
+  
+  .q-toolbar {
+    background: transparent;
+  }
+}
+
+.q-drawer {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border-right: 1px solid rgba($hospie-primary, 0.12) !important;
+  box-shadow: 4px 0 16px rgba($hospie-primary, 0.08) !important;
+  
+  .q-drawer__content {
+    background: transparent !important;
+  }
+}
+
+.q-page-container,
+.q-page {
+  background: transparent !important;
+}
+
+// ===== NAVIGATION - LIGHT MODE =====
+
+.q-item {
+  border-radius: 12px;
+  margin: 4px 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba($hospie-primary, 0.08);
+  color: #2c3e50;
+  
+  &:hover {
+    background: rgba($hospie-primary, 0.08) !important;
+    transform: translateX(6px) scale(1.02);
+    box-shadow: 0 4px 12px rgba($hospie-primary, 0.15);
+    border-color: rgba($hospie-primary, 0.2);
+  }
+  
+  &.q-item--active,
+  &.active-nav-item {
+    background: rgba($hospie-primary, 0.12) !important;
+    border-left: 4px solid $hospie-primary;
+    box-shadow: 0 4px 16px rgba($hospie-primary, 0.2);
+    
+    .q-item__label {
+      color: $hospie-primary-dark;
+      font-weight: 700;
+    }
+    
+    .q-icon {
+      color: $hospie-primary;
+    }
+  }
+  
+  .q-item__label {
+    color: #2c3e50;
+    font-weight: 600;
+  }
+  
+  .q-icon {
+    color: #5a6c7d;
+  }
+}
+
+// ===== CARDS - LIGHT MODE =====
+
+.q-card {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba($hospie-primary, 0.12);
+  border-radius: 16px;
+  box-shadow: 
+    0 4px 20px rgba($hospie-primary, 0.1),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 
+      0 8px 30px rgba($hospie-primary, 0.15),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+    border-color: rgba($hospie-primary, 0.2);
+  }
+  
+  .q-card__section {
+    color: #2c3e50;
+    
+    .text-h1, .text-h2, .text-h3, 
+    .text-h4, .text-h5, .text-h6 {
+      color: #2c3e50;
+    }
+  }
+}
+
+// ===== BUTTONS - LIGHT MODE =====
+
+.q-btn {
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:not(.q-btn--flat):not(.q-btn--outline) {
+    &.bg-primary {
+      background: linear-gradient(135deg, $hospie-primary, $hospie-primary-light) !important;
+      color: white !important;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 12px rgba($hospie-primary, 0.3);
+      
+      &:hover {
+        background: linear-gradient(135deg, $hospie-primary-dark, $hospie-primary) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba($hospie-primary, 0.4);
+      }
+    }
+    
+    &:not(.bg-primary):not(.bg-secondary):not(.bg-accent) {
+      background: rgba(255, 255, 255, 0.7) !important;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba($hospie-primary, 0.2);
+      color: $hospie-primary !important;
+      box-shadow: 0 2px 8px rgba($hospie-primary, 0.1);
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.85) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba($hospie-primary, 0.15);
+      }
+    }
+  }
+  
+  &.q-btn--flat {
+    color: $hospie-primary !important;
+    
+    &:hover {
+      background: rgba($hospie-primary, 0.08) !important;
+    }
+  }
+  
+  &.q-btn--outline {
+    border-color: $hospie-primary !important;
+    color: $hospie-primary !important;
+    
+    &:hover {
+      background: rgba($hospie-primary, 0.08) !important;
+    }
+  }
+}
+
+// ===== FORMS - LIGHT MODE =====
+
+.q-field {
+  .q-field__control {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba($hospie-primary, 0.2) !important;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.8) !important;
+      border-color: rgba($hospie-primary, 0.3) !important;
+    }
+    
+    &:focus-within {
+      background: rgba(255, 255, 255, 0.9) !important;
+      border-color: $hospie-primary !important;
+      box-shadow: 0 0 0 3px rgba($hospie-primary, 0.1);
+    }
+  }
+  
+  .q-field__native,
+  .q-field__prefix,
+  .q-field__suffix {
+    color: #2c3e50 !important;
+  }
+  
+  .q-field__label {
+    color: #5a6c7d !important;
+  }
+  
+  .q-icon {
+    color: $hospie-primary !important;
+  }
+}
+
+.q-menu {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba($hospie-primary, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba($hospie-primary, 0.15);
+  
+  .q-item {
+    color: #2c3e50;
+    
+    &:hover {
+      background: rgba($hospie-primary, 0.08) !important;
+    }
+  }
+}
+
+// ===== DARK MODE =====
+
+.body--dark {
+  background: #1a1a1a;
+  
+  &::before {
+    background: linear-gradient(
+      135deg,
+      rgba($hospie-primary-dark, 0.15) 0%,
+      rgba($hospie-secondary, 0.12) 25%,
+      rgba($hospie-accent, 0.10) 50%,
+      rgba($hospie-primary, 0.12) 75%,
+      rgba($hospie-primary-dark, 0.15) 100%
+    );
+  }
+  
+  // Header - Dark Mode
+  .q-header {
+    background: rgba(30, 30, 30, 0.85) !important;
+    border-bottom-color: rgba($hospie-primary, 0.2) !important;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  // Drawer - Dark Mode
+  .q-drawer {
+    background: rgba(25, 25, 25, 0.85) !important;
+    border-right-color: rgba($hospie-primary, 0.2) !important;
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  // Navigation - Dark Mode
+  .q-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba($hospie-primary, 0.15);
+    color: rgba(255, 255, 255, 0.9);
+    
+    &:hover {
+      background: rgba($hospie-primary, 0.15) !important;
+      border-color: rgba($hospie-primary, 0.3);
+    }
+    
+    &.q-item--active,
+    &.active-nav-item {
+      background: rgba($hospie-primary, 0.2) !important;
+      border-left-color: $hospie-primary-light;
+      
+      .q-item__label {
+        color: $hospie-primary-light;
+      }
+      
+      .q-icon {
+        color: $hospie-primary-light;
+      }
+    }
+    
+    .q-item__label {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .q-icon {
+      color: rgba(255, 255, 255, 0.7);
+    }
+  }
+
+  
+  // Cards - Dark Mode
+  .q-card {
+    background: rgba(40, 40, 40, 0.85) !important;
+    border-color: rgba($hospie-primary, 0.2);
+    box-shadow: 
+      0 4px 20px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    
+    &:hover {
+      background: rgba(45, 45, 45, 0.9) !important;
+      border-color: rgba($hospie-primary, 0.3);
+      box-shadow: 
+        0 8px 30px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+    }
+    
+    .q-card__section {
+      color: rgba(255, 255, 255, 0.9);
+      
+      .text-h1, .text-h2, .text-h3, 
+      .text-h4, .text-h5, .text-h6 {
+        color: rgba(255, 255, 255, 0.95);
+      }
+    }
+  }
+  
+  // Buttons - Dark Mode
+  .q-btn {
+    &:not(.q-btn--flat):not(.q-btn--outline) {
+      &.bg-primary {
+        background: linear-gradient(135deg, $hospie-primary, $hospie-primary-light) !important;
+        box-shadow: 0 4px 12px rgba($hospie-primary, 0.4);
+        
+        &:hover {
+          box-shadow: 0 6px 20px rgba($hospie-primary, 0.5);
+        }
+      }
+      
+      &:not(.bg-primary):not(.bg-secondary):not(.bg-accent) {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-color: rgba($hospie-primary, 0.3);
+        color: $hospie-primary-light !important;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.15) !important;
+        }
+      }
+    }
+    
+    &.q-btn--flat {
+      color: $hospie-primary-light !important;
+      
+      &:hover {
+        background: rgba($hospie-primary, 0.15) !important;
+      }
+    }
+    
+    &.q-btn--outline {
+      border-color: $hospie-primary-light !important;
+      color: $hospie-primary-light !important;
+      
+      &:hover {
+        background: rgba($hospie-primary, 0.15) !important;
+      }
+    }
+  }
+
+  
+  // Forms - Dark Mode
+  .q-field {
+    .q-field__control {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border-color: rgba($hospie-primary, 0.3) !important;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.12) !important;
+        border-color: rgba($hospie-primary, 0.4) !important;
+      }
+      
+      &:focus-within {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border-color: $hospie-primary-light !important;
+        box-shadow: 0 0 0 3px rgba($hospie-primary, 0.2);
+      }
+    }
+    
+    .q-field__native,
+    .q-field__prefix,
+    .q-field__suffix {
+      color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    .q-field__label {
+      color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    .q-icon {
+      color: $hospie-primary-light !important;
+    }
+  }
+  
+  .q-menu {
+    background: rgba(30, 30, 30, 0.95) !important;
+    border-color: rgba($hospie-primary, 0.25);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    
+    .q-item {
+      color: rgba(255, 255, 255, 0.9);
+      
+      &:hover {
+        background: rgba($hospie-primary, 0.15) !important;
+      }
+    }
+  }
+  
+  // Tables - Dark Mode
+  .q-table {
+    background: rgba(40, 40, 40, 0.85) !important;
+    border-color: rgba($hospie-primary, 0.2);
+    
+    .q-th {
+      background: rgba(255, 255, 255, 0.08) !important;
+      color: rgba(255, 255, 255, 0.95);
+      border-bottom-color: rgba($hospie-primary, 0.2);
+    }
+    
+    .q-td {
+      color: rgba(255, 255, 255, 0.9);
+      border-bottom-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .q-tr:hover {
+      background: rgba($hospie-primary, 0.08) !important;
+    }
+  }
+  
+  // Badges & Chips - Dark Mode
+  .q-badge {
+    background: rgba($hospie-primary, 0.3) !important;
+    border-color: rgba($hospie-primary, 0.5);
+    color: white;
+  }
+  
+  .q-chip {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba($hospie-primary, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.15) !important;
+    }
+  }
+  
+  // Notifications - Dark Mode
+  .q-notification {
+    background: rgba(30, 30, 30, 0.95) !important;
+    border-color: rgba($hospie-primary, 0.3);
+    color: rgba(255, 255, 255, 0.95);
+  }
+  
+  // Tabs - Dark Mode
+  .q-tabs {
+    background: rgba(255, 255, 255, 0.05) !important;
+    
+    .q-tab {
+      color: rgba(255, 255, 255, 0.7);
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+      
+      &.q-tab--active {
+        color: $hospie-primary-light;
+        background: rgba($hospie-primary, 0.15);
+      }
+    }
+  }
+}
+
+// ===== ADDITIONAL COMPONENTS - LIGHT MODE =====
+
+.q-table {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba($hospie-primary, 0.12);
+  border-radius: 16px;
+  overflow: hidden;
+  
+  .q-th {
+    background: rgba($hospie-primary, 0.08) !important;
+    color: #2c3e50;
+    font-weight: 700;
+    border-bottom: 1px solid rgba($hospie-primary, 0.15);
+  }
+  
+  .q-td {
+    color: #2c3e50;
+    border-bottom: 1px solid rgba($hospie-primary, 0.08);
+  }
+  
+  .q-tr:hover {
+    background: rgba($hospie-primary, 0.05) !important;
+  }
+}
+
+.q-list {
+  .q-item-label[header] {
+    color: $hospie-primary-dark;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+}
+
+.q-badge {
+  background: rgba($hospie-primary, 0.15) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba($hospie-primary, 0.3);
+  color: $hospie-primary-dark;
+  font-weight: 700;
+}
+
+.q-chip {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba($hospie-primary, 0.2);
+  color: $hospie-primary-dark;
+  font-weight: 600;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.85) !important;
+  }
+}
+
+.q-separator {
+  background: rgba($hospie-primary, 0.15) !important;
+}
+
+.q-notification {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba($hospie-primary, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba($hospie-primary, 0.15);
+  color: #2c3e50;
+}
+
+.q-tabs {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(15px);
+  border-radius: 12px;
+  
+  .q-tab {
+    color: #5a6c7d;
+    font-weight: 600;
+    
+    &:hover {
+      background: rgba($hospie-primary, 0.05);
+    }
+    
+    &.q-tab--active {
+      color: $hospie-primary;
+      background: rgba($hospie-primary, 0.1);
+    }
+  }
+}
+
+// ===== SEARCH BAR =====
+
+.GNL__toolbar-input {
+  .q-field__control {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba($hospie-primary, 0.2) !important;
+    border-radius: 24px;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.8) !important;
+    }
+    
+    &:focus-within {
+      background: rgba(255, 255, 255, 0.9) !important;
+      border-color: $hospie-primary !important;
+    }
+  }
+}
+
+// ===== RESPONSIVE =====
+
+@media (max-width: 768px) {
+  .q-card {
+    border-radius: 12px;
+  }
+  
+  .q-btn {
+    border-radius: 10px;
+  }
+  
+  .q-field .q-field__control {
+    border-radius: 10px;
+  }
+}
+
+// ===== ACCESSIBILITY =====
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  body::before {
+    animation: none !important;
+  }
+}
+
+// ===== PRINT =====
+
+@media print {
+  body::before {
+    display: none !important;
+  }
+  
+  .q-header,
+  .q-drawer,
+  .q-footer {
+    background: white !important;
+    backdrop-filter: none !important;
+  }
+  
+  .q-card {
+    background: white !important;
+    backdrop-filter: none !important;
+    border: 1px solid #ddd !important;
+  }
+}
