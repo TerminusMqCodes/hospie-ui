@@ -1,6 +1,9 @@
 <template>
   <q-layout view="hHh lpR fFf" :class="isDarkMode ? 'bg-dark' : 'bg-grey-1'">
-    <q-header elevated :class="isDarkMode ? 'bg-dark text-white' : 'bg-white text-grey-8'" height-hint="64">
+    <!-- Electron Window Controls -->
+    <ElectronWindowControls />
+    
+    <q-header elevated :class="isDarkMode ? 'bg-dark text-white' : 'bg-white text-grey-8'" height-hint="64" :style="electronHeaderStyle">
       <q-toolbar class="GNL__toolbar">
         <q-btn
           flat
@@ -177,6 +180,32 @@
           
           <DarkModeToggle />
           
+          <!-- Debug Info (temporary) -->
+          <q-btn 
+            v-if="isDev"
+            round 
+            dense 
+            flat 
+            color="text-grey-7" 
+            :icon="isElectron ? 'desktop_windows' : 'web'"
+            class="debug-electron-btn"
+          >
+            <q-tooltip>{{ isElectron ? 'Electron Mode' : 'Browser Mode' }}</q-tooltip>
+          </q-btn>
+          
+          <!-- Shortcuts Help Button -->
+          <q-btn 
+            round 
+            dense 
+            flat 
+            color="text-grey-7" 
+            icon="keyboard"
+            @click="showShortcutsHelp = true"
+            class="shortcuts-help-btn"
+          >
+            <q-tooltip>Keyboard Shortcuts (Ctrl+?)</q-tooltip>
+          </q-btn>
+          
           <q-btn round dense flat color="text-grey-7" icon="notifications" class="notifications-btn">
             <q-badge color="red" text-color="white" floating>
               2
@@ -314,6 +343,7 @@
             clickable
             @click="navigateToRoute(link.route)"
             :class="{ 'active-nav-item': $route.path === link.route }"
+            :data-electron-only="link.electronOnly"
           >
             <q-item-section avatar>
               <q-icon :name="link.icon" />
@@ -341,6 +371,8 @@
             clickable
             @click="navigateToRoute(link.route)"
             :class="{ 'active-nav-item': $route.path === link.route }"
+            :data-electron-only="link.electronOnly"
+            :data-dev-only="link.devOnly"
           >
             <q-item-section avatar>
               <q-icon :name="link.icon" />
@@ -437,6 +469,12 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    
+    <!-- Shortcuts Help Dialog -->
+    <ShortcutsHelp v-model="showShortcutsHelp" />
+    
+    <!-- Debug Info (development only) -->
+    <ElectronDebugInfo />
   </q-layout>
 </template>
 
@@ -451,6 +489,9 @@ import { usePWA } from '../composables/usePWA'
 import DarkModeToggle from '../components/DarkModeToggle.vue'
 import UnderDevelopmentModal from '../components/UnderDevelopmentModal.vue'
 import ConnectionStatus from '../components/WebSocket/ConnectionStatus.vue'
+import ElectronWindowControls from '../components/ElectronWindowControls.vue'
+import ShortcutsHelp from '../components/ShortcutsHelp.vue'
+import ElectronDebugInfo from '../components/ElectronDebugInfo.vue'
 
 export default {
   name: 'MainLayout',
@@ -458,7 +499,10 @@ export default {
   components: {
     DarkModeToggle,
     UnderDevelopmentModal,
-    ConnectionStatus
+    ConnectionStatus,
+    ElectronWindowControls,
+    ShortcutsHelp,
+    ElectronDebugInfo
   },
 
   setup () {
@@ -486,16 +530,51 @@ export default {
     const selectedFeature = ref('')
     const expectedDate = ref('2026.01.01.')
 
+    // Shortcuts Help
+    const showShortcutsHelp = ref(false)
+
     // Dark mode functionality
     const { isDarkMode, loadDarkModePreference } = useDarkMode()
 
-    // Load dark mode preference on component mount
+    // Electron functionality
+    const isElectron = ref(false)
+    const isDev = ref(process.env.DEV)
+    
+    // Check if running in Electron
     onMounted(() => {
+      const electronAPI = window.electronAPI
+      isElectron.value = electronAPI?.isElectron || false
+      
+      console.log('MainLayout mounted - isElectron:', isElectron.value)
+      console.log('ElectronAPI available:', !!electronAPI)
+      
       loadDarkModePreference()
       // Initialize auth state if needed
       if (!authStore.isAuthenticated && localStorage.getItem('auth_token')) {
         authStore.initializeAuth()
       }
+      
+      // Listen for Electron events
+      if (isElectron.value && electronAPI?.onOpenSettings) {
+        electronAPI.onOpenSettings(() => {
+          router.push('/pwa-settings')
+        })
+      }
+      
+      // Listen for shortcuts help event
+      document.addEventListener('show-shortcuts-help', () => {
+        showShortcutsHelp.value = true
+      })
+    })
+
+    // Computed style for header when in Electron
+    const electronHeaderStyle = computed(() => {
+      if (isElectron.value) {
+        return {
+          paddingTop: '40px' // Add space for window controls
+        }
+      }
+      return {}
     })
 
     function onClear () {
@@ -570,7 +649,7 @@ export default {
 
     // Computed properties for filtered navigation links
     const filteredLinks1 = computed(() => {
-      return links1.filter(link => {
+      return links1.value.filter(link => {
         if (link.permission) {
           return authStore.hasPermission(link.permission)
         }
@@ -582,7 +661,7 @@ export default {
     })
 
     const filteredLinks2 = computed(() => {
-      return links2.filter(link => {
+      return links2.value.filter(link => {
         if (link.permission) {
           return authStore.hasPermission(link.permission)
         }
@@ -609,8 +688,8 @@ export default {
       }
     }
 
-    // Define navigation links
-    const links1 = [
+    // Define navigation links as computed properties for reactivity
+    const links1 = computed(() => [
       { icon: 'dashboard', text: 'Dashboard', route: '/dashboard' },
       { icon: 'hotel', text: 'Reservations', route: '/reservations', permission: 'reservations.view' },
       { icon: 'calendar_month', text: 'Calendar', route: '/reservations/calendar', permission: 'reservations.view' },
@@ -618,10 +697,13 @@ export default {
       { icon: 'cleaning_services', text: 'Housekeeping', route: '/housekeeping', roles: ['admin', 'manager', 'housekeeping'] },
       { icon: 'people', text: 'Guests', route: '/guests', permission: 'guests.view' },
       { icon: 'spa', text: 'Spa Management', route: '/spa', permission: 'spa.view' },
-      { icon: 'event', text: 'Events', route: '/events', permission: 'events.view' }
-    ]
+      { icon: 'event', text: 'Events', route: '/events', permission: 'events.view' },
+      ...(isElectron.value ? [
+        { icon: 'desktop_windows', text: 'Electron Test', route: '/electron-test', electronOnly: true }
+      ] : [])
+    ])
 
-    const links2 = [
+    const links2 = computed(() => [
       { icon: 'account_balance_wallet', text: 'Finance', route: '/finance', permission: 'finance.view' },
       { icon: 'receipt', text: 'Invoices', route: '/finance/invoices', permission: 'invoices.view' },
       { icon: 'payment', text: 'Payments', route: '/finance/payments', permission: 'payments.view' },
@@ -634,8 +716,17 @@ export default {
       { icon: 'list_alt', text: 'Waitlist', route: '/waitlist', permission: 'waitlist.view' },
       { icon: 'shield', text: 'GDPR', route: '/gdpr', roles: ['admin', 'super-admin'] },
       { icon: 'admin_panel_settings', text: 'Admin', route: '/admin', roles: ['admin', 'super-admin'] },
+      // Development/Testing links
+      ...(isDev.value ? [
+        { icon: 'desktop_windows', text: 'Electron Test', route: '/electron-test', devOnly: true },
+        { icon: 'keyboard', text: 'Shortcuts Test', route: '/shortcuts-test', devOnly: true }
+      ] : []),
+      // Electron-specific links (when in Electron mode)
+      ...(isElectron.value ? [
+        { icon: 'bolt', text: 'Electron Features', route: '/electron-test', electronOnly: true }
+      ] : []),
       { icon: 'settings', text: 'Settings', route: '/pwa-settings' }
-    ]
+    ])
 
     return {
       authStore,
@@ -661,6 +752,11 @@ export default {
       isInstalled,
       installPWA,
       checkForUpdates,
+      // Electron functionality
+      isElectron,
+      isDev,
+      electronHeaderStyle,
+      showShortcutsHelp,
       navigateToRoute,
       performMobileSearch,
 
@@ -1079,6 +1175,46 @@ export default {
       height: 2px
       background: linear-gradient(90deg, var(--q-primary), var(--q-secondary))
       border-radius: 1px
+
+// Electron-specific and development menu items styling
+.electron-app, .q-layout
+  .main-drawer
+    .q-item
+      &[data-electron-only="true"], &[data-dev-only="true"]
+        background: rgba(25, 118, 210, 0.05)
+        border-left: 3px solid var(--q-primary)
+        margin: 2px 8px
+        border-radius: 6px
+        
+        .q-icon
+          color: var(--q-primary)
+        
+        .q-item-label
+          font-weight: 500
+          color: var(--q-primary)
+        
+        &:hover
+          background: rgba(25, 118, 210, 0.1)
+          transform: translateX(2px)
+          transition: all 0.2s ease
+        
+        &[data-electron-only="true"]::before
+          content: '⚡'
+          position: absolute
+          right: 8px
+          top: 50%
+          transform: translateY(-50%)
+          font-size: 12px
+          opacity: 0.7
+        
+        &[data-dev-only="true"]::before
+          content: '🔧'
+          position: absolute
+          right: 8px
+          top: 50%
+          transform: translateY(-50%)
+          font-size: 12px
+          opacity: 0.7
 
 // Enhanced mobile-specific styles with better touch targets
 @media (max-width: 768px)

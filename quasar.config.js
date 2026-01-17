@@ -12,7 +12,7 @@ export default defineConfig((ctx) => {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['i18n', 'axios', 'dark-mode', 'websocket', 'firebase', 'pwa'],
+    boot: ['electron'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
     css: ['app.scss'],
@@ -484,19 +484,215 @@ export default defineConfig((ctx) => {
 
       packager: {
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
-        // OS X / Mac App Store
-        // appBundleId: '',
-        // appCategoryType: '',
-        // osxSign: '',
-        // protocol: 'myapp://path',
-        // Windows only
-        // win32metadata: { ... }
+        
+        // App info
+        name: 'Hospie PMS',
+        productName: 'Hospie PMS',
+        executableName: 'hospie-pms',
+        
+        // App metadata
+        appBundleId: 'hu.terminusmq.hospie.pms',
+        appCategoryType: 'public.app-category.business',
+        appCopyright: 'Copyright © 2026 TerminusMQ. All rights reserved.',
+        appVersion: '1.0.0',
+        buildVersion: '1.0.0',
+        
+        // Platform specific
+        platform: ['win32', 'darwin', 'linux'],
+        arch: ['x64', 'arm64'],
+        
+        // Output
+        out: 'dist/electron',
+        overwrite: true,
+        
+        // App icon
+        icon: 'src-electron/icons/icon',
+        
+        // Windows specific
+        win32metadata: {
+          CompanyName: 'TerminusMQ',
+          FileDescription: 'Hospie PMS - Property Management System',
+          OriginalFilename: 'hospie-pms.exe',
+          ProductName: 'Hospie PMS',
+          InternalName: 'hospie-pms'
+        },
+        
+        // macOS specific
+        darwinDarkModeSupport: true,
+        
+        // Ignore files/folders
+        ignore: [
+          /\.git/,
+          /node_modules\/(?!.*\.(js|json)$)/,
+          /src/,
+          /public/,
+          /\.env/,
+          /\.quasar/,
+          /quasar\.config\.js/,
+          /package-lock\.json/,
+          /yarn\.lock/
+        ],
+        
+        // Prune dev dependencies
+        prune: true,
+        
+        // Asar archive
+        asar: true,
+        
+        // Download options
+        download: {
+          cacheRoot: '.electron-cache'
+        }
       },
 
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'hu.terminusmq.hospie.ui',
+        appId: 'hu.terminusmq.hospie.pms',
+        productName: 'Hospie PMS',
+        copyright: 'Copyright © 2026 TerminusMQ. All rights reserved.',
+        
+        // Directories
+        directories: {
+          output: 'dist/electron-builder',
+          buildResources: 'src-electron/build'
+        },
+        
+        // Files to include
+        files: [
+          'dist/**/*',
+          'node_modules/**/*',
+          'package.json'
+        ],
+        
+        // Files to exclude
+        extraFiles: [],
+        
+        // Compression
+        compression: 'maximum',
+        
+        // Auto-updater
+        publish: null,
+        
+        // Windows configuration
+        win: {
+          target: [
+            {
+              target: 'nsis',
+              arch: ['x64', 'arm64']
+            },
+            {
+              target: 'portable',
+              arch: ['x64']
+            }
+          ],
+          icon: 'src-electron/icons/icon.ico',
+          requestedExecutionLevel: 'asInvoker',
+          artifactName: '${productName}-${version}-${arch}.${ext}'
+        },
+        
+        // NSIS installer (Windows)
+        nsis: {
+          oneClick: false,
+          allowToChangeInstallationDirectory: true,
+          allowElevation: true,
+          installerIcon: 'src-electron/icons/icon.ico',
+          uninstallerIcon: 'src-electron/icons/icon.ico',
+          installerHeaderIcon: 'src-electron/icons/icon.ico',
+          createDesktopShortcut: true,
+          createStartMenuShortcut: true,
+          shortcutName: 'Hospie PMS',
+          include: 'src-electron/build/installer.nsh'
+        },
+        
+        // macOS configuration
+        mac: {
+          target: [
+            {
+              target: 'dmg',
+              arch: ['x64', 'arm64']
+            },
+            {
+              target: 'zip',
+              arch: ['x64', 'arm64']
+            }
+          ],
+          icon: 'src-electron/icons/icon.icns',
+          category: 'public.app-category.business',
+          darkModeSupport: true,
+          hardenedRuntime: true,
+          gatekeeperAssess: false,
+          entitlements: 'src-electron/build/entitlements.mac.plist',
+          entitlementsInherit: 'src-electron/build/entitlements.mac.plist',
+          artifactName: '${productName}-${version}-${arch}.${ext}'
+        },
+        
+        // DMG configuration (macOS)
+        dmg: {
+          title: 'Hospie PMS ${version}',
+          icon: 'src-electron/icons/icon.icns',
+          background: 'src-electron/build/background.png',
+          contents: [
+            {
+              x: 410,
+              y: 150,
+              type: 'link',
+              path: '/Applications'
+            },
+            {
+              x: 130,
+              y: 150,
+              type: 'file'
+            }
+          ]
+        },
+        
+        // Linux configuration
+        linux: {
+          target: [
+            {
+              target: 'AppImage',
+              arch: ['x64', 'arm64']
+            },
+            {
+              target: 'deb',
+              arch: ['x64', 'arm64']
+            },
+            {
+              target: 'rpm',
+              arch: ['x64', 'arm64']
+            }
+          ],
+          icon: 'src-electron/icons/',
+          category: 'Office',
+          desktop: {
+            Name: 'Hospie PMS',
+            Comment: 'Property Management System for Hotels',
+            Keywords: 'hotel;pms;management;booking;reservation;',
+            StartupWMClass: 'hospie-pms'
+          },
+          artifactName: '${productName}-${version}-${arch}.${ext}'
+        },
+        
+        // AppImage configuration (Linux)
+        appImage: {
+          license: 'LICENSE'
+        },
+        
+        // Debian package configuration (Linux)
+        deb: {
+          depends: ['gconf2', 'gconf-service', 'libnotify4', 'libappindicator1', 'libxtst6', 'libnss3'],
+          recommends: ['pulseaudio | libasound2-dev'],
+          afterInstall: 'src-electron/build/linux-after-install.sh',
+          afterRemove: 'src-electron/build/linux-after-remove.sh'
+        },
+        
+        // RPM package configuration (Linux)
+        rpm: {
+          depends: ['libXScrnSaver'],
+          afterInstall: 'src-electron/build/linux-after-install.sh',
+          afterRemove: 'src-electron/build/linux-after-remove.sh'
+        }
       },
     },
 

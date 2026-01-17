@@ -164,6 +164,20 @@ const routes = [
         meta: { 
           requiresAuth: true
         }
+      },
+      { 
+        path: 'electron-test', 
+        component: () => import('pages/ElectronTest.vue'),
+        meta: { 
+          requiresAuth: true
+        }
+      },
+      { 
+        path: 'shortcuts-test', 
+        component: () => import('pages/ShortcutsTest.vue'),
+        meta: { 
+          requiresAuth: true
+        }
       }
     ],
   },

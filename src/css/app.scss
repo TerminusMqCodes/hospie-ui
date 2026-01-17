@@ -3,6 +3,9 @@
 // Import Liquid Glass Theme
 @import './liquid-glass-theme.scss';
 
+// Import Electron-specific styles
+@import './electron.scss';
+
 // Mobile-first responsive design
 // Base styles for mobile devices
 body {
