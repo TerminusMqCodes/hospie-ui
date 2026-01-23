@@ -46,6 +46,44 @@ const routes = [
     ],
   },
 
+  // Onboarding routes (public)
+  {
+    path: '/onboarding',
+    component: () => import('layouts/OnboardingLayout.vue'),
+    children: [
+      { 
+        path: '', 
+        name: 'onboarding-index',
+        component: () => import('pages/onboarding/OnboardingIndexPage.vue')
+      },
+      { 
+        path: 'step1', 
+        name: 'onboarding-step1',
+        component: () => import('pages/onboarding/Step1Page.vue')
+      },
+      { 
+        path: 'step2', 
+        name: 'onboarding-step2',
+        component: () => import('pages/onboarding/Step2Page.vue')
+      },
+      { 
+        path: 'step3', 
+        name: 'onboarding-step3',
+        component: () => import('pages/onboarding/Step3Page.vue')
+      },
+      { 
+        path: 'review', 
+        name: 'onboarding-review',
+        component: () => import('pages/onboarding/ReviewPage.vue')
+      },
+      { 
+        path: 'success', 
+        name: 'onboarding-success',
+        component: () => import('pages/onboarding/SuccessPage.vue')
+      }
+    ],
+  },
+
   // Offline page
   {
     path: '/offline',

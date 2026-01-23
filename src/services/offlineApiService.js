@@ -1,4 +1,4 @@
-import { api } from 'boot/axios'
+import { api } from 'src/boot/axios'
 import offlineStorage from './offlineStorage'
 import { Notify } from 'quasar'
 
