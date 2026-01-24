@@ -9,7 +9,7 @@
       />
       
       <h4 class="text-h4 q-mb-md text-grey-7">
-        You're Offline
+        {{ $t('notifications.offline') }}
       </h4>
       
       <p class="text-body1 q-mb-lg text-grey-6 max-width">
@@ -32,7 +32,7 @@
           text-color="white" 
           icon="wifi_off"
         >
-          Offline Mode
+          {{ $t('notifications.offline') }} Mode
         </q-chip>
       </div>
 
@@ -48,7 +48,7 @@
         <q-btn 
           flat 
           color="primary" 
-          label="Go to Dashboard" 
+          :label="`Go to ${$t('pages.dashboard.title')}`" 
           icon="dashboard"
           @click="$router.push('/dashboard')"
         />
@@ -65,7 +65,7 @@
               <q-icon name="visibility" color="positive" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>View cached reservations</q-item-label>
+              <q-item-label>View cached {{ $t('pages.reservations.title') }}</q-item-label>
             </q-item-section>
           </q-item>
           
@@ -74,7 +74,7 @@
               <q-icon name="hotel" color="positive" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Check room status</q-item-label>
+              <q-item-label>Check {{ $t('pages.dashboard.roomStatus') }}</q-item-label>
             </q-item-section>
           </q-item>
           
@@ -83,7 +83,7 @@
               <q-icon name="person" color="positive" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>View guest information</q-item-label>
+              <q-item-label>View {{ $t('pages.guests.title') }} information</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -95,8 +95,10 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 
 const $q = useQuasar()
+const { t: $t } = useI18n()
 const isOnline = ref(navigator.onLine)
 const checking = ref(false)
 

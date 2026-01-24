@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import onboardingService from 'src/services/onboardingService'
-import { api } from 'src/boot/axios'
 
 export const useOnboardingStore = defineStore('onboarding', {
   state: () => ({

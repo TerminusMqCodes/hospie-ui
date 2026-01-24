@@ -6,21 +6,21 @@
           <q-card-section>
             <div class="row items-center justify-between">
               <div>
-                <div class="text-h6">Reports & Analytics</div>
+                <div class="text-h6">{{ $t('pages.reports.title') }}</div>
                 <div class="text-subtitle2">Comprehensive analytics and reporting dashboard</div>
               </div>
               <div class="row q-gutter-sm">
                 <q-btn 
                   color="primary" 
                   icon="analytics" 
-                  label="Export Data" 
+                  :label="$t('actions.export')" 
                   outline
                   @click="showExportDialog = true"
                 />
                 <q-btn 
                   color="secondary" 
                   icon="refresh" 
-                  label="Refresh" 
+                  :label="$t('actions.refresh')" 
                   @click="refreshData"
                   :loading="refreshing"
                 />
@@ -40,7 +40,7 @@
     <q-dialog v-model="showExportDialog">
       <q-card class="export-dialog">
         <q-card-section>
-          <div class="text-h6">Export Report Data</div>
+          <div class="text-h6">{{ $t('actions.export') }} {{ $t('pages.reports.title') }}</div>
         </q-card-section>
 
         <q-card-section>
@@ -48,7 +48,7 @@
             <q-select
               v-model="exportType"
               :options="exportOptions"
-              label="Report Type"
+              :label="$t('pages.reports.title')"
               outlined
             />
             
@@ -64,7 +64,7 @@
                 <q-input
                   v-model="exportStartDate"
                   type="date"
-                  label="Start Date"
+                  :label="$t('pages.reports.dateRange')"
                   outlined
                 />
               </div>
@@ -81,10 +81,10 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="Cancel" @click="showExportDialog = false" />
+          <q-btn flat :label="$t('actions.cancel')" @click="showExportDialog = false" />
           <q-btn 
             color="primary" 
-            label="Export" 
+            :label="$t('actions.export')" 
             @click="exportData"
             :loading="exporting"
           />
@@ -97,7 +97,10 @@
 <script setup>
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import AnalyticsDashboard from 'src/components/AnalyticsDashboard.vue'
+
+const { t: $t } = useI18n()
 
 const $q = useQuasar()
 

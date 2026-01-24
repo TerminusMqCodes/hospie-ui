@@ -163,3 +163,5 @@ class AnalyticsService {
 }
 
 export default new AnalyticsService()
+export { AnalyticsService }
+export const analyticsService = new AnalyticsService()

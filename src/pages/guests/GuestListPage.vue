@@ -7,13 +7,13 @@
           <q-card-section>
             <div class="row items-center justify-between">
               <div>
-                <div class="text-h6">Guest Management</div>
+                <div class="text-h6">{{ $t('pages.guests.title') }}</div>
                 <div class="text-subtitle2">Manage guest profiles and preferences</div>
               </div>
               <q-btn 
                 color="primary" 
                 icon="person_add" 
-                label="New Guest" 
+                :label="`${$t('actions.add')} ${$t('pages.guests.title')}`" 
                 @click="showCreateDialog = true"
               />
             </div>
@@ -29,7 +29,7 @@
               <div class="col-12 col-md-4">
                 <q-input
                   v-model="searchQuery"
-                  label="Search guests"
+                  :label="`${$t('actions.search')} ${$t('pages.guests.title')}`"
                   outlined
                   dense
                   clearable
@@ -57,7 +57,7 @@
                 <q-select
                   v-model="statusFilter"
                   :options="statusOptions"
-                  label="Status"
+                  :label="$t('status.status')"
                   outlined
                   dense
                   clearable
@@ -69,7 +69,7 @@
                 <q-btn
                   color="secondary"
                   icon="clear"
-                  label="Clear"
+                  :label="$t('search.clear')"
                   outline
                   @click="clearFilters"
                 />

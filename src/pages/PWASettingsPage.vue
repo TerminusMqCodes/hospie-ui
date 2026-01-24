@@ -5,7 +5,7 @@
         <div class="col-12 col-md-8 col-lg-6">
           <q-card class="q-mb-md">
             <q-card-section>
-              <div class="text-h5 q-mb-md">PWA & Mobile Settings</div>
+              <div class="text-h5 q-mb-md">{{ $t('pages.settings.title') }} & Mobile Settings</div>
               
               <!-- App Status -->
               <div class="app-status q-mb-lg">
@@ -28,7 +28,7 @@
                     <q-item-section side v-if="isInstallable && !isInstalled">
                       <q-btn
                         color="primary"
-                        label="Install"
+                        :label="$t('notifications.install')"
                         @click="installApp"
                         :loading="installing"
                       />
@@ -45,7 +45,7 @@
                     <q-item-section>
                       <q-item-label>Connection Status</q-item-label>
                       <q-item-label caption>
-                        {{ isOnline ? 'Online' : 'Offline' }}
+                        {{ isOnline ? 'Online' : $t('notifications.offline') }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>
@@ -69,7 +69,7 @@
 
               <!-- Push Notifications -->
               <div class="notifications-section q-mb-lg">
-                <div class="text-h6 q-mb-sm">Push Notifications</div>
+                <div class="text-h6 q-mb-sm">{{ $t('notifications.title') }}</div>
                 
                 <q-list>
                   <q-item tag="label" v-ripple>
@@ -81,7 +81,7 @@
                       />
                     </q-item-section>
                     <q-item-section>
-                      <q-item-label>Enable Push Notifications</q-item-label>
+                      <q-item-label>Enable Push {{ $t('notifications.title') }}</q-item-label>
                       <q-item-label caption>
                         Receive notifications for reservations, messages, and alerts
                       </q-item-label>

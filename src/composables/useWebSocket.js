@@ -3,7 +3,7 @@ import { useWebSocketStore } from 'src/stores/websocket'
 
 export function useWebSocket() {
   const webSocketStore = useWebSocketStore()
-  const pusher = inject('pusher')
+  const pusher = inject('pusher', null) // Make it optional
 
   return {
     // Store state

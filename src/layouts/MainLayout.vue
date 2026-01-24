@@ -29,7 +29,7 @@
           dense 
           v-model="search" 
           color="bg-grey-7 shadow-1" 
-          placeholder="Search reservations, guests, rooms..."
+          :placeholder="t('search.placeholder')"
           clearable
         >
           <template v-slot:prepend>
@@ -45,34 +45,34 @@
               icon="tune"
               class="search-options-btn"
             >
-              <q-tooltip>Advanced Search</q-tooltip>
+              <q-tooltip>{{ t('tooltips.advancedSearch') }}</q-tooltip>
               <q-menu anchor="bottom end" self="top end">
                 <div class="q-pa-md advanced-search-menu" style="width: 400px">
                   <div class="text-body2 text-grey q-mb-md">
-                    Advanced Search Options
+                    {{ t('search.advancedOptions') }}
                   </div>
 
                   <div class="row items-center q-mb-md">
                     <div class="col-3 text-subtitle2 text-grey">
-                      Guest Name
+                      {{ t('search.guestName') }}
                     </div>
                     <div class="col-9 q-pl-md">
-                      <q-input dense v-model="exactPhrase" placeholder="Enter guest name" />
+                      <q-input dense v-model="exactPhrase" :placeholder="t('search.guestName')" />
                     </div>
                   </div>
 
                   <div class="row items-center q-mb-md">
                     <div class="col-3 text-subtitle2 text-grey">
-                      Room Number
+                      {{ t('search.roomNumber') }}
                     </div>
                     <div class="col-9 q-pl-md">
-                      <q-input dense v-model="hasWords" placeholder="Enter room number" />
+                      <q-input dense v-model="hasWords" :placeholder="t('search.roomNumber')" />
                     </div>
                   </div>
 
                   <div class="row items-center q-mb-md">
                     <div class="col-3 text-subtitle2 text-grey">
-                      Date Range
+                      {{ t('search.dateRange') }}
                     </div>
                     <div class="col-9 q-pl-md">
                       <q-input dense v-model="byWebsite" type="date" />
@@ -80,8 +80,8 @@
                   </div>
 
                   <div class="col-12 q-pt-lg row justify-end">
-                    <q-btn flat dense no-caps color="grey-7" size="md" style="min-width: 68px;" label="Search" v-close-popup />
-                    <q-btn flat dense no-caps color="grey-7" size="md" style="min-width: 68px;" @click="onClear" label="Clear" v-close-popup />
+                    <q-btn flat dense no-caps color="grey-7" size="md" style="min-width: 68px;" :label="t('actions.search')" v-close-popup />
+                    <q-btn flat dense no-caps color="grey-7" size="md" style="min-width: 68px;" @click="onClear" :label="t('search.clear')" v-close-popup />
                   </div>
                 </div>
               </q-menu>
@@ -98,7 +98,7 @@
           icon="search" 
           @click="showMobileSearch = true"
         >
-          <q-tooltip>Search</q-tooltip>
+          <q-tooltip>{{ t('tooltips.search') }}</q-tooltip>
         </q-btn>
 
         <q-space />
@@ -115,7 +115,7 @@
             @click="installPWA"
             class="install-pwa-btn"
           >
-            <q-tooltip>Install Hospie PMS</q-tooltip>
+            <q-tooltip>{{ t('notifications.install') }}</q-tooltip>
           </q-btn>
 
           <!-- Offline Indicator -->
@@ -129,7 +129,7 @@
             @click="$router.push('/offline')"
             class="offline-indicator"
           >
-            <q-tooltip>You are offline</q-tooltip>
+            <q-tooltip>{{ t('notifications.offline') }}</q-tooltip>
           </q-btn>
 
           <!-- WebSocket Connection Status -->
@@ -145,11 +145,11 @@
             icon="apps"
             class="apps-menu-btn"
           >
-            <q-tooltip>Applications</q-tooltip>
+            <q-tooltip>{{ t('tooltips.applications') }}</q-tooltip>
             <q-menu anchor="bottom end" self="top end" class="apps-menu">
               <div class="q-pa-md" style="width: 320px">
                 <div class="text-body2 text-grey q-mb-md text-center">
-                  Hospie SaaS Services
+                  {{ t('applications.title') }}
                 </div>
                 <div class="row q-gutter-sm">
                   <div class="col-5" v-for="app in applications" :key="app.name">
@@ -178,6 +178,9 @@
             </q-menu>
           </q-btn>
           
+          <!-- Language Selector -->
+          <LanguageSelector class="q-mr-sm" />
+          
           <DarkModeToggle />
           
           <!-- Debug Info (temporary) -->
@@ -190,7 +193,7 @@
             :icon="isElectron ? 'desktop_windows' : 'web'"
             class="debug-electron-btn"
           >
-            <q-tooltip>{{ isElectron ? 'Electron Mode' : 'Browser Mode' }}</q-tooltip>
+            <q-tooltip>{{ isElectron ? t('tooltips.electronMode') : t('tooltips.browserMode') }}</q-tooltip>
           </q-btn>
           
           <!-- Shortcuts Help Button -->
@@ -203,24 +206,24 @@
             @click="showShortcutsHelp = true"
             class="shortcuts-help-btn"
           >
-            <q-tooltip>Keyboard Shortcuts (Ctrl+?)</q-tooltip>
+            <q-tooltip>{{ t('tooltips.keyboardShortcuts') }}</q-tooltip>
           </q-btn>
           
           <q-btn round dense flat color="text-grey-7" icon="notifications" class="notifications-btn">
             <q-badge color="red" text-color="white" floating>
               2
             </q-badge>
-            <q-tooltip>Notifications</q-tooltip>
+            <q-tooltip>{{ t('tooltips.notifications') }}</q-tooltip>
             <q-menu anchor="bottom end" self="top end" class="notifications-menu">
               <div class="q-pa-md" style="width: 300px; max-height: 400px;">
-                <div class="text-h6 q-mb-md">Notifications</div>
+                <div class="text-h6 q-mb-md">{{ t('notifications.title') }}</div>
                 <q-list>
                   <q-item>
                     <q-item-section avatar>
                       <q-icon name="hotel" color="primary" />
                     </q-item-section>
                     <q-item-section>
-                      <q-item-label>New reservation</q-item-label>
+                      <q-item-label>{{ t('notifications.newReservation') }}</q-item-label>
                       <q-item-label caption>John Doe - Room 101</q-item-label>
                     </q-item-section>
                     <q-item-section side>
@@ -232,7 +235,7 @@
                       <q-icon name="cleaning_services" color="warning" />
                     </q-item-section>
                     <q-item-section>
-                      <q-item-label>Room ready</q-item-label>
+                      <q-item-label>{{ t('notifications.roomReady') }}</q-item-label>
                       <q-item-label caption>Room 205 cleaned</q-item-label>
                     </q-item-section>
                     <q-item-section side>
@@ -241,7 +244,7 @@
                   </q-item>
                 </q-list>
                 <div class="text-center q-mt-md">
-                  <q-btn flat color="primary" label="View All" size="sm" />
+                  <q-btn flat color="primary" :label="t('notifications.viewAll')" size="sm" />
                 </div>
               </div>
             </q-menu>
@@ -283,7 +286,7 @@
                     <q-icon name="person" />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>Profile</q-item-label>
+                    <q-item-label>{{ t('navigation.profile') }}</q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-item clickable v-close-popup @click="$router.push('/settings')" class="menu-item">
@@ -291,7 +294,18 @@
                     <q-icon name="settings" />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>Settings</q-item-label>
+                    <q-item-label>{{ t('navigation.settings') }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item class="menu-item">
+                  <q-item-section avatar>
+                    <q-icon name="language" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ t('language.select') }}</q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <LanguageSelector />
                   </q-item-section>
                 </q-item>
                 <q-separator />
@@ -300,7 +314,7 @@
                     <q-icon name="lock" />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>Lock Session</q-item-label>
+                    <q-item-label>{{ t('notifications.lockSession') }}</q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-item clickable v-close-popup @click="handleLogout" class="menu-item">
@@ -308,7 +322,7 @@
                     <q-icon name="logout" />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>Logout</q-item-label>
+                    <q-item-label>{{ t('navigation.logout') }}</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -332,7 +346,7 @@
         <q-list padding :class="isDarkMode ? 'text-white' : 'text-grey-8'">
           <!-- Primary Navigation -->
           <q-item-label header class="text-weight-bold text-primary q-mb-sm">
-            Main Menu
+            {{ t('menu.main') }}
           </q-item-label>
           
           <q-item 
@@ -360,7 +374,7 @@
 
           <!-- Secondary Navigation -->
           <q-item-label header class="text-weight-bold text-secondary q-mb-sm">
-            Management
+            {{ t('menu.management') }}
           </q-item-label>
 
           <q-item 
@@ -389,7 +403,7 @@
 
           <!-- Additional Links -->
           <q-item-label header class="text-weight-bold text-grey-6 q-mb-sm">
-            More
+            {{ t('menu.more') }}
           </q-item-label>
 
           <q-item class="GNL__drawer-item" v-ripple v-for="link in links3" :key="link.text" clickable>
@@ -401,14 +415,14 @@
           <!-- Footer Links -->
           <div class="q-mt-xl q-pa-md">
             <div class="flex flex-center q-gutter-xs">
-              <a class="GNL__drawer-footer-link" href="javascript:void(0)" aria-label="Privacy">Privacy</a>
+              <a class="GNL__drawer-footer-link" href="javascript:void(0)" :aria-label="t('footer.privacy')">{{ t('footer.privacy') }}</a>
               <span> · </span>
-              <a class="GNL__drawer-footer-link" href="javascript:void(0)" aria-label="Terms">Terms</a>
+              <a class="GNL__drawer-footer-link" href="javascript:void(0)" :aria-label="t('footer.terms')">{{ t('footer.terms') }}</a>
               <span> · </span>
-              <a class="GNL__drawer-footer-link" href="javascript:void(0)" aria-label="About">About Hospie</a>
+              <a class="GNL__drawer-footer-link" href="javascript:void(0)" :aria-label="t('footer.about')">{{ t('footer.about') }}</a>
             </div>
             <div class="text-center q-mt-sm text-caption text-grey-5">
-              Version 1.0.0
+              {{ t('footer.version') }}
             </div>
           </div>
         </q-list>
@@ -433,7 +447,7 @@
         <q-card-section class="q-pb-none">
           <q-input
             v-model="search"
-            label="Search"
+            :label="t('mobile.search')"
             outlined
             dense
             autofocus
@@ -458,12 +472,12 @@
         <q-card-actions align="right">
           <q-btn 
             flat 
-            label="Cancel" 
+            :label="t('mobile.cancel')" 
             @click="showMobileSearch = false" 
           />
           <q-btn 
             color="primary" 
-            label="Search" 
+            :label="t('mobile.search')" 
             @click="performMobileSearch"
           />
         </q-card-actions>
@@ -482,11 +496,13 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import { useDarkMode } from '../composables/useDarkMode'
 import { useAuthStore } from '../stores/auth'
 import { useSessionStore } from '../stores/session'
 import { usePWA } from '../composables/usePWA'
 import DarkModeToggle from '../components/DarkModeToggle.vue'
+import LanguageSelector from '../components/LanguageSelector.vue'
 import UnderDevelopmentModal from '../components/UnderDevelopmentModal.vue'
 import ConnectionStatus from '../components/WebSocket/ConnectionStatus.vue'
 import ElectronWindowControls from '../components/ElectronWindowControls.vue'
@@ -498,6 +514,7 @@ export default {
 
   components: {
     DarkModeToggle,
+    LanguageSelector,
     UnderDevelopmentModal,
     ConnectionStatus,
     ElectronWindowControls,
@@ -508,6 +525,7 @@ export default {
   setup () {
     const router = useRouter()
     const $q = useQuasar()
+    const { t } = useI18n()
     const authStore = useAuthStore()
     const sessionStore = useSessionStore()
     
@@ -615,7 +633,7 @@ export default {
         
         $q.notify({
           type: 'positive',
-          message: 'Successfully logged out',
+          message: t('notifications.logoutSuccess'),
           position: 'top'
         })
         
@@ -623,7 +641,7 @@ export default {
       } catch {
         $q.notify({
           type: 'negative',
-          message: 'Logout failed',
+          message: t('notifications.logoutFailed'),
           position: 'top'
         })
       }
@@ -635,13 +653,13 @@ export default {
         
         $q.notify({
           type: 'info',
-          message: 'Session locked',
+          message: t('notifications.sessionLocked'),
           position: 'top'
         })
       } catch {
         $q.notify({
           type: 'negative',
-          message: 'Failed to lock session',
+          message: t('notifications.sessionLockFailed'),
           position: 'top'
         })
       }
@@ -690,45 +708,48 @@ export default {
 
     // Define navigation links as computed properties for reactivity
     const links1 = computed(() => [
-      { icon: 'dashboard', text: 'Dashboard', route: '/dashboard' },
-      { icon: 'hotel', text: 'Reservations', route: '/reservations', permission: 'reservations.view' },
-      { icon: 'calendar_month', text: 'Calendar', route: '/reservations/calendar', permission: 'reservations.view' },
-      { icon: 'meeting_room', text: 'Rooms', route: '/rooms', permission: 'rooms.view' },
-      { icon: 'cleaning_services', text: 'Housekeeping', route: '/housekeeping', roles: ['admin', 'manager', 'housekeeping'] },
-      { icon: 'people', text: 'Guests', route: '/guests', permission: 'guests.view' },
-      { icon: 'spa', text: 'Spa Management', route: '/spa', permission: 'spa.view' },
-      { icon: 'event', text: 'Events', route: '/events', permission: 'events.view' },
+      { icon: 'dashboard', text: t('navigation.dashboard'), route: '/dashboard' },
+      { icon: 'hotel', text: t('navigation.reservations'), route: '/reservations', permission: 'reservations.view' },
+      { icon: 'calendar_month', text: t('navigation.calendar'), route: '/reservations/calendar', permission: 'reservations.view' },
+      { icon: 'meeting_room', text: t('navigation.rooms'), route: '/rooms', permission: 'rooms.view' },
+      { icon: 'cleaning_services', text: t('navigation.housekeeping'), route: '/housekeeping', roles: ['admin', 'manager', 'housekeeping'] },
+      { icon: 'people', text: t('navigation.guests'), route: '/guests', permission: 'guests.view' },
+      { icon: 'spa', text: t('navigation.spa'), route: '/spa', permission: 'spa.view' },
+      { icon: 'event', text: t('navigation.events'), route: '/events', permission: 'events.view' },
       ...(isElectron.value ? [
-        { icon: 'desktop_windows', text: 'Electron Test', route: '/electron-test', electronOnly: true }
+        { icon: 'desktop_windows', text: t('navigation.electronTest'), route: '/electron-test', electronOnly: true }
       ] : [])
     ])
 
     const links2 = computed(() => [
-      { icon: 'account_balance_wallet', text: 'Finance', route: '/finance', permission: 'finance.view' },
-      { icon: 'receipt', text: 'Invoices', route: '/finance/invoices', permission: 'invoices.view' },
-      { icon: 'payment', text: 'Payments', route: '/finance/payments', permission: 'payments.view' },
-      { icon: 'point_of_sale', text: 'POS', route: '/pos', permission: 'pos.view' },
-      { icon: 'analytics', text: 'Reports', route: '/reports', permission: 'reports.view' },
-      { icon: 'insights', text: 'Analytics', route: '/analytics', permission: 'analytics.view' },
-      { icon: 'eco', text: 'Sustainability', route: '/sustainability', permission: 'sustainability.view' },
-      { icon: 'attach_money', text: 'Rate Management', route: '/rates', permission: 'rates.view' },
-      { icon: 'hub', text: 'Channel Manager', route: '/channel-manager', permission: 'channel_manager.view' },
-      { icon: 'list_alt', text: 'Waitlist', route: '/waitlist', permission: 'waitlist.view' },
-      { icon: 'shield', text: 'GDPR', route: '/gdpr', roles: ['admin', 'super-admin'] },
-      { icon: 'admin_panel_settings', text: 'Admin', route: '/admin', roles: ['admin', 'super-admin'] },
+      { icon: 'account_balance_wallet', text: t('navigation.finance'), route: '/finance', permission: 'finance.view' },
+      { icon: 'receipt', text: t('navigation.invoices'), route: '/finance/invoices', permission: 'invoices.view' },
+      { icon: 'payment', text: t('navigation.payments'), route: '/finance/payments', permission: 'payments.view' },
+      { icon: 'point_of_sale', text: t('navigation.pos'), route: '/pos', permission: 'pos.view' },
+      { icon: 'analytics', text: t('navigation.reports'), route: '/reports', permission: 'reports.view' },
+      { icon: 'insights', text: t('navigation.analytics'), route: '/analytics', permission: 'analytics.view' },
+      { icon: 'eco', text: t('navigation.sustainability'), route: '/sustainability', permission: 'sustainability.view' },
+      { icon: 'attach_money', text: t('navigation.rates'), route: '/rates', permission: 'rates.view' },
+      { icon: 'hub', text: t('navigation.channelManager'), route: '/channel-manager', permission: 'channel_manager.view' },
+      { icon: 'list_alt', text: t('navigation.waitlist'), route: '/waitlist', permission: 'waitlist.view' },
+      { icon: 'shield', text: t('navigation.gdpr'), route: '/gdpr', roles: ['admin', 'super-admin'] },
+      { icon: 'admin_panel_settings', text: t('navigation.admin'), route: '/admin', roles: ['admin', 'super-admin'] },
       // Development/Testing links
       ...(isDev.value ? [
-        { icon: 'desktop_windows', text: 'Electron Test', route: '/electron-test', devOnly: true },
-        { icon: 'keyboard', text: 'Shortcuts Test', route: '/shortcuts-test', devOnly: true }
+        { icon: 'desktop_windows', text: t('navigation.electronTest'), route: '/electron-test', devOnly: true },
+        { icon: 'keyboard', text: t('navigation.shortcutsTest'), route: '/shortcuts-test', devOnly: true }
       ] : []),
       // Electron-specific links (when in Electron mode)
       ...(isElectron.value ? [
-        { icon: 'bolt', text: 'Electron Features', route: '/electron-test', electronOnly: true }
+        { icon: 'bolt', text: t('navigation.electronFeatures'), route: '/electron-test', electronOnly: true }
       ] : []),
-      { icon: 'settings', text: 'Settings', route: '/pwa-settings' }
+      { icon: 'settings', text: t('navigation.settings'), route: '/pwa-settings' }
     ])
 
     return {
+      // i18n
+      t,
+      
       authStore,
       leftDrawerOpen,
       search,
@@ -762,25 +783,25 @@ export default {
 
       applications: [
         { 
-          name: 'HospiePAY', 
+          name: t('applications.hospiePay'), 
           icon: 'payment', 
           color: 'primary',
           route: '/hospiepay'
         },
         { 
-          name: 'ChannelManager', 
+          name: t('applications.channelManager'), 
           icon: 'hub', 
           color: 'secondary',
           route: '/channel-manager'
         },
         { 
-          name: 'Előfizetés', 
+          name: t('applications.subscription'), 
           icon: 'subscriptions', 
           color: 'info',
           route: '/subscription'
         },
         { 
-          name: 'Beállítások', 
+          name: t('applications.settings'), 
           icon: 'settings', 
           color: 'warning',
           route: '/settings'
@@ -812,14 +833,14 @@ export default {
         { icon: 'admin_panel_settings', text: 'Admin', route: '/admin', roles: ['admin', 'super-admin'] },
         { icon: 'settings', text: 'Settings', route: '/pwa-settings' }
       ],
-      links3: [
-        { icon: '', text: 'Language & region' },
-        { icon: '', text: 'Settings' },
-        { icon: 'open_in_new', text: 'Get the Android app' },
-        { icon: 'open_in_new', text: 'Get the iOS app' },
-        { icon: '', text: 'Send feedback' },
-        { icon: 'open_in_new', text: 'Help' }
-      ],
+      links3: computed(() => [
+        { icon: '', text: t('links.languageRegion') },
+        { icon: '', text: t('navigation.settings') },
+        { icon: 'open_in_new', text: t('links.getAndroidApp') },
+        { icon: 'open_in_new', text: t('links.getIosApp') },
+        { icon: '', text: t('links.sendFeedback') },
+        { icon: 'open_in_new', text: t('links.help') }
+      ]),
 
       onClear,
       changeDate,

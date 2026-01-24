@@ -7,7 +7,7 @@
           <q-card-section>
             <div class="row items-center justify-between header-row">
               <div class="header-info">
-                <div class="text-h6">Room Status Dashboard</div>
+                <div class="text-h6">{{ $t('pages.dashboard.roomStatusOverview') }}</div>
                 <div class="text-subtitle2">Real-time room status management</div>
               </div>
               <div class="row q-gutter-sm header-actions">
@@ -15,13 +15,13 @@
                 <q-btn 
                   color="primary" 
                   icon="refresh" 
-                  :label="$q.screen.gt.xs ? 'Refresh' : ''"
+                  :label="$q.screen.gt.xs ? $t('actions.refresh') : ''"
                   @click="refreshRoomStatus"
                 />
                 <q-btn 
                   color="secondary" 
                   icon="settings" 
-                  :label="$q.screen.gt.xs ? 'Settings' : ''"
+                  :label="$q.screen.gt.xs ? $t('navigation.settings') : ''"
                   outline
                 />
               </div>
@@ -34,7 +34,7 @@
       <div class="col-12">
         <q-card>
           <q-card-section>
-            <div class="text-h6 q-mb-md">Room Status Summary</div>
+            <div class="text-h6 q-mb-md">{{ $t('pages.dashboard.roomStatusOverview') }}</div>
             <div class="row q-gutter-md status-summary">
               <div class="col-6 col-sm-4 col-md-2">
                 <div class="text-center status-item">
@@ -48,7 +48,7 @@
                   >
                     <div class="text-h6 status-number">{{ roomStats.available }}</div>
                   </q-circular-progress>
-                  <div class="text-subtitle2 status-label">Available</div>
+                  <div class="text-subtitle2 status-label">{{ $t('pages.dashboard.available') }}</div>
                 </div>
               </div>
               
@@ -64,7 +64,7 @@
                   >
                     <div class="text-h6 status-number">{{ roomStats.occupied }}</div>
                   </q-circular-progress>
-                  <div class="text-subtitle2 status-label">Occupied</div>
+                  <div class="text-subtitle2 status-label">{{ $t('pages.dashboard.occupied') }}</div>
                 </div>
               </div>
               
@@ -80,7 +80,7 @@
                   >
                     <div class="text-h6 status-number">{{ roomStats.cleaning }}</div>
                   </q-circular-progress>
-                  <div class="text-subtitle2 status-label">Cleaning</div>
+                  <div class="text-subtitle2 status-label">{{ $t('pages.dashboard.cleaning') }}</div>
                 </div>
               </div>
               
@@ -96,7 +96,7 @@
                   >
                     <div class="text-h6 status-number">{{ roomStats.maintenance }}</div>
                   </q-circular-progress>
-                  <div class="text-subtitle2 status-label">Maintenance</div>
+                  <div class="text-subtitle2 status-label">{{ $t('pages.dashboard.maintenance') }}</div>
                 </div>
               </div>
               
@@ -119,7 +119,7 @@
               <div class="col-6 col-sm-4 col-md-2">
                 <div class="text-center status-item">
                   <div class="text-h4 q-ma-md occupancy-rate">{{ occupancyRate }}%</div>
-                  <div class="text-subtitle2 status-label">Occupancy Rate</div>
+                  <div class="text-subtitle2 status-label">{{ $t('pages.dashboard.occupancy') }}</div>
                 </div>
               </div>
             </div>

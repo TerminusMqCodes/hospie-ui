@@ -8,10 +8,10 @@
             <div class="row items-center justify-between">
               <div class="col">
                 <div class="text-h4 text-weight-light welcome-title">
-                  Welcome back, {{ authStore.userName }}! 👋
+                  {{ $t('pages.dashboard.welcome', { name: authStore.userName }) }}
                 </div>
                 <div class="text-subtitle1 q-mt-sm welcome-subtitle">
-                  Here's what's happening with your property today
+                  {{ $t('pages.dashboard.welcomeSubtitle') }}
                 </div>
               </div>
               <div class="col-auto">
@@ -34,7 +34,7 @@
               <q-card-section>
                 <div class="row items-center no-wrap">
                   <div class="col">
-                    <div class="text-h6 stat-title">Today's Arrivals</div>
+                    <div class="text-h6 stat-title">{{ $t('pages.dashboard.todaysArrivals') }}</div>
                     <div class="text-h4 text-primary stat-value">{{ dashboardStats.arrivals }}</div>
                   </div>
                   <div class="col-auto">
@@ -50,7 +50,7 @@
               <q-card-section>
                 <div class="row items-center no-wrap">
                   <div class="col">
-                    <div class="text-h6 stat-title">Departures</div>
+                    <div class="text-h6 stat-title">{{ $t('pages.dashboard.departures') }}</div>
                     <div class="text-h4 text-secondary stat-value">{{ dashboardStats.departures }}</div>
                   </div>
                   <div class="col-auto">
@@ -66,7 +66,7 @@
               <q-card-section>
                 <div class="row items-center no-wrap">
                   <div class="col">
-                    <div class="text-h6 stat-title">Occupancy</div>
+                    <div class="text-h6 stat-title">{{ $t('pages.dashboard.occupancy') }}</div>
                     <div class="text-h4 text-positive stat-value">{{ dashboardStats.occupancy }}%</div>
                   </div>
                   <div class="col-auto">
@@ -82,7 +82,7 @@
               <q-card-section>
                 <div class="row items-center no-wrap">
                   <div class="col">
-                    <div class="text-h6 stat-title">Revenue</div>
+                    <div class="text-h6 stat-title">{{ $t('pages.dashboard.revenue') }}</div>
                     <div class="text-h4 text-accent stat-value">${{ formatNumber(dashboardStats.revenue) }}</div>
                   </div>
                   <div class="col-auto">
@@ -104,13 +104,13 @@
       <div class="col-12 col-lg-6">
         <q-card class="full-height">
           <q-card-section>
-            <div class="text-h6 q-mb-md">Quick Actions</div>
+            <div class="text-h6 q-mb-md">{{ $t('pages.dashboard.quickActions') }}</div>
             <div class="row q-col-gutter-sm quick-actions">
               <div class="col-6 col-sm-3 col-lg-6">
                 <q-btn 
                   color="primary" 
                   icon="add" 
-                  label="New Reservation" 
+                  :label="$t('pages.dashboard.newReservation')" 
                   class="full-width"
                   @click="$router.push('/reservations/create')"
                 />
@@ -119,7 +119,7 @@
                 <q-btn 
                   color="secondary" 
                   icon="hotel" 
-                  label="Room Status" 
+                  :label="$t('pages.dashboard.roomStatus')" 
                   outline
                   class="full-width"
                   @click="$router.push('/rooms/status')"
@@ -129,7 +129,7 @@
                 <q-btn 
                   color="accent" 
                   icon="person_add" 
-                  label="Check In" 
+                  :label="$t('pages.dashboard.checkIn')" 
                   outline
                   class="full-width"
                   @click="showCheckInDialog = true"
@@ -139,7 +139,7 @@
                 <q-btn 
                   color="info" 
                   icon="logout" 
-                  label="Check Out" 
+                  :label="$t('pages.dashboard.checkOut')" 
                   outline
                   class="full-width"
                   @click="showCheckOutDialog = true"
@@ -154,7 +154,7 @@
       <div class="col-12 col-lg-6">
         <q-card class="full-height">
           <q-card-section>
-            <div class="text-h6 q-mb-md">Recent Activity</div>
+            <div class="text-h6 q-mb-md">{{ $t('pages.dashboard.recentActivity') }}</div>
             <q-list>
               <q-item v-for="activity in recentActivities" :key="activity.id" class="activity-item">
                 <q-item-section avatar>
@@ -300,7 +300,7 @@
           <q-btn flat label="Cancel" @click="showCheckInDialog = false" />
           <q-btn 
             color="primary" 
-            label="Check In" 
+            :label="$t('pages.dashboard.checkIn')" 
             @click="quickCheckIn"
             :disable="!selectedReservation"
           />
@@ -335,7 +335,7 @@
           <q-btn flat label="Cancel" @click="showCheckOutDialog = false" />
           <q-btn 
             color="secondary" 
-            label="Check Out" 
+            :label="$t('pages.dashboard.checkOut')" 
             @click="quickCheckOut"
             :disable="!selectedCheckOut"
           />
@@ -348,6 +348,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from 'src/stores/auth'
+import { useI18n } from 'vue-i18n'
 import AutomatedInvoicingDashboard from 'src/components/AutomatedInvoicingDashboard.vue'
 import ConnectionStatus from 'src/components/WebSocket/ConnectionStatus.vue'
 import RealtimeUpdates from 'src/components/WebSocket/RealtimeUpdates.vue'
@@ -355,6 +356,7 @@ import analyticsService from 'src/services/analyticsService'
 import { useRoomUpdates, useReservationUpdates } from 'src/composables/useWebSocket'
 
 const authStore = useAuthStore()
+const { t: $t } = useI18n()
 
 // Reactive data
 const showCheckInDialog = ref(false)
