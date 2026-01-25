@@ -31,6 +31,7 @@ export default {
     channelManager: 'Csatornamanager',
     waitlist: 'Várólisták',
     gdpr: 'GDPR',
+    branding: 'Márkaépítés',
     electronTest: 'Electron teszt',
     shortcutsTest: 'Billentyűparancsok teszt',
     electronFeatures: 'Electron funkciók'

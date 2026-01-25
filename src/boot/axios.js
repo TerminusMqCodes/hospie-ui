@@ -40,6 +40,12 @@ api.interceptors.request.use(
       }
     }
     
+    // Add tenant ID header for multi-tenant requests
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    if (user.current_property_id) {
+      config.headers['X-Tenant-ID'] = user.current_property_id
+    }
+    
     return config
   },
   (error) => {

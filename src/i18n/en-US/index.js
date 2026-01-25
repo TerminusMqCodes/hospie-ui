@@ -31,6 +31,7 @@ export default {
     channelManager: 'Channel Manager',
     waitlist: 'Waitlist',
     gdpr: 'GDPR',
+    branding: 'Branding',
     electronTest: 'Electron Test',
     shortcutsTest: 'Shortcuts Test',
     electronFeatures: 'Electron Features'

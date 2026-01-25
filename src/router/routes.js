@@ -256,6 +256,14 @@ const routes = [
           requiresAuth: true,
           roles: ['admin', 'super-admin']
         }
+      },
+      { 
+        path: 'branding', 
+        component: () => import('pages/admin/BrandingPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          roles: ['admin', 'super-admin']
+        }
       }
     ],
   },
