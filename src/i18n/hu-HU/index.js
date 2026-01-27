@@ -31,6 +31,7 @@ export default {
     channelManager: 'Csatornamanager',
     waitlist: 'Várólisták',
     gdpr: 'GDPR',
+    backup: 'Biztonsági mentés',
     branding: 'Márkaépítés',
     electronTest: 'Electron teszt',
     shortcutsTest: 'Billentyűparancsok teszt',
@@ -523,6 +524,176 @@ export default {
       consent: 'Hozzájárulás',
       dataRequests: 'Adatkérések',
       compliance: 'Megfelelőség'
+    }
+  },
+
+  // Közös
+  common: {
+    actions: 'Műveletek',
+    cancel: 'Mégse',
+    create: 'Létrehozás',
+    update: 'Frissítés',
+    delete: 'Törlés',
+    edit: 'Szerkesztés',
+    save: 'Mentés',
+    close: 'Bezárás',
+    loading: 'Betöltés...',
+    noData: 'Nincs adat',
+    error: 'Hiba',
+    success: 'Sikeres',
+    warning: 'Figyelmeztetés',
+    info: 'Információ'
+  },
+
+  // Validáció
+  validation: {
+    required: 'Ez a mező kötelező'
+  },
+
+  // Biztonsági mentés kezelés
+  backup: {
+    title: 'Biztonsági mentés kezelés',
+    subtitle: 'Adatok biztonsági mentésének és helyreállításának kezelése',
+    createBackup: 'Mentés létrehozása',
+    schedules: 'Ütemezések',
+    backupHistory: 'Mentési előzmények',
+    
+    // Statisztikák
+    totalBackups: 'Összes mentés',
+    completedBackups: 'Befejezett',
+    failedBackups: 'Sikertelen',
+    totalSize: 'Összes méret',
+    
+    // Típusok
+    type: 'Típus',
+    backupType: 'Mentés típusa',
+    types: {
+      full: 'Teljes mentés',
+      incremental: 'Növekményes',
+      export: 'Adatexport'
+    },
+    typeDescriptions: {
+      full: 'Az összes bérlői adat teljes mentése',
+      incremental: 'Az utolsó mentés óta történt változások mentése',
+      export: 'Specifikus adatok exportálása elemzéshez'
+    },
+    
+    // Állapot
+    status: {
+      pending: 'Függőben',
+      in_progress: 'Folyamatban',
+      completed: 'Befejezve',
+      failed: 'Sikertelen'
+    },
+    
+    // Műveletek
+    create: 'Létrehozás',
+    download: 'Letöltés',
+    restore: 'Helyreállítás',
+    validate: 'Ellenőrzés',
+    filterByType: 'Szűrés típus szerint',
+    filterByStatus: 'Szűrés állapot szerint',
+    
+    // Tulajdonságok
+    fileSize: 'Fájlméret',
+    createdAt: 'Létrehozva',
+    
+    // Mentés létrehozása párbeszéd
+    exportOptions: 'Export beállítások',
+    dateFrom: 'Kezdő dátum',
+    dateTo: 'Záró dátum',
+    tablesToExport: 'Exportálandó táblák',
+    tablesHint: 'Hagyja üresen az összes tábla exportálásához',
+    incrementalOptions: 'Növekményes beállítások',
+    sinceDate: 'Ettől a dátumtól',
+    sinceHint: 'Hagyja üresen az utolsó mentés dátumának használatához',
+    
+    // Táblák
+    tables: {
+      rooms: 'Szobák',
+      room_types: 'Szoba típusok',
+      reservations: 'Foglalások',
+      guests: 'Vendégek',
+      payments: 'Fizetések',
+      invoices: 'Számlák',
+      events: 'Események',
+      spa_appointments: 'Wellness időpontok',
+      pos_transactions: 'Pénztár tranzakciók',
+      communication_history: 'Kommunikációs előzmények'
+    },
+    
+    // Ütemezés kezelés
+    scheduleManagement: 'Ütemezés kezelés',
+    addSchedule: 'Ütemezés hozzáadása',
+    editSchedule: 'Ütemezés szerkesztése',
+    frequency: 'Gyakoriság',
+    time: 'Idő',
+    isActive: 'Aktív',
+    nextRun: 'Következő futtatás',
+    lastRun: 'Utolsó futtatás',
+    notScheduled: 'Nincs ütemezve',
+    neverRun: 'Soha nem futott',
+    noSchedules: 'Nincsenek konfigurált ütemezések',
+    
+    frequencies: {
+      daily: 'Napi',
+      weekly: 'Heti',
+      monthly: 'Havi'
+    },
+    
+    // Helyreállítás párbeszéd
+    restoreBackup: 'Mentés helyreállítása',
+    backupInformation: 'Mentés információk',
+    restoreWarning: 'Figyelem!',
+    restoreWarningMessage: 'Ez a művelet az összes jelenlegi adatot lecseréli a mentés adataira. Ez nem vonható vissza.',
+    usePointInTime: 'Időpontos helyreállítás használata',
+    pointInTime: 'Időpont',
+    pointInTimeHint: 'Adatok helyreállítása az adott időpontban érvényes állapotban',
+    confirmRestore: 'Megértem, hogy ez lecseréli az összes jelenlegi adatot',
+    mustConfirm: 'Meg kell erősítenie a folytatáshoz',
+    invalidPointInTime: 'Az időpont nem lehet a mentés létrehozási dátuma után',
+    
+    // Üzenetek
+    createSuccess: 'Mentés létrehozása elkezdődött',
+    createSuccessCaption: 'A mentés a háttérben lesz feldolgozva',
+    downloadStarted: 'Letöltés elkezdődött',
+    deleteSuccess: 'Mentés sikeresen törölve',
+    restoreSuccess: 'Helyreállítás sikeresen befejezve',
+    restoreSuccessCaption: 'Az adatok helyreállítva lettek a mentésből',
+    validationSuccess: 'Mentés ellenőrzése sikeres',
+    validationFailed: 'Mentés ellenőrzése sikertelen',
+    scheduleCreated: 'Ütemezés sikeresen létrehozva',
+    scheduleUpdated: 'Ütemezés sikeresen frissítve',
+    scheduleDeleted: 'Ütemezés sikeresen törölve',
+    scheduleActivated: 'Ütemezés aktiválva',
+    scheduleDeactivated: 'Ütemezés deaktiválva',
+    
+    // Megerősítések
+    confirmDelete: 'Törlés megerősítése',
+    confirmDeleteMessage: 'Biztosan törölni szeretné ezt a {type} mentést?',
+    confirmDeleteSchedule: 'Ütemezés törlésének megerősítése',
+    confirmDeleteScheduleMessage: 'Biztosan törölni szeretné ezt a {type} {frequency} mentési ütemezést?',
+    
+    // Ellenőrzési hibák
+    validationErrors: {
+      file_exists: 'Fájl nem található',
+      size_match: 'Fájlméret eltérés',
+      checksum_valid: 'Ellenőrző összeg érvényesítése sikertelen',
+      readable: 'A fájl nem olvasható'
+    },
+    
+    // Hibák
+    errors: {
+      loadFailed: 'Mentések betöltése sikertelen',
+      createFailed: 'Mentés létrehozása sikertelen',
+      downloadFailed: 'Mentés letöltése sikertelen',
+      deleteFailed: 'Mentés törlése sikertelen',
+      restoreFailed: 'Mentés helyreállítása sikertelen',
+      validationFailed: 'Mentés ellenőrzése sikertelen',
+      loadSchedulesFailed: 'Ütemezések betöltése sikertelen',
+      saveScheduleFailed: 'Ütemezés mentése sikertelen',
+      deleteScheduleFailed: 'Ütemezés törlése sikertelen',
+      toggleScheduleFailed: 'Ütemezés kapcsolása sikertelen'
     }
   }
 }

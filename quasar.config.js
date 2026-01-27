@@ -167,7 +167,13 @@ export default defineConfig((ctx) => {
           target: 'http://localhost:80', // Laravel development server via Docker
           changeOrigin: true,
           secure: false,
-          logLevel: 'debug' // Add logging to debug proxy issues
+          logLevel: 'debug', // Add logging to debug proxy issues
+          onProxyReq: function(proxyReq, req, res) {
+            console.log('Proxying request:', req.method, req.url, '-> http://localhost:80' + req.url);
+          },
+          onError: function(err, req, res) {
+            console.error('Proxy error:', err);
+          }
         }
       }
     },

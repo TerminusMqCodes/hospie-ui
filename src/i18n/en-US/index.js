@@ -31,6 +31,7 @@ export default {
     channelManager: 'Channel Manager',
     waitlist: 'Waitlist',
     gdpr: 'GDPR',
+    backup: 'Backup',
     branding: 'Branding',
     electronTest: 'Electron Test',
     shortcutsTest: 'Shortcuts Test',
@@ -523,6 +524,176 @@ export default {
       consent: 'Consent',
       dataRequests: 'Data Requests',
       compliance: 'Compliance'
+    }
+  },
+
+  // Common
+  common: {
+    actions: 'Actions',
+    cancel: 'Cancel',
+    create: 'Create',
+    update: 'Update',
+    delete: 'Delete',
+    edit: 'Edit',
+    save: 'Save',
+    close: 'Close',
+    loading: 'Loading...',
+    noData: 'No data available',
+    error: 'Error',
+    success: 'Success',
+    warning: 'Warning',
+    info: 'Information'
+  },
+
+  // Validation
+  validation: {
+    required: 'This field is required'
+  },
+
+  // Backup Management
+  backup: {
+    title: 'Backup Management',
+    subtitle: 'Manage your data backups and recovery options',
+    createBackup: 'Create Backup',
+    schedules: 'Schedules',
+    backupHistory: 'Backup History',
+    
+    // Statistics
+    totalBackups: 'Total Backups',
+    completedBackups: 'Completed',
+    failedBackups: 'Failed',
+    totalSize: 'Total Size',
+    
+    // Types
+    type: 'Type',
+    backupType: 'Backup Type',
+    types: {
+      full: 'Full Backup',
+      incremental: 'Incremental',
+      export: 'Data Export'
+    },
+    typeDescriptions: {
+      full: 'Complete backup of all tenant data',
+      incremental: 'Backup of changes since last backup',
+      export: 'Export specific data for analysis'
+    },
+    
+    // Status
+    status: {
+      pending: 'Pending',
+      in_progress: 'In Progress',
+      completed: 'Completed',
+      failed: 'Failed'
+    },
+    
+    // Actions
+    create: 'Create',
+    download: 'Download',
+    restore: 'Restore',
+    validate: 'Validate',
+    filterByType: 'Filter by Type',
+    filterByStatus: 'Filter by Status',
+    
+    // Properties
+    fileSize: 'File Size',
+    createdAt: 'Created At',
+    
+    // Create Backup Dialog
+    exportOptions: 'Export Options',
+    dateFrom: 'From Date',
+    dateTo: 'To Date',
+    tablesToExport: 'Tables to Export',
+    tablesHint: 'Leave empty to export all tables',
+    incrementalOptions: 'Incremental Options',
+    sinceDate: 'Since Date',
+    sinceHint: 'Leave empty to use last backup date',
+    
+    // Tables
+    tables: {
+      rooms: 'Rooms',
+      room_types: 'Room Types',
+      reservations: 'Reservations',
+      guests: 'Guests',
+      payments: 'Payments',
+      invoices: 'Invoices',
+      events: 'Events',
+      spa_appointments: 'Spa Appointments',
+      pos_transactions: 'POS Transactions',
+      communication_history: 'Communication History'
+    },
+    
+    // Schedule Management
+    scheduleManagement: 'Schedule Management',
+    addSchedule: 'Add Schedule',
+    editSchedule: 'Edit Schedule',
+    frequency: 'Frequency',
+    time: 'Time',
+    isActive: 'Active',
+    nextRun: 'Next Run',
+    lastRun: 'Last Run',
+    notScheduled: 'Not Scheduled',
+    neverRun: 'Never Run',
+    noSchedules: 'No schedules configured',
+    
+    frequencies: {
+      daily: 'Daily',
+      weekly: 'Weekly',
+      monthly: 'Monthly'
+    },
+    
+    // Restore Dialog
+    restoreBackup: 'Restore Backup',
+    backupInformation: 'Backup Information',
+    restoreWarning: 'Warning!',
+    restoreWarningMessage: 'This action will replace all current data with the backup data. This cannot be undone.',
+    usePointInTime: 'Use Point-in-Time Recovery',
+    pointInTime: 'Point in Time',
+    pointInTimeHint: 'Restore data as it was at this specific time',
+    confirmRestore: 'I understand that this will replace all current data',
+    mustConfirm: 'You must confirm to proceed',
+    invalidPointInTime: 'Point in time cannot be after backup creation date',
+    
+    // Messages
+    createSuccess: 'Backup creation started',
+    createSuccessCaption: 'The backup will be processed in the background',
+    downloadStarted: 'Download started',
+    deleteSuccess: 'Backup deleted successfully',
+    restoreSuccess: 'Restore completed successfully',
+    restoreSuccessCaption: 'Your data has been restored from the backup',
+    validationSuccess: 'Backup validation passed',
+    validationFailed: 'Backup validation failed',
+    scheduleCreated: 'Schedule created successfully',
+    scheduleUpdated: 'Schedule updated successfully',
+    scheduleDeleted: 'Schedule deleted successfully',
+    scheduleActivated: 'Schedule activated',
+    scheduleDeactivated: 'Schedule deactivated',
+    
+    // Confirmations
+    confirmDelete: 'Confirm Delete',
+    confirmDeleteMessage: 'Are you sure you want to delete this {type} backup?',
+    confirmDeleteSchedule: 'Confirm Delete Schedule',
+    confirmDeleteScheduleMessage: 'Are you sure you want to delete this {type} {frequency} backup schedule?',
+    
+    // Validation Errors
+    validationErrors: {
+      file_exists: 'File not found',
+      size_match: 'File size mismatch',
+      checksum_valid: 'Checksum validation failed',
+      readable: 'File is not readable'
+    },
+    
+    // Errors
+    errors: {
+      loadFailed: 'Failed to load backups',
+      createFailed: 'Failed to create backup',
+      downloadFailed: 'Failed to download backup',
+      deleteFailed: 'Failed to delete backup',
+      restoreFailed: 'Failed to restore backup',
+      validationFailed: 'Failed to validate backup',
+      loadSchedulesFailed: 'Failed to load schedules',
+      saveScheduleFailed: 'Failed to save schedule',
+      deleteScheduleFailed: 'Failed to delete schedule',
+      toggleScheduleFailed: 'Failed to toggle schedule'
     }
   }
 }

@@ -601,6 +601,86 @@ const routes = [
     ],
   },
 
+  // Backup Management routes
+  {
+    path: '/backup',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { 
+      requiresAuth: true,
+      roles: ['admin', 'super-admin']
+    },
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/backup/BackupManagementPage.vue'),
+        meta: { 
+          requiresAuth: true,
+          roles: ['admin', 'super-admin']
+        }
+      }
+    ],
+  },
+
+  // Backup Test route (no auth required)
+  {
+    path: '/backup-test',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/backup/BackupTestPage.vue')
+      }
+    ],
+  },
+
+  // Backup Debug route (no auth required)
+  {
+    path: '/backup-debug',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/backup/BackupDebugPage.vue')
+      }
+    ],
+  },
+
+  // Backup System Test route (no auth required)
+  {
+    path: '/backup-system-test',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/backup/BackupSystemTest.vue')
+      }
+    ],
+  },
+
+  // Backup Function Test route (no auth required)
+  {
+    path: '/backup-function-test',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/backup/BackupFunctionTest.vue')
+      }
+    ],
+  },
+
+  // Backup Auth Test route (no auth required)
+  {
+    path: '/backup-auth-test',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/backup/BackupAuthTest.vue')
+      }
+    ],
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {

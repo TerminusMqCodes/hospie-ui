@@ -733,6 +733,7 @@ export default {
       { icon: 'hub', text: t('navigation.channelManager'), route: '/channel-manager', permission: 'channel_manager.view' },
       { icon: 'list_alt', text: t('navigation.waitlist'), route: '/waitlist', permission: 'waitlist.view' },
       { icon: 'shield', text: t('navigation.gdpr'), route: '/gdpr', roles: ['admin', 'super-admin'] },
+      { icon: 'backup', text: t('navigation.backup'), route: '/backup', roles: ['admin', 'super-admin'] },
       { icon: 'palette', text: t('navigation.branding'), route: '/admin/branding', roles: ['admin', 'super-admin'] },
       { icon: 'admin_panel_settings', text: t('navigation.admin'), route: '/admin', roles: ['admin', 'super-admin'] },
       // Development/Testing links
