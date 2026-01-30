@@ -177,30 +177,31 @@
   </q-dialog>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+<script setup>
+import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
-import { backupService, BackupSchedule } from 'src/services/backupService'
+import { backupService } from 'src/services/backupService'
 import { formatDate } from 'src/utils/formatters'
 
-const props = defineProps<{
-  modelValue: boolean
-}>()
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true
+  }
+})
 
-const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-  'updated': []
-}>()
+const emit = defineEmits(['update:modelValue', 'updated'])
+
 const { t } = useI18n()
 const $q = useQuasar()
 
 const loading = ref(false)
 const saving = ref(false)
-const schedules = ref<BackupSchedule[]>([])
+const schedules = ref([])
 const showCreateForm = ref(false)
-const editingSchedule = ref<BackupSchedule | null>(null)
-const togglingIds = ref<number[]>([])
+const editingSchedule = ref(null)
+const togglingIds = ref([])
 
 const showDialog = computed({
   get: () => props.modelValue,
@@ -271,7 +272,7 @@ const frequencyOptions = computed(() => [
   { label: t('backup.frequencies.monthly'), value: 'monthly' }
 ])
 
-const getTypeColor = (type: string) => {
+const getTypeColor = (type) => {
   const colors = {
     full: 'primary',
     incremental: 'secondary',
@@ -334,7 +335,7 @@ const saveSchedule = async () => {
   }
 }
 
-const editSchedule = (schedule: BackupSchedule) => {
+const editSchedule = (schedule) => {
   editingSchedule.value = schedule
   scheduleForm.value = {
     backup_type: backupTypeOptions.value.find(opt => opt.value === schedule.backup_type),
@@ -356,7 +357,7 @@ const cancelEdit = () => {
   }
 }
 
-const toggleSchedule = async (schedule: BackupSchedule) => {
+const toggleSchedule = async (schedule) => {
   togglingIds.value.push(schedule.id)
   try {
     await backupService.toggleSchedule(schedule.id)
@@ -378,7 +379,7 @@ const toggleSchedule = async (schedule: BackupSchedule) => {
   }
 }
 
-const confirmDeleteSchedule = (schedule: BackupSchedule) => {
+const confirmDeleteSchedule = (schedule) => {
   $q.dialog({
     title: t('backup.confirmDeleteSchedule'),
     message: t('backup.confirmDeleteScheduleMessage', { 

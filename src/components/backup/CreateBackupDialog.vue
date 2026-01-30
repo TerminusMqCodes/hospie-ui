@@ -100,20 +100,20 @@
   </q-dialog>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import { backupService } from 'src/services/backupService'
 
-const props = defineProps<{
-  modelValue: boolean
-}>()
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true
+  }
+})
 
-const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-  'created': []
-}>()
+const emit = defineEmits(['update:modelValue', 'created'])
 
 const { t } = useI18n()
 const $q = useQuasar()
@@ -166,7 +166,7 @@ const tableOptions = computed(() => [
   { label: t('backup.tables.communication_history'), value: 'communication_history' }
 ])
 
-const getTypeIcon = (type: string) => {
+const getTypeIcon = (type) => {
   const icons = {
     full: 'storage',
     incremental: 'update',

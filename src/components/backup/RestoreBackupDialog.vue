@@ -96,22 +96,25 @@
   </q-dialog>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
-import { backupService, BackupItem } from 'src/services/backupService'
+import { backupService } from 'src/services/backupService'
 import { formatDate } from 'src/utils/formatters'
 
-const props = defineProps<{
-  modelValue: boolean
-  backup: BackupItem | null
-}>()
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true
+  },
+  backup: {
+    type: Object,
+    default: null
+  }
+})
 
-const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-  'restored': []
-}>()
+const emit = defineEmits(['update:modelValue', 'restored'])
 
 const { t } = useI18n()
 const $q = useQuasar()
@@ -128,7 +131,7 @@ const showDialog = computed({
 
 const backup = computed(() => props.backup)
 
-const getTypeColor = (type: string) => {
+const getTypeColor = (type) => {
   const colors = {
     full: 'primary',
     incremental: 'secondary',
@@ -137,7 +140,7 @@ const getTypeColor = (type: string) => {
   return colors[type] || 'grey'
 }
 
-const isValidPointInTime = (dateTime: string) => {
+const isValidPointInTime = (dateTime) => {
   if (!dateTime || !backup.value) return true
   
   const pointInTimeDate = new Date(dateTime)

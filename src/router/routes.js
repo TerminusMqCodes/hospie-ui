@@ -681,6 +681,36 @@ const routes = [
     ],
   },
 
+  // Support routes
+  {
+    path: '/support',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      { 
+        path: '', 
+        component: () => import('pages/support/SupportPage.vue'),
+        meta: { 
+          requiresAuth: true
+        }
+      },
+      { 
+        path: 'tickets/:id', 
+        component: () => import('pages/support/TicketDetailPage.vue'),
+        meta: { 
+          requiresAuth: true
+        }
+      },
+      { 
+        path: 'tickets/:id/edit', 
+        component: () => import('pages/support/EditTicketPage.vue'),
+        meta: { 
+          requiresAuth: true
+        }
+      }
+    ],
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {

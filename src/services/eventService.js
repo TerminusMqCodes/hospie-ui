@@ -3,7 +3,7 @@ import { api } from '../boot/axios'
 export const eventService = {
   // Events
   async getEvents() {
-    return api.get('/api/events')
+    return api.get('/events')
   },
 
   async getEvent(id) {
@@ -11,7 +11,7 @@ export const eventService = {
   },
 
   async createEvent(eventData) {
-    return api.post('/api/events', eventData)
+    return api.post('/events', eventData)
   },
 
   async updateEvent(id, eventData) {
@@ -24,16 +24,16 @@ export const eventService = {
 
   // Event Types
   async getEventTypes() {
-    return api.get('/api/event-types')
+    return api.get('/event-types')
   },
 
   async createEventType(typeData) {
-    return api.post('/api/event-types', typeData)
+    return api.post('/event-types', typeData)
   },
 
   // Event Spaces
   async getEventSpaces() {
-    return api.get('/api/event-spaces')
+    return api.get('/event-spaces')
   },
 
   async getEventSpace(id) {
@@ -41,7 +41,7 @@ export const eventService = {
   },
 
   async createEventSpace(spaceData) {
-    return api.post('/api/event-spaces', spaceData)
+    return api.post('/event-spaces', spaceData)
   },
 
   async updateEventSpace(id, spaceData) {
@@ -54,11 +54,11 @@ export const eventService = {
 
   // Event Space Bookings
   async getEventSpaceBookings() {
-    return api.get('/api/event-space-bookings')
+    return api.get('/event-space-bookings')
   },
 
   async createEventSpaceBooking(bookingData) {
-    return api.post('/api/event-space-bookings', bookingData)
+    return api.post('/event-space-bookings', bookingData)
   },
 
   async updateEventSpaceBooking(id, bookingData) {
@@ -71,11 +71,11 @@ export const eventService = {
 
   // Event Equipment
   async getEventEquipment() {
-    return api.get('/api/event-equipment')
+    return api.get('/event-equipment')
   },
 
   async createEventEquipment(equipmentData) {
-    return api.post('/api/event-equipment', equipmentData)
+    return api.post('/event-equipment', equipmentData)
   },
 
   async updateEventEquipment(id, equipmentData) {
@@ -88,20 +88,20 @@ export const eventService = {
 
   // Event Equipment Bookings
   async getEventEquipmentBookings() {
-    return api.get('/api/event-equipment-bookings')
+    return api.get('/event-equipment-bookings')
   },
 
   async createEventEquipmentBooking(bookingData) {
-    return api.post('/api/event-equipment-bookings', bookingData)
+    return api.post('/event-equipment-bookings', bookingData)
   },
 
   // Event Staff Assignments
   async getEventStaffAssignments() {
-    return api.get('/api/event-staff-assignments')
+    return api.get('/event-staff-assignments')
   },
 
   async createEventStaffAssignment(assignmentData) {
-    return api.post('/api/event-staff-assignments', assignmentData)
+    return api.post('/event-staff-assignments', assignmentData)
   },
 
   async updateEventStaffAssignment(id, assignmentData) {
@@ -114,11 +114,11 @@ export const eventService = {
 
   // Event Catering
   async getCateringServices() {
-    return api.get('/api/event-catering')
+    return api.get('/event-catering')
   },
 
   async createCateringService(cateringData) {
-    return api.post('/api/event-catering', cateringData)
+    return api.post('/event-catering', cateringData)
   },
 
   async updateCateringService(id, cateringData) {
@@ -148,11 +148,11 @@ export const eventService = {
 
   // Event Contracts
   async getEventContracts() {
-    return api.get('/api/event-contracts')
+    return api.get('/event-contracts')
   },
 
   async createEventContract(contractData) {
-    return api.post('/api/event-contracts', contractData)
+    return api.post('/event-contracts', contractData)
   },
 
   async updateEventContract(id, contractData) {
@@ -165,11 +165,11 @@ export const eventService = {
 
   // Event Invoices
   async getEventInvoices() {
-    return api.get('/api/event-invoices')
+    return api.get('/event-invoices')
   },
 
   async createEventInvoice(invoiceData) {
-    return api.post('/api/event-invoices', invoiceData)
+    return api.post('/event-invoices', invoiceData)
   },
 
   async updateEventInvoice(id, invoiceData) {
@@ -200,7 +200,7 @@ export const eventService = {
 
   // Event Availability
   async checkEventAvailability(spaceId, startDate, endDate) {
-    return api.get('/api/event-availability', {
+    return api.get('/event-availability', {
       params: {
         space_id: spaceId,
         start_date: startDate,

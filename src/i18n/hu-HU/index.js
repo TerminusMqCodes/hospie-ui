@@ -35,7 +35,8 @@ export default {
     branding: 'Márkaépítés',
     electronTest: 'Electron teszt',
     shortcutsTest: 'Billentyűparancsok teszt',
-    electronFeatures: 'Electron funkciók'
+    electronFeatures: 'Electron funkciók',
+    support: 'Támogatás'
   },
   
   // Általános műveletek

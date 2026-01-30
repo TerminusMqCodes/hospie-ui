@@ -35,7 +35,8 @@ export default {
     branding: 'Branding',
     electronTest: 'Electron Test',
     shortcutsTest: 'Shortcuts Test',
-    electronFeatures: 'Electron Features'
+    electronFeatures: 'Electron Features',
+    support: 'Support'
   },
   
   // General actions
@@ -695,5 +696,206 @@ export default {
       deleteScheduleFailed: 'Failed to delete schedule',
       toggleScheduleFailed: 'Failed to toggle schedule'
     }
+  },
+
+  // Support System
+  support: {
+    // General
+    supportCenter: 'Support Center',
+    supportCenterDescription: 'Get help and manage your support tickets',
+    createTicket: 'Create Ticket',
+    myTickets: 'My Tickets',
+    faq: 'FAQ',
+    contact: 'Contact',
+    dashboard: 'Dashboard',
+    liveChat: 'Live Chat',
+    
+    // Ticket Management
+    ticketDetails: 'Ticket Details',
+    editTicket: 'Edit Ticket',
+    ticketNumber: 'Ticket Number',
+    title: 'Title',
+    description: 'Description',
+    category: 'Category',
+    priority: 'Priority',
+    status: 'Status',
+    source: 'Source',
+    createdAt: 'Created At',
+    updatedAt: 'Updated At',
+    resolvedAt: 'Resolved At',
+    slaDue: 'SLA Due',
+    assignedTo: 'Assigned To',
+    
+    // Ticket Status
+    statuses: {
+      open: 'Open',
+      in_progress: 'In Progress',
+      pending_customer: 'Pending Customer',
+      resolved: 'Resolved',
+      closed: 'Closed'
+    },
+    
+    // Ticket Priority
+    priorities: {
+      low: 'Low',
+      normal: 'Normal',
+      high: 'High',
+      critical: 'Critical'
+    },
+    
+    // Ticket Categories
+    categories: {
+      technical: 'Technical',
+      billing: 'Billing',
+      account: 'Account',
+      feature_request: 'Feature Request',
+      general: 'General'
+    },
+    
+    // Ticket Sources
+    sources: {
+      web: 'Web',
+      email: 'Email',
+      phone: 'Phone',
+      chat: 'Chat',
+      system: 'System'
+    },
+    
+    // Actions
+    viewTicket: 'View Ticket',
+    updateStatus: 'Update Status',
+    newStatus: 'New Status',
+    statusNote: 'Status Note',
+    addMessage: 'Add Message',
+    addAttachment: 'Add Attachment',
+    message: 'Message',
+    internalMessage: 'Internal Message',
+    selectFile: 'Select File',
+    selectFiles: 'Select Files',
+    attachments: 'Attachments',
+    messages: 'Messages',
+    internal: 'Internal',
+    agent: 'Agent',
+    customer: 'Customer',
+    
+    // Contact Information
+    contactInformation: 'Contact Information',
+    contactName: 'Contact Name',
+    contactEmail: 'Contact Email',
+    contactPhone: 'Contact Phone',
+    
+    // System Information
+    systemInformation: 'System Information',
+    browser: 'Browser',
+    operatingSystem: 'Operating System',
+    currentPage: 'Current Page',
+    timestamp: 'Timestamp',
+    
+    // Dashboard
+    totalTickets: 'Total Tickets',
+    openTickets: 'Open Tickets',
+    slaCompliance: 'SLA Compliance',
+    avgResponseTime: 'Avg Response Time',
+    ticketsByStatus: 'Tickets by Status',
+    ticketsByPriority: 'Tickets by Priority',
+    recentTickets: 'Recent Tickets',
+    viewAll: 'View All',
+    noRecentTickets: 'No recent tickets',
+    
+    // SaaS Metrics
+    tenantHealth: 'Tenant Health',
+    healthScore: 'Health Score',
+    selfServiceUsage: 'Self-Service Usage',
+    faqViews: 'FAQ Views',
+    chatSessions: 'Chat Sessions',
+    escalationRate: 'Escalation Rate',
+    ticketsEscalated: 'Tickets Escalated',
+    
+    // FAQ
+    searchFaq: 'Search FAQ',
+    searchResults: 'Search Results',
+    noFaqResults: 'No FAQ results found',
+    noFaqResultsHint: 'Try different keywords or create a support ticket',
+    loadingFaq: 'Loading FAQ...',
+    language: 'Language',
+    lastUpdated: 'Last Updated',
+    helpful: 'Helpful',
+    notHelpful: 'Not Helpful',
+    feedbackThanks: 'Thank you for your feedback!',
+    
+    // Live Chat
+    online: 'Online',
+    sessionId: 'Session ID',
+    connectedAt: 'Connected At',
+    typeMessage: 'Type a message...',
+    chatMinimized: 'Chat minimized',
+    chatWelcomeMessage: 'Hello! How can I help you today?',
+    chatInitError: 'Failed to initialize chat',
+    
+    // Quick Actions
+    quickActions: {
+      needHelp: 'Need Help',
+      needHelpMessage: 'I need help with something',
+      technicalIssue: 'Technical Issue',
+      technicalIssueMessage: 'I\'m experiencing a technical problem',
+      billing: 'Billing Question',
+      billingMessage: 'I have a question about billing',
+      featureRequest: 'Feature Request',
+      featureRequestMessage: 'I\'d like to request a new feature'
+    },
+    
+    // Agent Responses
+    agentResponses: {
+      help: 'I\'d be happy to help you! Can you provide more details about what you need assistance with?',
+      technical: 'I understand you\'re experiencing a technical issue. Can you describe what\'s happening and any error messages you\'re seeing?',
+      billing: 'I can help with billing questions. What specific information do you need about your account or charges?',
+      feature: 'Thank you for the feature request! Can you tell me more about what functionality you\'d like to see?',
+      default: 'Thank you for contacting support. I\'ll do my best to help you with your question.'
+    },
+    
+    // Contact Section
+    email: 'Email',
+    phone: 'Phone',
+    liveChatAvailable: 'Available 24/7',
+    startChat: 'Start Chat',
+    businessHours: 'Business Hours',
+    businessHoursDetails: 'Mon-Fri 9:00 AM - 6:00 PM CET',
+    supportChannels: 'Support Channels',
+    documentation: 'Documentation',
+    documentationDescription: 'Browse our comprehensive guides',
+    community: 'Community Forum',
+    communityDescription: 'Connect with other users',
+    videoTutorials: 'Video Tutorials',
+    videoTutorialsDescription: 'Watch step-by-step guides',
+    scheduleCall: 'Schedule a Call',
+    scheduleCallDescription: 'Book a one-on-one session',
+    emergencySupport: 'Emergency Support',
+    emergencySupportDescription: 'For critical issues requiring immediate attention',
+    emergencyContact: 'Emergency Contact',
+    expectedResponseTimes: 'Expected Response Times',
+    copiedToClipboard: 'Copied to clipboard',
+    copyFailed: 'Failed to copy',
+    
+    // Filters and Search
+    searchTickets: 'Search tickets...',
+    clearFilters: 'Clear Filters',
+    noTickets: 'No tickets found',
+    
+    // Loading and Error States
+    loadingTicket: 'Loading ticket...',
+    ticketNotFound: 'Ticket not found',
+    backToTickets: 'Back to Tickets',
+    
+    // Success Messages
+    ticketCreatedSuccess: 'Support ticket created successfully',
+    ticketUpdatedSuccess: 'Ticket updated successfully',
+    
+    // Error Messages
+    ticketCreatedError: 'Failed to create support ticket',
+    ticketUpdateError: 'Failed to update ticket',
+    fileRejected: '{count} file(s) rejected. Maximum size: {maxSize}',
+    
+    // Validation
+    required: 'This field is required'
   }
 }

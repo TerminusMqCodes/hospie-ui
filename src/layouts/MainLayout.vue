@@ -716,6 +716,7 @@ export default {
       { icon: 'people', text: t('navigation.guests'), route: '/guests', permission: 'guests.view' },
       { icon: 'spa', text: t('navigation.spa'), route: '/spa', permission: 'spa.view' },
       { icon: 'event', text: t('navigation.events'), route: '/events', permission: 'events.view' },
+      { icon: 'mdi-help-circle', text: t('navigation.support'), route: '/support' },
       ...(isElectron.value ? [
         { icon: 'desktop_windows', text: t('navigation.electronTest'), route: '/electron-test', electronOnly: true }
       ] : [])
