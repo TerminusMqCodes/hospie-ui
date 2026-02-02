@@ -15,7 +15,8 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-  }
+  },
+  withCredentials: true // Enable cookies for session-based authentication
 })
 
 // Request interceptor to add auth token
@@ -37,6 +38,12 @@ api.interceptors.request.use(
       if (token) {
         config.headers.Authorization = `Bearer ${token}`
       }
+    }
+    
+    // Add tenant ID header for multi-tenant requests
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    if (user.current_property_id) {
+      config.headers['X-Tenant-ID'] = user.current_property_id
     }
     
     return config
@@ -71,6 +78,9 @@ api.interceptors.response.use(
           window.location.href = '/login'
         }
       }
+    } else if (error.response?.status === 423) {
+      // Session is locked - this will be handled by the session store
+      console.info('Session is locked')
     }
     return Promise.reject(error)
   }

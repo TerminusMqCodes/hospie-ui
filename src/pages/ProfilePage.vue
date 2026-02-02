@@ -4,36 +4,36 @@
       <div class="col-12 col-md-8 col-lg-6">
         <q-card>
           <q-card-section>
-            <div class="text-h5 q-mb-lg">User Profile</div>
+            <div class="text-h5 q-mb-lg">{{ $t('pages.user_profile.title') }}</div>
             
             <q-form @submit="onUpdateProfile" class="q-gutter-md">
               <q-input
                 filled
                 v-model="form.name"
-                label="Full Name"
-                :rules="[val => !!val || 'Name is required']"
+                :label="$t('pages.user_profile.fullName')"
+                :rules="[val => !!val || $t('pages.user_profile.nameRequired')]"
                 :loading="loading"
               />
               
               <q-input
                 filled
                 v-model="form.email"
-                label="Email"
+                :label="$t('pages.user_profile.email')"
                 type="email"
-                :rules="[val => !!val || 'Email is required', val => isValidEmail(val) || 'Please enter a valid email']"
+                :rules="[val => !!val || $t('pages.user_profile.emailRequired'), val => isValidEmail(val) || $t('pages.user_profile.validEmail')]"
                 :loading="loading"
               />
 
               <div class="row q-gutter-sm">
                 <q-btn
                   color="primary"
-                  label="Update Profile"
+                  :label="$t('pages.user_profile.updateProfile')"
                   type="submit"
                   :loading="loading"
                 />
                 <q-btn
                   color="grey-6"
-                  label="Cancel"
+                  :label="$t('actions.cancel')"
                   outline
                   @click="resetForm"
                 />
@@ -45,15 +45,15 @@
         <!-- Change Password Section -->
         <q-card class="q-mt-lg">
           <q-card-section>
-            <div class="text-h6 q-mb-lg">Change Password</div>
+            <div class="text-h6 q-mb-lg">{{ $t('pages.user_profile.changePassword') }}</div>
             
             <q-form @submit="onChangePassword" class="q-gutter-md">
               <q-input
                 filled
                 v-model="passwordForm.currentPassword"
-                label="Current Password"
+                :label="$t('pages.user_profile.currentPassword')"
                 :type="showCurrentPassword ? 'text' : 'password'"
-                :rules="[val => !!val || 'Current password is required']"
+                :rules="[val => !!val || $t('pages.user_profile.currentPasswordRequired')]"
                 :loading="passwordLoading"
               >
                 <template v-slot:append>
@@ -68,9 +68,9 @@
               <q-input
                 filled
                 v-model="passwordForm.newPassword"
-                label="New Password"
+                :label="$t('pages.user_profile.newPassword')"
                 :type="showNewPassword ? 'text' : 'password'"
-                :rules="[val => !!val || 'New password is required', val => val.length >= 8 || 'Password must be at least 8 characters']"
+                :rules="[val => !!val || $t('pages.user_profile.newPasswordRequired'), val => val.length >= 8 || $t('pages.user_profile.passwordMinLength')]"
                 :loading="passwordLoading"
               >
                 <template v-slot:append>
@@ -85,9 +85,9 @@
               <q-input
                 filled
                 v-model="passwordForm.confirmPassword"
-                label="Confirm New Password"
+                :label="$t('pages.user_profile.confirmPassword')"
                 :type="showConfirmPassword ? 'text' : 'password'"
-                :rules="[val => !!val || 'Please confirm your password', val => val === passwordForm.newPassword || 'Passwords do not match']"
+                :rules="[val => !!val || $t('pages.user_profile.confirmPasswordRequired'), val => val === passwordForm.newPassword || $t('pages.user_profile.passwordsNotMatch')]"
                 :loading="passwordLoading"
               >
                 <template v-slot:append>
@@ -102,7 +102,7 @@
               <div class="row q-gutter-sm">
                 <q-btn
                   color="secondary"
-                  label="Change Password"
+                  :label="$t('pages.user_profile.changePassword')"
                   type="submit"
                   :loading="passwordLoading"
                 />
@@ -114,19 +114,19 @@
         <!-- Account Actions -->
         <q-card class="q-mt-lg">
           <q-card-section>
-            <div class="text-h6 q-mb-lg">Account Actions</div>
+            <div class="text-h6 q-mb-lg">{{ $t('pages.user_profile.accountActions') }}</div>
             
             <div class="row q-gutter-sm">
               <q-btn
                 color="warning"
-                label="Logout All Devices"
+                :label="$t('pages.user_profile.logoutAllDevices')"
                 outline
                 @click="onLogoutAll"
                 :loading="logoutLoading"
               />
               <q-btn
                 color="negative"
-                label="Logout"
+                :label="$t('navigation.logout')"
                 outline
                 @click="onLogout"
               />
@@ -143,10 +143,12 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from 'src/stores/auth'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 
 const $q = useQuasar()
 const router = useRouter()
 const authStore = useAuthStore()
+const { t } = useI18n()
 
 const loading = ref(false)
 const passwordLoading = ref(false)
@@ -184,13 +186,13 @@ const onUpdateProfile = async () => {
     // For now, just show success message
     $q.notify({
       type: 'positive',
-      message: 'Profile updated successfully!',
+      message: t('pages.user_profile.profileUpdated'),
       position: 'top'
     })
   } catch {
     $q.notify({
       type: 'negative',
-      message: 'Failed to update profile',
+      message: t('pages.user_profile.profileUpdateFailed'),
       position: 'top'
     })
   } finally {
@@ -205,7 +207,7 @@ const onChangePassword = async () => {
     // For now, just show success message
     $q.notify({
       type: 'positive',
-      message: 'Password changed successfully!',
+      message: t('pages.user_profile.passwordChanged'),
       position: 'top'
     })
     
@@ -218,7 +220,7 @@ const onChangePassword = async () => {
   } catch {
     $q.notify({
       type: 'negative',
-      message: 'Failed to change password',
+      message: t('pages.user_profile.passwordChangeFailed'),
       position: 'top'
     })
   } finally {
@@ -231,14 +233,14 @@ const onLogout = async () => {
     await authStore.logout()
     $q.notify({
       type: 'positive',
-      message: 'Logged out successfully',
+      message: t('notifications.logoutSuccess'),
       position: 'top'
     })
     router.push('/login')
   } catch {
     $q.notify({
       type: 'negative',
-      message: 'Logout failed',
+      message: t('notifications.logoutFailed'),
       position: 'top'
     })
   }
@@ -250,14 +252,14 @@ const onLogoutAll = async () => {
     await authStore.logoutAll()
     $q.notify({
       type: 'positive',
-      message: 'Logged out from all devices successfully',
+      message: t('pages.user_profile.loggedOutAllDevices'),
       position: 'top'
     })
     router.push('/login')
   } catch {
     $q.notify({
       type: 'negative',
-      message: 'Logout failed',
+      message: t('pages.user_profile.logoutAllFailed'),
       position: 'top'
     })
   } finally {

@@ -7,13 +7,13 @@
           <q-card-section>
             <div class="row items-center justify-between header-row">
               <div class="header-info">
-                <div class="text-h6">Reservations</div>
-                <div class="text-subtitle2">Manage hotel reservations</div>
+                <div class="text-h6">{{ $t('pages.reservations.title') }}</div>
+                <div class="text-subtitle2">{{ $t('pages.reservations.list.title') }}</div>
               </div>
               <q-btn 
                 color="primary" 
                 icon="add" 
-                :label="$q.screen.gt.xs ? 'New Reservation' : ''"
+                :label="$q.screen.gt.xs ? $t('pages.dashboard.newReservation') : ''"
                 class="new-reservation-btn"
                 @click="$router.push('/reservations/create')"
               />
@@ -30,7 +30,7 @@
               <div class="col-12 col-sm-6 col-md-3">
                 <q-input
                   v-model="bookingStore.filters.search"
-                  label="Search guest name or confirmation"
+                  :label="$t('pages.reservations.list.searchPlaceholder')"
                   outlined
                   dense
                   clearable
@@ -46,7 +46,7 @@
                 <q-select
                   v-model="bookingStore.filters.status"
                   :options="statusOptions"
-                  label="Status"
+                  :label="$t('pages.reservations.list.status')"
                   outlined
                   dense
                   clearable
@@ -57,7 +57,7 @@
               <div class="col-12 col-sm-6 col-md-2">
                 <q-input
                   v-model="bookingStore.filters.start_date"
-                  label="From Date"
+                  :label="$t('pages.reservations.list.from_date')"
                   type="date"
                   outlined
                   dense
@@ -68,7 +68,7 @@
               <div class="col-12 col-sm-6 col-md-2">
                 <q-input
                   v-model="bookingStore.filters.end_date"
-                  label="To Date"
+                  :label="$t('pages.reservations.list.to_date')"
                   type="date"
                   outlined
                   dense
@@ -80,7 +80,7 @@
                 <q-btn
                   color="secondary"
                   icon="clear"
-                  :label="$q.screen.gt.xs ? 'Clear' : ''"
+                  :label="$q.screen.gt.xs ? $t('search.clear') : ''"
                   outline
                   class="full-width-mobile"
                   @click="clearFilters"
@@ -98,7 +98,7 @@
           <div v-if="$q.screen.lt.md" class="mobile-reservations">
             <q-card-section v-if="bookingStore.loading" class="text-center">
               <q-spinner size="40px" />
-              <div class="q-mt-sm">Loading reservations...</div>
+              <div class="q-mt-sm">$t('pages.reservations.list.loading')</div>
             </q-card-section>
             
             <div v-else>
@@ -202,7 +202,7 @@
               
               <div v-if="bookingStore.reservations.length === 0" class="text-center q-pa-lg">
                 <q-icon size="3em" name="sentiment_dissatisfied" class="text-grey-5" />
-                <div class="text-grey-7 q-mt-sm">No reservations found</div>
+                <div class="text-grey-7 q-mt-sm">$t('pages.reservations.list.not_found')</div>
               </div>
             </div>
           </div>
@@ -313,7 +313,7 @@
             <template v-slot:no-data>
               <div class="full-width row flex-center q-gutter-sm">
                 <q-icon size="2em" name="sentiment_dissatisfied" />
-                <span>No reservations found</span>
+                <span>$t('pages.reservations.list.not_found')</span>
               </div>
             </template>
           </q-table>
@@ -395,10 +395,12 @@ import { ref, onMounted, computed } from 'vue'
 import { useBookingStore } from 'src/stores/booking'
 import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const bookingStore = useBookingStore()
 const $q = useQuasar()
 const router = useRouter()
+const { t: $t } = useI18n()
 
 // Reactive data
 const showDetailsDialog = ref(false)
@@ -415,50 +417,50 @@ const columns = [
   },
   {
     name: 'guest',
-    label: 'Guest',
+    label: computed(() => $t('pages.reservations.list.guestName')),
     field: 'guest',
     align: 'left'
   },
   {
     name: 'dates',
-    label: 'Stay Dates',
+    label: computed(() => `${$t('pages.reservations.list.checkIn')} - ${$t('pages.reservations.list.checkOut')}`),
     field: 'check_in_date',
     align: 'left'
   },
   {
     name: 'room_type',
-    label: 'Room Type',
+    label: computed(() => $t('pages.rooms.roomType')),
     field: row => row.room_type?.name || 'N/A',
     align: 'left'
   },
   {
     name: 'status',
-    label: 'Status',
+    label: computed(() => $t('pages.reservations.list.status')),
     field: 'status',
     align: 'center'
   },
   {
     name: 'amount',
-    label: 'Amount',
+    label: computed(() => $t('pages.finance.revenue')),
     field: 'total_amount',
     align: 'right'
   },
   {
     name: 'actions',
-    label: 'Actions',
+    label: computed(() => $t('pages.reservations.list.actions')),
     field: 'actions',
     align: 'center'
   }
 ]
 
-const statusOptions = [
-  { label: 'Pending', value: 'pending' },
-  { label: 'Confirmed', value: 'confirmed' },
-  { label: 'Checked In', value: 'checked_in' },
-  { label: 'Checked Out', value: 'checked_out' },
-  { label: 'Cancelled', value: 'cancelled' },
+const statusOptions = computed(() => [
+  { label: $t('status.pending'), value: 'pending' },
+  { label: $t('status.confirmed'), value: 'confirmed' },
+  { label: $t('status.active'), value: 'checked_in' },
+  { label: $t('status.completed'), value: 'checked_out' },
+  { label: $t('status.cancelled'), value: 'cancelled' },
   { label: 'No Show', value: 'no_show' }
-]
+])
 
 const pagination = computed(() => bookingStore.pagination)
 
@@ -499,11 +501,11 @@ const getStatusColor = (status) => {
 
 const getStatusLabel = (status) => {
   const labels = {
-    pending: 'Pending',
-    confirmed: 'Confirmed',
-    checked_in: 'Checked In',
-    checked_out: 'Checked Out',
-    cancelled: 'Cancelled',
+    pending: $t('status.pending'),
+    confirmed: $t('status.confirmed'),
+    checked_in: $t('status.active'),
+    checked_out: $t('status.completed'),
+    cancelled: $t('status.cancelled'),
     no_show: 'No Show'
   }
   return labels[status] || status

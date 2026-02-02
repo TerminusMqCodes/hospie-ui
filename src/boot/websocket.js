@@ -1,6 +1,5 @@
 import { boot } from 'quasar/wrappers'
 import Pusher from 'pusher-js'
-import { useWebSocketStore } from 'src/stores/websocket'
 
 export default boot(({ app }) => {
   // Check if Pusher configuration is available
@@ -12,10 +11,6 @@ export default boot(({ app }) => {
   // Only initialize Pusher if we have a valid app key
   if (!pusherAppKey || pusherAppKey === 'your-pusher-app-key-here') {
     console.warn('[WebSocket] Pusher app key not configured. WebSocket features will be disabled.')
-    
-    // Initialize WebSocket store with null pusher (disabled state)
-    const webSocketStore = useWebSocketStore()
-    webSocketStore.initialize(null)
     
     // Provide a mock pusher object to prevent errors
     const mockPusher = {
@@ -63,21 +58,16 @@ export default boot(({ app }) => {
       console.log('[WebSocket] Disconnected from Pusher')
     })
 
-    // Initialize WebSocket store
-    const webSocketStore = useWebSocketStore()
-    webSocketStore.initialize(pusher)
-
     // Make pusher available globally
     app.config.globalProperties.$pusher = pusher
     app.provide('pusher', pusher)
 
     console.log('[WebSocket] Pusher initialized successfully')
+    
+    // Initialize WebSocket store after app is mounted
+    // The store will access $pusher from the app instance
   } catch (error) {
     console.error('[WebSocket] Failed to initialize Pusher:', error)
-    
-    // Initialize WebSocket store with null pusher (disabled state)
-    const webSocketStore = useWebSocketStore()
-    webSocketStore.initialize(null)
     
     // Provide a mock pusher object to prevent errors
     const mockPusher = {

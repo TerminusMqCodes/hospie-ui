@@ -7,7 +7,7 @@
           <q-card-section>
             <div class="row items-center justify-between">
               <div>
-                <div class="text-h6">Booking Calendar</div>
+                <div class="text-h6">{{ $t('pages.reservations.calendar.title') }}</div>
                 <div class="text-subtitle2">Visual reservation management</div>
               </div>
               <div class="row q-gutter-sm">
@@ -20,7 +20,7 @@
                 <q-btn 
                   color="primary" 
                   icon="add" 
-                  label="New Booking" 
+                  :label="$t('pages.dashboard.newReservation')" 
                   @click="showCreateDialog = true"
                 />
               </div>

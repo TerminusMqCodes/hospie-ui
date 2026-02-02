@@ -6,13 +6,13 @@
           <q-card-section>
             <div class="row items-center justify-between">
               <div>
-                <div class="text-h6">Rooms</div>
-                <div class="text-subtitle2">Manage hotel rooms</div>
+                <div class="text-h6">{{ $t('pages.rooms.title') }}</div>
+                <div class="text-subtitle2">{{ $t('pages.rooms.title') }} {{ $t('navigation.rooms') }}</div>
               </div>
               <q-btn 
                 color="primary" 
                 icon="meeting_room" 
-                label="Room Status" 
+                :label="$t('pages.dashboard.roomStatus')" 
                 @click="$router.push('/rooms/status')"
               />
             </div>
@@ -23,7 +23,7 @@
       <div class="col-12">
         <q-card>
           <q-card-section>
-            <div class="text-h6 q-mb-md">Room Management</div>
+            <div class="text-h6 q-mb-md">{{ $t('pages.rooms.title') }} {{ $t('navigation.settings') }}</div>
             <div class="text-body1 text-grey-6">
               Room management functionality will be implemented in the next development phase.
             </div>
@@ -43,5 +43,7 @@
 </template>
 
 <script setup>
-// Placeholder component for room list
+import { useI18n } from 'vue-i18n'
+
+const { t: $t } = useI18n()
 </script>

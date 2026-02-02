@@ -1,6 +1,9 @@
 <template>
   <q-layout view="hHh lpR fFf" :class="isDarkMode ? 'bg-dark' : 'bg-grey-1'">
-    <q-header elevated :class="isDarkMode ? 'bg-dark text-white' : 'bg-white text-grey-8'" height-hint="64">
+    <!-- Electron Window Controls -->
+    <ElectronWindowControls />
+    
+    <q-header elevated :class="isDarkMode ? 'bg-dark text-white' : 'bg-white text-grey-8'" height-hint="64" :style="electronHeaderStyle">
       <q-toolbar class="GNL__toolbar">
         <q-btn
           flat
@@ -26,7 +29,7 @@
           dense 
           v-model="search" 
           color="bg-grey-7 shadow-1" 
-          placeholder="Search reservations, guests, rooms..."
+          :placeholder="t('search.placeholder')"
           clearable
         >
           <template v-slot:prepend>
@@ -42,34 +45,34 @@
               icon="tune"
               class="search-options-btn"
             >
-              <q-tooltip>Advanced Search</q-tooltip>
+              <q-tooltip>{{ t('tooltips.advancedSearch') }}</q-tooltip>
               <q-menu anchor="bottom end" self="top end">
                 <div class="q-pa-md advanced-search-menu" style="width: 400px">
                   <div class="text-body2 text-grey q-mb-md">
-                    Advanced Search Options
+                    {{ t('search.advancedOptions') }}
                   </div>
 
                   <div class="row items-center q-mb-md">
                     <div class="col-3 text-subtitle2 text-grey">
-                      Guest Name
+                      {{ t('search.guestName') }}
                     </div>
                     <div class="col-9 q-pl-md">
-                      <q-input dense v-model="exactPhrase" placeholder="Enter guest name" />
+                      <q-input dense v-model="exactPhrase" :placeholder="t('search.guestName')" />
                     </div>
                   </div>
 
                   <div class="row items-center q-mb-md">
                     <div class="col-3 text-subtitle2 text-grey">
-                      Room Number
+                      {{ t('search.roomNumber') }}
                     </div>
                     <div class="col-9 q-pl-md">
-                      <q-input dense v-model="hasWords" placeholder="Enter room number" />
+                      <q-input dense v-model="hasWords" :placeholder="t('search.roomNumber')" />
                     </div>
                   </div>
 
                   <div class="row items-center q-mb-md">
                     <div class="col-3 text-subtitle2 text-grey">
-                      Date Range
+                      {{ t('search.dateRange') }}
                     </div>
                     <div class="col-9 q-pl-md">
                       <q-input dense v-model="byWebsite" type="date" />
@@ -77,8 +80,8 @@
                   </div>
 
                   <div class="col-12 q-pt-lg row justify-end">
-                    <q-btn flat dense no-caps color="grey-7" size="md" style="min-width: 68px;" label="Search" v-close-popup />
-                    <q-btn flat dense no-caps color="grey-7" size="md" style="min-width: 68px;" @click="onClear" label="Clear" v-close-popup />
+                    <q-btn flat dense no-caps color="grey-7" size="md" style="min-width: 68px;" :label="t('actions.search')" v-close-popup />
+                    <q-btn flat dense no-caps color="grey-7" size="md" style="min-width: 68px;" @click="onClear" :label="t('search.clear')" v-close-popup />
                   </div>
                 </div>
               </q-menu>
@@ -95,7 +98,7 @@
           icon="search" 
           @click="showMobileSearch = true"
         >
-          <q-tooltip>Search</q-tooltip>
+          <q-tooltip>{{ t('tooltips.search') }}</q-tooltip>
         </q-btn>
 
         <q-space />
@@ -112,7 +115,7 @@
             @click="installPWA"
             class="install-pwa-btn"
           >
-            <q-tooltip>Install Hospie PMS</q-tooltip>
+            <q-tooltip>{{ t('notifications.install') }}</q-tooltip>
           </q-btn>
 
           <!-- Offline Indicator -->
@@ -126,8 +129,11 @@
             @click="$router.push('/offline')"
             class="offline-indicator"
           >
-            <q-tooltip>You are offline</q-tooltip>
+            <q-tooltip>{{ t('notifications.offline') }}</q-tooltip>
           </q-btn>
+
+          <!-- WebSocket Connection Status -->
+          <ConnectionStatus class="q-mr-sm" />
 
           <!-- Mobile-optimized toolbar buttons -->
           <q-btn 
@@ -139,11 +145,11 @@
             icon="apps"
             class="apps-menu-btn"
           >
-            <q-tooltip>Applications</q-tooltip>
+            <q-tooltip>{{ t('tooltips.applications') }}</q-tooltip>
             <q-menu anchor="bottom end" self="top end" class="apps-menu">
               <div class="q-pa-md" style="width: 320px">
                 <div class="text-body2 text-grey q-mb-md text-center">
-                  Hospie SaaS Services
+                  {{ t('applications.title') }}
                 </div>
                 <div class="row q-gutter-sm">
                   <div class="col-5" v-for="app in applications" :key="app.name">
@@ -172,23 +178,52 @@
             </q-menu>
           </q-btn>
           
+          <!-- Language Selector -->
+          <LanguageSelector class="q-mr-sm" />
+          
           <DarkModeToggle />
+          
+          <!-- Debug Info (temporary) -->
+          <q-btn 
+            v-if="isDev"
+            round 
+            dense 
+            flat 
+            color="text-grey-7" 
+            :icon="isElectron ? 'desktop_windows' : 'web'"
+            class="debug-electron-btn"
+          >
+            <q-tooltip>{{ isElectron ? t('tooltips.electronMode') : t('tooltips.browserMode') }}</q-tooltip>
+          </q-btn>
+          
+          <!-- Shortcuts Help Button -->
+          <q-btn 
+            round 
+            dense 
+            flat 
+            color="text-grey-7" 
+            icon="keyboard"
+            @click="showShortcutsHelp = true"
+            class="shortcuts-help-btn"
+          >
+            <q-tooltip>{{ t('tooltips.keyboardShortcuts') }}</q-tooltip>
+          </q-btn>
           
           <q-btn round dense flat color="text-grey-7" icon="notifications" class="notifications-btn">
             <q-badge color="red" text-color="white" floating>
               2
             </q-badge>
-            <q-tooltip>Notifications</q-tooltip>
+            <q-tooltip>{{ t('tooltips.notifications') }}</q-tooltip>
             <q-menu anchor="bottom end" self="top end" class="notifications-menu">
               <div class="q-pa-md" style="width: 300px; max-height: 400px;">
-                <div class="text-h6 q-mb-md">Notifications</div>
+                <div class="text-h6 q-mb-md">{{ t('notifications.title') }}</div>
                 <q-list>
                   <q-item>
                     <q-item-section avatar>
                       <q-icon name="hotel" color="primary" />
                     </q-item-section>
                     <q-item-section>
-                      <q-item-label>New reservation</q-item-label>
+                      <q-item-label>{{ t('notifications.newReservation') }}</q-item-label>
                       <q-item-label caption>John Doe - Room 101</q-item-label>
                     </q-item-section>
                     <q-item-section side>
@@ -200,7 +235,7 @@
                       <q-icon name="cleaning_services" color="warning" />
                     </q-item-section>
                     <q-item-section>
-                      <q-item-label>Room ready</q-item-label>
+                      <q-item-label>{{ t('notifications.roomReady') }}</q-item-label>
                       <q-item-label caption>Room 205 cleaned</q-item-label>
                     </q-item-section>
                     <q-item-section side>
@@ -209,7 +244,7 @@
                   </q-item>
                 </q-list>
                 <div class="text-center q-mt-md">
-                  <q-btn flat color="primary" label="View All" size="sm" />
+                  <q-btn flat color="primary" :label="t('notifications.viewAll')" size="sm" />
                 </div>
               </div>
             </q-menu>
@@ -251,7 +286,7 @@
                     <q-icon name="person" />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>Profile</q-item-label>
+                    <q-item-label>{{ t('navigation.profile') }}</q-item-label>
                   </q-item-section>
                 </q-item>
                 <q-item clickable v-close-popup @click="$router.push('/settings')" class="menu-item">
@@ -259,16 +294,35 @@
                     <q-icon name="settings" />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>Settings</q-item-label>
+                    <q-item-label>{{ t('navigation.settings') }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item class="menu-item">
+                  <q-item-section avatar>
+                    <q-icon name="language" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ t('language.select') }}</q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <LanguageSelector />
                   </q-item-section>
                 </q-item>
                 <q-separator />
+                <q-item clickable v-close-popup @click="handleLockSession" class="menu-item">
+                  <q-item-section avatar>
+                    <q-icon name="lock" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ t('notifications.lockSession') }}</q-item-label>
+                  </q-item-section>
+                </q-item>
                 <q-item clickable v-close-popup @click="handleLogout" class="menu-item">
                   <q-item-section avatar>
                     <q-icon name="logout" />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>Logout</q-item-label>
+                    <q-item-label>{{ t('navigation.logout') }}</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -292,7 +346,7 @@
         <q-list padding :class="isDarkMode ? 'text-white' : 'text-grey-8'">
           <!-- Primary Navigation -->
           <q-item-label header class="text-weight-bold text-primary q-mb-sm">
-            Main Menu
+            {{ t('menu.main') }}
           </q-item-label>
           
           <q-item 
@@ -303,6 +357,7 @@
             clickable
             @click="navigateToRoute(link.route)"
             :class="{ 'active-nav-item': $route.path === link.route }"
+            :data-electron-only="link.electronOnly"
           >
             <q-item-section avatar>
               <q-icon :name="link.icon" />
@@ -319,7 +374,7 @@
 
           <!-- Secondary Navigation -->
           <q-item-label header class="text-weight-bold text-secondary q-mb-sm">
-            Management
+            {{ t('menu.management') }}
           </q-item-label>
 
           <q-item 
@@ -330,6 +385,8 @@
             clickable
             @click="navigateToRoute(link.route)"
             :class="{ 'active-nav-item': $route.path === link.route }"
+            :data-electron-only="link.electronOnly"
+            :data-dev-only="link.devOnly"
           >
             <q-item-section avatar>
               <q-icon :name="link.icon" />
@@ -346,7 +403,7 @@
 
           <!-- Additional Links -->
           <q-item-label header class="text-weight-bold text-grey-6 q-mb-sm">
-            More
+            {{ t('menu.more') }}
           </q-item-label>
 
           <q-item class="GNL__drawer-item" v-ripple v-for="link in links3" :key="link.text" clickable>
@@ -358,14 +415,14 @@
           <!-- Footer Links -->
           <div class="q-mt-xl q-pa-md">
             <div class="flex flex-center q-gutter-xs">
-              <a class="GNL__drawer-footer-link" href="javascript:void(0)" aria-label="Privacy">Privacy</a>
+              <a class="GNL__drawer-footer-link" href="javascript:void(0)" :aria-label="t('footer.privacy')">{{ t('footer.privacy') }}</a>
               <span> · </span>
-              <a class="GNL__drawer-footer-link" href="javascript:void(0)" aria-label="Terms">Terms</a>
+              <a class="GNL__drawer-footer-link" href="javascript:void(0)" :aria-label="t('footer.terms')">{{ t('footer.terms') }}</a>
               <span> · </span>
-              <a class="GNL__drawer-footer-link" href="javascript:void(0)" aria-label="About">About Hospie</a>
+              <a class="GNL__drawer-footer-link" href="javascript:void(0)" :aria-label="t('footer.about')">{{ t('footer.about') }}</a>
             </div>
             <div class="text-center q-mt-sm text-caption text-grey-5">
-              Version 1.0.0
+              {{ t('footer.version') }}
             </div>
           </div>
         </q-list>
@@ -390,7 +447,7 @@
         <q-card-section class="q-pb-none">
           <q-input
             v-model="search"
-            label="Search"
+            :label="t('mobile.search')"
             outlined
             dense
             autofocus
@@ -415,17 +472,23 @@
         <q-card-actions align="right">
           <q-btn 
             flat 
-            label="Cancel" 
+            :label="t('mobile.cancel')" 
             @click="showMobileSearch = false" 
           />
           <q-btn 
             color="primary" 
-            label="Search" 
+            :label="t('mobile.search')" 
             @click="performMobileSearch"
           />
         </q-card-actions>
       </q-card>
     </q-dialog>
+    
+    <!-- Shortcuts Help Dialog -->
+    <ShortcutsHelp v-model="showShortcutsHelp" />
+    
+    <!-- Debug Info (development only) -->
+    <ElectronDebugInfo />
   </q-layout>
 </template>
 
@@ -433,24 +496,38 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import { useDarkMode } from '../composables/useDarkMode'
 import { useAuthStore } from '../stores/auth'
+import { useSessionStore } from '../stores/session'
 import { usePWA } from '../composables/usePWA'
 import DarkModeToggle from '../components/DarkModeToggle.vue'
+import LanguageSelector from '../components/LanguageSelector.vue'
 import UnderDevelopmentModal from '../components/UnderDevelopmentModal.vue'
+import ConnectionStatus from '../components/WebSocket/ConnectionStatus.vue'
+import ElectronWindowControls from '../components/ElectronWindowControls.vue'
+import ShortcutsHelp from '../components/ShortcutsHelp.vue'
+import ElectronDebugInfo from '../components/ElectronDebugInfo.vue'
 
 export default {
   name: 'MainLayout',
 
   components: {
     DarkModeToggle,
-    UnderDevelopmentModal
+    LanguageSelector,
+    UnderDevelopmentModal,
+    ConnectionStatus,
+    ElectronWindowControls,
+    ShortcutsHelp,
+    ElectronDebugInfo
   },
 
   setup () {
     const router = useRouter()
     const $q = useQuasar()
+    const { t } = useI18n()
     const authStore = useAuthStore()
+    const sessionStore = useSessionStore()
     
     // PWA functionality
     const { isOnline, isInstallable, isInstalled, installPWA, checkForUpdates } = usePWA()
@@ -471,16 +548,51 @@ export default {
     const selectedFeature = ref('')
     const expectedDate = ref('2026.01.01.')
 
+    // Shortcuts Help
+    const showShortcutsHelp = ref(false)
+
     // Dark mode functionality
     const { isDarkMode, loadDarkModePreference } = useDarkMode()
 
-    // Load dark mode preference on component mount
+    // Electron functionality
+    const isElectron = ref(false)
+    const isDev = ref(process.env.DEV)
+    
+    // Check if running in Electron
     onMounted(() => {
+      const electronAPI = window.electronAPI
+      isElectron.value = electronAPI?.isElectron || false
+      
+      console.log('MainLayout mounted - isElectron:', isElectron.value)
+      console.log('ElectronAPI available:', !!electronAPI)
+      
       loadDarkModePreference()
       // Initialize auth state if needed
       if (!authStore.isAuthenticated && localStorage.getItem('auth_token')) {
         authStore.initializeAuth()
       }
+      
+      // Listen for Electron events
+      if (isElectron.value && electronAPI?.onOpenSettings) {
+        electronAPI.onOpenSettings(() => {
+          router.push('/pwa-settings')
+        })
+      }
+      
+      // Listen for shortcuts help event
+      document.addEventListener('show-shortcuts-help', () => {
+        showShortcutsHelp.value = true
+      })
+    })
+
+    // Computed style for header when in Electron
+    const electronHeaderStyle = computed(() => {
+      if (isElectron.value) {
+        return {
+          paddingTop: '40px' // Add space for window controls
+        }
+      }
+      return {}
     })
 
     function onClear () {
@@ -514,11 +626,14 @@ export default {
 
     async function handleLogout () {
       try {
+        // Cleanup session management before logout
+        sessionStore.destroy()
+        
         await authStore.logout()
         
         $q.notify({
           type: 'positive',
-          message: 'Successfully logged out',
+          message: t('notifications.logoutSuccess'),
           position: 'top'
         })
         
@@ -526,7 +641,25 @@ export default {
       } catch {
         $q.notify({
           type: 'negative',
-          message: 'Logout failed',
+          message: t('notifications.logoutFailed'),
+          position: 'top'
+        })
+      }
+    }
+
+    async function handleLockSession () {
+      try {
+        await sessionStore.lockSession('manual')
+        
+        $q.notify({
+          type: 'info',
+          message: t('notifications.sessionLocked'),
+          position: 'top'
+        })
+      } catch {
+        $q.notify({
+          type: 'negative',
+          message: t('notifications.sessionLockFailed'),
           position: 'top'
         })
       }
@@ -534,7 +667,7 @@ export default {
 
     // Computed properties for filtered navigation links
     const filteredLinks1 = computed(() => {
-      return links1.filter(link => {
+      return links1.value.filter(link => {
         if (link.permission) {
           return authStore.hasPermission(link.permission)
         }
@@ -546,7 +679,7 @@ export default {
     })
 
     const filteredLinks2 = computed(() => {
-      return links2.filter(link => {
+      return links2.value.filter(link => {
         if (link.permission) {
           return authStore.hasPermission(link.permission)
         }
@@ -573,25 +706,53 @@ export default {
       }
     }
 
-    // Define navigation links
-    const links1 = [
-      { icon: 'dashboard', text: 'Dashboard', route: '/dashboard' },
-      { icon: 'hotel', text: 'Reservations', route: '/reservations', permission: 'reservations.view' },
-      { icon: 'calendar_month', text: 'Calendar', route: '/reservations/calendar', permission: 'reservations.view' },
-      { icon: 'meeting_room', text: 'Rooms', route: '/rooms', permission: 'rooms.view' },
-      { icon: 'people', text: 'Guests', route: '/guests', permission: 'guests.view' }
-    ]
+    // Define navigation links as computed properties for reactivity
+    const links1 = computed(() => [
+      { icon: 'dashboard', text: t('navigation.dashboard'), route: '/dashboard' },
+      { icon: 'hotel', text: t('navigation.reservations'), route: '/reservations', permission: 'reservations.view' },
+      { icon: 'calendar_month', text: t('navigation.calendar'), route: '/reservations/calendar', permission: 'reservations.view' },
+      { icon: 'meeting_room', text: t('navigation.rooms'), route: '/rooms', permission: 'rooms.view' },
+      { icon: 'cleaning_services', text: t('navigation.housekeeping'), route: '/housekeeping', roles: ['admin', 'manager', 'housekeeping'] },
+      { icon: 'people', text: t('navigation.guests'), route: '/guests', permission: 'guests.view' },
+      { icon: 'spa', text: t('navigation.spa'), route: '/spa', permission: 'spa.view' },
+      { icon: 'event', text: t('navigation.events'), route: '/events', permission: 'events.view' },
+      { icon: 'mdi-help-circle', text: t('navigation.support'), route: '/support' },
+      ...(isElectron.value ? [
+        { icon: 'desktop_windows', text: t('navigation.electronTest'), route: '/electron-test', electronOnly: true }
+      ] : [])
+    ])
 
-    const links2 = [
-      { icon: 'account_balance_wallet', text: 'Finance', route: '/finance', permission: 'invoices.view' },
-      { icon: 'analytics', text: 'Reports', route: '/reports', permission: 'reports.view' },
-      { icon: 'admin_panel_settings', text: 'Admin', route: '/admin', roles: ['admin', 'super-admin'] },
-      { icon: 'settings', text: 'Settings', route: '/settings' },
-      { icon: 'support', text: 'Support', route: '/support' },
-      { icon: 'help', text: 'Help', route: '/help' }
-    ]
+    const links2 = computed(() => [
+      { icon: 'account_balance_wallet', text: t('navigation.finance'), route: '/finance', permission: 'finance.view' },
+      { icon: 'receipt', text: t('navigation.invoices'), route: '/finance/invoices', permission: 'invoices.view' },
+      { icon: 'payment', text: t('navigation.payments'), route: '/finance/payments', permission: 'payments.view' },
+      { icon: 'point_of_sale', text: t('navigation.pos'), route: '/pos', permission: 'pos.view' },
+      { icon: 'analytics', text: t('navigation.reports'), route: '/reports', permission: 'reports.view' },
+      { icon: 'insights', text: t('navigation.analytics'), route: '/analytics', permission: 'analytics.view' },
+      { icon: 'eco', text: t('navigation.sustainability'), route: '/sustainability', permission: 'sustainability.view' },
+      { icon: 'attach_money', text: t('navigation.rates'), route: '/rates', permission: 'rates.view' },
+      { icon: 'hub', text: t('navigation.channelManager'), route: '/channel-manager', permission: 'channel_manager.view' },
+      { icon: 'list_alt', text: t('navigation.waitlist'), route: '/waitlist', permission: 'waitlist.view' },
+      { icon: 'shield', text: t('navigation.gdpr'), route: '/gdpr', roles: ['admin', 'super-admin'] },
+      { icon: 'backup', text: t('navigation.backup'), route: '/backup', roles: ['admin', 'super-admin'] },
+      { icon: 'palette', text: t('navigation.branding'), route: '/admin/branding', roles: ['admin', 'super-admin'] },
+      { icon: 'admin_panel_settings', text: t('navigation.admin'), route: '/admin', roles: ['admin', 'super-admin'] },
+      // Development/Testing links
+      ...(isDev.value ? [
+        { icon: 'desktop_windows', text: t('navigation.electronTest'), route: '/electron-test', devOnly: true },
+        { icon: 'keyboard', text: t('navigation.shortcutsTest'), route: '/shortcuts-test', devOnly: true }
+      ] : []),
+      // Electron-specific links (when in Electron mode)
+      ...(isElectron.value ? [
+        { icon: 'bolt', text: t('navigation.electronFeatures'), route: '/electron-test', electronOnly: true }
+      ] : []),
+      { icon: 'settings', text: t('navigation.settings'), route: '/pwa-settings' }
+    ])
 
     return {
+      // i18n
+      t,
+      
       authStore,
       leftDrawerOpen,
       search,
@@ -615,30 +776,35 @@ export default {
       isInstalled,
       installPWA,
       checkForUpdates,
+      // Electron functionality
+      isElectron,
+      isDev,
+      electronHeaderStyle,
+      showShortcutsHelp,
       navigateToRoute,
       performMobileSearch,
 
       applications: [
         { 
-          name: 'HospiePAY', 
+          name: t('applications.hospiePay'), 
           icon: 'payment', 
           color: 'primary',
           route: '/hospiepay'
         },
         { 
-          name: 'ChannelManager', 
+          name: t('applications.channelManager'), 
           icon: 'hub', 
           color: 'secondary',
           route: '/channel-manager'
         },
         { 
-          name: 'Előfizetés', 
+          name: t('applications.subscription'), 
           icon: 'subscriptions', 
           color: 'info',
           route: '/subscription'
         },
         { 
-          name: 'Beállítások', 
+          name: t('applications.settings'), 
           icon: 'settings', 
           color: 'warning',
           route: '/settings'
@@ -650,31 +816,42 @@ export default {
         { icon: 'hotel', text: 'Reservations', route: '/reservations', permission: 'reservations.view' },
         { icon: 'calendar_month', text: 'Calendar', route: '/reservations/calendar', permission: 'reservations.view' },
         { icon: 'meeting_room', text: 'Rooms', route: '/rooms', permission: 'rooms.view' },
-        { icon: 'people', text: 'Guests', route: '/guests', permission: 'guests.view' }
+        { icon: 'cleaning_services', text: 'Housekeeping', route: '/housekeeping', roles: ['admin', 'manager', 'housekeeping'] },
+        { icon: 'people', text: 'Guests', route: '/guests', permission: 'guests.view' },
+        { icon: 'spa', text: 'Spa Management', route: '/spa', permission: 'spa.view' },
+        { icon: 'event', text: 'Events', route: '/events', permission: 'events.view' }
       ],
       links2: [
-        { icon: 'account_balance_wallet', text: 'Finance', route: '/finance', permission: 'invoices.view' },
+        { icon: 'account_balance_wallet', text: 'Finance', route: '/finance', permission: 'finance.view' },
+        { icon: 'receipt', text: 'Invoices', route: '/finance/invoices', permission: 'invoices.view' },
+        { icon: 'payment', text: 'Payments', route: '/finance/payments', permission: 'payments.view' },
+        { icon: 'point_of_sale', text: 'POS', route: '/pos', permission: 'pos.view' },
         { icon: 'analytics', text: 'Reports', route: '/reports', permission: 'reports.view' },
+        { icon: 'insights', text: 'Analytics', route: '/analytics', permission: 'analytics.view' },
+        { icon: 'eco', text: 'Sustainability', route: '/sustainability', permission: 'sustainability.view' },
+        { icon: 'attach_money', text: 'Rate Management', route: '/rates', permission: 'rates.view' },
+        { icon: 'hub', text: 'Channel Manager', route: '/channel-manager', permission: 'channel_manager.view' },
+        { icon: 'list_alt', text: 'Waitlist', route: '/waitlist', permission: 'waitlist.view' },
+        { icon: 'shield', text: 'GDPR', route: '/gdpr', roles: ['admin', 'super-admin'] },
         { icon: 'admin_panel_settings', text: 'Admin', route: '/admin', roles: ['admin', 'super-admin'] },
-        { icon: 'settings', text: 'Settings', route: '/settings' },
-        { icon: 'support', text: 'Support', route: '/support' },
-        { icon: 'help', text: 'Help', route: '/help' }
+        { icon: 'settings', text: 'Settings', route: '/pwa-settings' }
       ],
-      links3: [
-        { icon: '', text: 'Language & region' },
-        { icon: '', text: 'Settings' },
-        { icon: 'open_in_new', text: 'Get the Android app' },
-        { icon: 'open_in_new', text: 'Get the iOS app' },
-        { icon: '', text: 'Send feedback' },
-        { icon: 'open_in_new', text: 'Help' }
-      ],
+      links3: computed(() => [
+        { icon: '', text: t('links.languageRegion') },
+        { icon: '', text: t('navigation.settings') },
+        { icon: 'open_in_new', text: t('links.getAndroidApp') },
+        { icon: 'open_in_new', text: t('links.getIosApp') },
+        { icon: '', text: t('links.sendFeedback') },
+        { icon: 'open_in_new', text: t('links.help') }
+      ]),
 
       onClear,
       changeDate,
       toggleLeftDrawer,
       openApplication,
       handleNotificationRequest,
-      handleLogout
+      handleLogout,
+      handleLockSession
     }
   }
 }
@@ -1023,6 +1200,46 @@ export default {
       background: linear-gradient(90deg, var(--q-primary), var(--q-secondary))
       border-radius: 1px
 
+// Electron-specific and development menu items styling
+.electron-app, .q-layout
+  .main-drawer
+    .q-item
+      &[data-electron-only="true"], &[data-dev-only="true"]
+        background: rgba(25, 118, 210, 0.05)
+        border-left: 3px solid var(--q-primary)
+        margin: 2px 8px
+        border-radius: 6px
+        
+        .q-icon
+          color: var(--q-primary)
+        
+        .q-item-label
+          font-weight: 500
+          color: var(--q-primary)
+        
+        &:hover
+          background: rgba(25, 118, 210, 0.1)
+          transform: translateX(2px)
+          transition: all 0.2s ease
+        
+        &[data-electron-only="true"]::before
+          content: '⚡'
+          position: absolute
+          right: 8px
+          top: 50%
+          transform: translateY(-50%)
+          font-size: 12px
+          opacity: 0.7
+        
+        &[data-dev-only="true"]::before
+          content: '🔧'
+          position: absolute
+          right: 8px
+          top: 50%
+          transform: translateY(-50%)
+          font-size: 12px
+          opacity: 0.7
+
 // Enhanced mobile-specific styles with better touch targets
 @media (max-width: 768px)
   .q-toolbar
@@ -1066,25 +1283,53 @@ export default {
 // Enhanced dark mode with better contrast and effects
 .body--dark
   .GNL__toolbar
-    background: rgba(18, 18, 18, 0.95)
-    border-bottom-color: rgba(255, 255, 255, 0.08)
+    background: rgba(18, 18, 18, 0.98)
+    border-bottom-color: rgba(255, 255, 255, 0.12)
     
     .GNL__toolbar-input .q-field__control
-      background: rgba(255, 255, 255, 0.08)
-      border-color: rgba(255, 255, 255, 0.2)
+      background: rgba(255, 255, 255, 0.1)
+      border-color: rgba(255, 255, 255, 0.25)
+      color: white
+      
+      input
+        color: white
+        
+      .q-icon
+        color: rgba(255, 255, 255, 0.7)
   
   .GNL__drawer-item
+    color: rgba(255, 255, 255, 0.9)
+    
+    .q-item__section--avatar .q-icon
+      color: rgba(255, 255, 255, 0.7)
+    
+    .q-item__label
+      color: rgba(255, 255, 255, 0.9)
+    
     &:hover
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.12))
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.16))
+      
+      .q-item__section--avatar .q-icon
+        color: var(--q-primary)
     
     &.active-nav-item
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.18))
+      background: linear-gradient(135deg, rgba(196, 88, 101, 0.25), rgba(196, 88, 101, 0.35))
+      border-left-color: var(--q-primary)
+      
+      .q-item__section--avatar .q-icon
+        color: var(--q-primary)
+      
+      .q-item__label
+        color: white
   
   .main-drawer .q-drawer__content
     background: linear-gradient(180deg, 
       rgba(18, 18, 18, 0.98) 0%, 
-      rgba(33, 33, 33, 0.95) 50%,
-      rgba(48, 48, 48, 0.92) 100%)
+      rgba(30, 30, 30, 0.95) 50%,
+      rgba(40, 40, 40, 0.92) 100%)
+  
+  .q-item-label[header]
+    color: rgba(255, 255, 255, 0.7)
   
   .toolbar-menu-btn,
   .install-pwa-btn,
@@ -1092,15 +1337,61 @@ export default {
   .apps-menu-btn,
   .notifications-btn,
   .user-menu-btn
+    color: rgba(255, 255, 255, 0.9)
+    
     &:hover
-      background: rgba(255, 255, 255, 0.08)
+      background: rgba(255, 255, 255, 0.12)
+  
+  .brand-text
+    color: white
   
   .apps-menu,
   .notifications-menu,
   .user-menu
     .q-menu
-      background: rgba(18, 18, 18, 0.95)
+      background: rgba(18, 18, 18, 0.98)
       border-color: rgba(255, 255, 255, 0.2)
+      
+      .q-item
+        color: rgba(255, 255, 255, 0.9)
+        
+        &:hover
+          background: rgba(255, 255, 255, 0.1)
+      
+      .q-item-label
+        color: rgba(255, 255, 255, 0.9)
+      
+      .q-item-label[caption]
+        color: rgba(255, 255, 255, 0.6)
+  
+  .app-card
+    background: rgba(255, 255, 255, 0.08)
+    border-color: rgba(255, 255, 255, 0.15)
+    color: rgba(255, 255, 255, 0.9)
+    
+    &:hover
+      background: rgba(255, 255, 255, 0.12)
+      border-color: rgba(255, 255, 255, 0.25)
+    
+    .text-caption
+      color: rgba(255, 255, 255, 0.8)
+  
+  .advanced-search-menu
+    background: rgba(18, 18, 18, 0.98)
+    border-color: rgba(255, 255, 255, 0.2)
+    
+    .text-body2,
+    .text-subtitle2
+      color: rgba(255, 255, 255, 0.9)
+    
+    .q-input
+      color: white
+  
+  .GNL__drawer-footer-link
+    color: rgba(255, 255, 255, 0.7)
+    
+    &:hover
+      color: var(--q-primary)
 
 // Enhanced accessibility improvements
 @media (prefers-reduced-motion: reduce)

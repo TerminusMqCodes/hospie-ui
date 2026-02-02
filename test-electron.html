@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Electron Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+        .status {
+            background: rgba(0, 255, 0, 0.2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 Electron működik!</h1>
+        <p>Ha ezt látod, akkor az Electron sikeresen betöltötte a tartalmat.</p>
+        <div class="status">
+            ✅ Electron Test Sikeres
+        </div>
+        <p style="margin-top: 30px; font-size: 1rem; opacity: 0.8;">
+            Most már tudjuk, hogy az Electron alapvetően működik.<br>
+            A probléma a Quasar alkalmazás betöltésében van.
+        </p>
+    </div>
+
+    <script>
+        console.log('Electron test page loaded successfully!');
+        
+        // Test if electronAPI is available
+        if (window.electronAPI) {
+            console.log('ElectronAPI is available:', window.electronAPI);
+        } else {
+            console.log('ElectronAPI is not available');
+        }
+        
+        // Add some interactivity
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                if (window.electronAPI && window.electronAPI.closeWindow) {
+                    window.electronAPI.closeWindow();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

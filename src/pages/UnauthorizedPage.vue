@@ -6,11 +6,11 @@
       </div>
 
       <div class="text-h2" style="opacity:.4">
-        Unauthorized
+        {{ $t('pages.unauthorized.title') }}
       </div>
 
       <div class="text-h5 q-mt-md">
-        {{ message || 'You do not have permission to access this page.' }}
+        {{ message || $t('pages.unauthorized.message') }}
       </div>
 
       <q-btn
@@ -19,7 +19,7 @@
         text-color="blue"
         unelevated
         to="/dashboard"
-        label="Go to Dashboard"
+        :label="$t('pages.unauthorized.goToDashboard')"
         no-caps
       />
     </div>
@@ -29,8 +29,10 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const route = useRoute()
+const { t: $t } = useI18n()
 
 const message = computed(() => route.query.message)
 </script>

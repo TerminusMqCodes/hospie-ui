@@ -4,26 +4,26 @@
       <q-input
         filled
         v-model="form.name"
-        label="Full Name"
-        :rules="[val => !!val || 'Name is required']"
+        :label="$t('pages.auth.register.firstName')"
+        :rules="[val => !!val || $t('pages.auth.register.firstNameRequired')]"
         :loading="authStore.loading"
       />
       
       <q-input
         filled
         v-model="form.email"
-        label="Email"
+        :label="$t('pages.auth.register.email')"
         type="email"
-        :rules="[val => !!val || 'Email is required', val => isValidEmail(val) || 'Please enter a valid email']"
+        :rules="[val => !!val || $t('pages.auth.login.emailRequired'), val => isValidEmail(val) || $t('pages.user_profile.validEmail')]"
         :loading="authStore.loading"
       />
       
       <q-input
         filled
         v-model="form.password"
-        label="Password"
+        :label="$t('pages.auth.register.password')"
         :type="showPassword ? 'text' : 'password'"
-        :rules="[val => !!val || 'Password is required', val => val.length >= 8 || 'Password must be at least 8 characters']"
+        :rules="[val => !!val || $t('pages.auth.login.passwordRequired'), val => val.length >= 8 || $t('pages.user_profile.passwordMinLength')]"
         :loading="authStore.loading"
       >
         <template v-slot:append>
@@ -38,9 +38,9 @@
       <q-input
         filled
         v-model="form.password_confirmation"
-        label="Confirm Password"
+        :label="$t('pages.auth.register.confirmPassword')"
         :type="showPasswordConfirm ? 'text' : 'password'"
-        :rules="[val => !!val || 'Please confirm your password', val => val === form.password || 'Passwords do not match']"
+        :rules="[val => !!val || $t('pages.user_profile.confirmPasswordRequired'), val => val === form.password || $t('pages.user_profile.passwordsNotMatch')]"
         :loading="authStore.loading"
       >
         <template v-slot:append>
@@ -62,7 +62,7 @@
           color="primary"
           size="lg"
           class="full-width"
-          label="Register"
+          :label="$t('pages.auth.register.registerButton')"
           type="submit"
           :loading="authStore.loading"
         />
@@ -73,7 +73,7 @@
           flat 
           no-caps 
           color="grey-6" 
-          label="Already have an account? Login" 
+          :label="`${$t('pages.auth.register.alreadyHaveAccount')} ${$t('pages.auth.register.signIn')}`" 
           @click="$router.push('/login')"
         />
       </div>
@@ -86,10 +86,12 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from 'src/stores/auth'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 
 const $q = useQuasar()
 const router = useRouter()
 const authStore = useAuthStore()
+const { t: $t } = useI18n()
 
 const form = ref({
   name: '',

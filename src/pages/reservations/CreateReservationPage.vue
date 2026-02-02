@@ -4,8 +4,8 @@
       <div class="col-12">
         <q-card>
           <q-card-section>
-            <div class="text-h6">Create Reservation</div>
-            <div class="text-subtitle2">Add a new hotel reservation</div>
+            <div class="text-h6">{{ $t('pages.reservations.create.title') }}</div>
+            <div class="text-subtitle2">{{ $t('pages.reservations.create.guestInformation') }}</div>
           </q-card-section>
         </q-card>
       </div>
@@ -20,7 +20,7 @@
               <q-btn 
                 color="primary" 
                 icon="arrow_back" 
-                label="Back to Reservations" 
+                :label="`${$t('actions.back')} ${$t('pages.reservations.title')}`" 
                 @click="$router.push('/reservations')"
               />
             </div>
@@ -32,5 +32,7 @@
 </template>
 
 <script setup>
-// Placeholder component for reservation creation
+import { useI18n } from 'vue-i18n'
+
+const { t: $t } = useI18n()
 </script>

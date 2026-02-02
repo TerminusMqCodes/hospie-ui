@@ -4,18 +4,18 @@
       <q-input
         filled
         v-model="form.email"
-        label="Email"
+        :label="$t('pages.auth.login.email')"
         type="email"
-        :rules="[val => !!val || 'Email is required', val => isValidEmail(val) || 'Please enter a valid email']"
+        :rules="[val => !!val || $t('pages.auth.login.emailRequired'), val => isValidEmail(val) || $t('pages.user_profile.validEmail')]"
         :loading="authStore.loading"
       />
       
       <q-input
         filled
         v-model="form.password"
-        label="Password"
+        :label="$t('pages.auth.login.password')"
         :type="showPassword ? 'text' : 'password'"
-        :rules="[val => !!val || 'Password is required']"
+        :rules="[val => !!val || $t('pages.auth.login.passwordRequired')]"
         :loading="authStore.loading"
       >
         <template v-slot:append>
@@ -28,12 +28,12 @@
       </q-input>
 
       <div class="row justify-between items-center">
-        <q-checkbox v-model="form.remember" label="Remember me" />
+        <q-checkbox v-model="form.remember" :label="$t('pages.auth.login.rememberMe')" />
         <q-btn 
           flat 
           no-caps 
           color="primary" 
-          label="Forgot Password?" 
+          :label="$t('pages.auth.login.forgotPassword')" 
           @click="$router.push('/forgot-password')"
         />
       </div>
@@ -48,7 +48,7 @@
           color="primary"
           size="lg"
           class="full-width"
-          label="Login"
+          :label="$t('pages.auth.login.loginButton')"
           type="submit"
           :loading="authStore.loading"
         />
@@ -59,7 +59,7 @@
           flat 
           no-caps 
           color="grey-6" 
-          label="Don't have an account? Register" 
+          :label="`${$t('pages.auth.login.noAccount')} ${$t('pages.auth.login.signUp')}`" 
           @click="$router.push('/register')"
         />
       </div>
@@ -77,10 +77,12 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from 'src/stores/auth'
+import { useI18n } from 'vue-i18n'
 import ApiConnectionTest from 'src/components/ApiConnectionTest.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { t: $t } = useI18n()
 
 const form = ref({
   email: '',

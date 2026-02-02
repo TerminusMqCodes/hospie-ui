@@ -1,83 +1,98 @@
 <template>
   <q-page class="q-pa-md dashboard-page">
-    <div class="row q-gutter-lg">
+    <div class="row q-col-gutter-lg">
       <!-- Welcome Section -->
       <div class="col-12">
         <q-card class="welcome-card">
           <q-card-section>
-            <div class="text-h4 text-weight-light welcome-title">
-              Welcome back, {{ authStore.userName }}! 👋
-            </div>
-            <div class="text-subtitle1 text-grey-7 q-mt-sm welcome-subtitle">
-              Here's what's happening with your property today
+            <div class="row items-center justify-between">
+              <div class="col">
+                <div class="text-h4 text-weight-light welcome-title">
+                  {{ $t('pages.dashboard.welcome', { name: authStore.userName }) }}
+                </div>
+                <div class="text-subtitle1 q-mt-sm welcome-subtitle">
+                  {{ $t('pages.dashboard.welcomeSubtitle') }}
+                </div>
+              </div>
+              <div class="col-auto">
+                <ConnectionStatus />
+                <RealtimeUpdates 
+                  class="q-ml-md"
+                  @action-clicked="handleRealtimeAction"
+                />
+              </div>
             </div>
           </q-card-section>
         </q-card>
       </div>
 
       <!-- Stats Cards -->
-      <div class="col-12 col-sm-6 col-md-3">
-        <q-card class="stat-card" @click="$router.push('/reservations')">
-          <q-card-section>
-            <div class="row items-center no-wrap">
-              <div class="col">
-                <div class="text-h6 stat-title">Today's Arrivals</div>
-                <div class="text-h4 text-primary stat-value">{{ dashboardStats.arrivals }}</div>
-              </div>
-              <div class="col-auto">
-                <q-icon name="flight_land" size="40px" color="primary" class="stat-icon" />
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
+      <div class="col-12">
+        <div class="row q-col-gutter-md stats-grid">
+          <div class="col-12 col-sm-6">
+            <q-card class="stat-card" @click="$router.push('/reservations')">
+              <q-card-section>
+                <div class="row items-center no-wrap">
+                  <div class="col">
+                    <div class="text-h6 stat-title">{{ $t('pages.dashboard.todaysArrivals') }}</div>
+                    <div class="text-h4 text-primary stat-value">{{ dashboardStats.arrivals }}</div>
+                  </div>
+                  <div class="col-auto">
+                    <q-icon name="flight_land" size="40px" color="primary" class="stat-icon" />
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
 
-      <div class="col-12 col-sm-6 col-md-3">
-        <q-card class="stat-card" @click="$router.push('/reservations')">
-          <q-card-section>
-            <div class="row items-center no-wrap">
-              <div class="col">
-                <div class="text-h6 stat-title">Departures</div>
-                <div class="text-h4 text-secondary stat-value">{{ dashboardStats.departures }}</div>
-              </div>
-              <div class="col-auto">
-                <q-icon name="flight_takeoff" size="40px" color="secondary" class="stat-icon" />
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
+          <div class="col-12 col-sm-6">
+            <q-card class="stat-card" @click="$router.push('/reservations')">
+              <q-card-section>
+                <div class="row items-center no-wrap">
+                  <div class="col">
+                    <div class="text-h6 stat-title">{{ $t('pages.dashboard.departures') }}</div>
+                    <div class="text-h4 text-secondary stat-value">{{ dashboardStats.departures }}</div>
+                  </div>
+                  <div class="col-auto">
+                    <q-icon name="flight_takeoff" size="40px" color="secondary" class="stat-icon" />
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
 
-      <div class="col-12 col-sm-6 col-md-3">
-        <q-card class="stat-card" @click="$router.push('/rooms/status')">
-          <q-card-section>
-            <div class="row items-center no-wrap">
-              <div class="col">
-                <div class="text-h6 stat-title">Occupancy</div>
-                <div class="text-h4 text-positive stat-value">{{ dashboardStats.occupancy }}%</div>
-              </div>
-              <div class="col-auto">
-                <q-icon name="hotel" size="40px" color="positive" class="stat-icon" />
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
+          <div class="col-12 col-sm-6">
+            <q-card class="stat-card" @click="$router.push('/rooms/status')">
+              <q-card-section>
+                <div class="row items-center no-wrap">
+                  <div class="col">
+                    <div class="text-h6 stat-title">{{ $t('pages.dashboard.occupancy') }}</div>
+                    <div class="text-h4 text-positive stat-value">{{ dashboardStats.occupancy }}%</div>
+                  </div>
+                  <div class="col-auto">
+                    <q-icon name="hotel" size="40px" color="positive" class="stat-icon" />
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
 
-      <div class="col-12 col-sm-6 col-md-3">
-        <q-card class="stat-card" @click="$router.push('/finance')">
-          <q-card-section>
-            <div class="row items-center no-wrap">
-              <div class="col">
-                <div class="text-h6 stat-title">Revenue</div>
-                <div class="text-h4 text-accent stat-value">${{ formatNumber(dashboardStats.revenue) }}</div>
-              </div>
-              <div class="col-auto">
-                <q-icon name="attach_money" size="40px" color="accent" class="stat-icon" />
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
+          <div class="col-12 col-sm-6">
+            <q-card class="stat-card" @click="$router.push('/finance')">
+              <q-card-section>
+                <div class="row items-center no-wrap">
+                  <div class="col">
+                    <div class="text-h6 stat-title">{{ $t('pages.dashboard.revenue') }}</div>
+                    <div class="text-h4 text-accent stat-value">${{ formatNumber(dashboardStats.revenue) }}</div>
+                  </div>
+                  <div class="col-auto">
+                    <q-icon name="attach_money" size="40px" color="accent" class="stat-icon" />
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
+        </div>
       </div>
 
       <!-- Automated Invoicing Dashboard -->
@@ -87,44 +102,44 @@
 
       <!-- Quick Actions -->
       <div class="col-12 col-lg-6">
-        <q-card>
+        <q-card class="full-height">
           <q-card-section>
-            <div class="text-h6 q-mb-md">Quick Actions</div>
-            <div class="row q-gutter-sm quick-actions">
-              <div class="col-12 col-sm-6 col-md-3 col-lg-6">
+            <div class="text-h6 q-mb-md">{{ $t('pages.dashboard.quickActions') }}</div>
+            <div class="row q-col-gutter-sm quick-actions">
+              <div class="col-6 col-sm-3 col-lg-6">
                 <q-btn 
                   color="primary" 
                   icon="add" 
-                  label="New Reservation" 
+                  :label="$t('pages.dashboard.newReservation')" 
                   class="full-width"
                   @click="$router.push('/reservations/create')"
                 />
               </div>
-              <div class="col-12 col-sm-6 col-md-3 col-lg-6">
+              <div class="col-6 col-sm-3 col-lg-6">
                 <q-btn 
                   color="secondary" 
                   icon="hotel" 
-                  label="Room Status" 
+                  :label="$t('pages.dashboard.roomStatus')" 
                   outline
                   class="full-width"
                   @click="$router.push('/rooms/status')"
                 />
               </div>
-              <div class="col-12 col-sm-6 col-md-3 col-lg-6">
+              <div class="col-6 col-sm-3 col-lg-6">
                 <q-btn 
                   color="accent" 
                   icon="person_add" 
-                  label="Check In" 
+                  :label="$t('pages.dashboard.checkIn')" 
                   outline
                   class="full-width"
                   @click="showCheckInDialog = true"
                 />
               </div>
-              <div class="col-12 col-sm-6 col-md-3 col-lg-6">
+              <div class="col-6 col-sm-3 col-lg-6">
                 <q-btn 
                   color="info" 
                   icon="logout" 
-                  label="Check Out" 
+                  :label="$t('pages.dashboard.checkOut')" 
                   outline
                   class="full-width"
                   @click="showCheckOutDialog = true"
@@ -137,9 +152,9 @@
 
       <!-- Recent Activity -->
       <div class="col-12 col-lg-6">
-        <q-card>
+        <q-card class="full-height">
           <q-card-section>
-            <div class="text-h6 q-mb-md">Recent Activity</div>
+            <div class="text-h6 q-mb-md">{{ $t('pages.dashboard.recentActivity') }}</div>
             <q-list>
               <q-item v-for="activity in recentActivities" :key="activity.id" class="activity-item">
                 <q-item-section avatar>
@@ -157,7 +172,7 @@
 
       <!-- Today's Schedule -->
       <div class="col-12 col-lg-6">
-        <q-card>
+        <q-card class="full-height">
           <q-card-section>
             <div class="text-h6 q-mb-md">Today's Schedule</div>
             <q-timeline color="primary" class="schedule-timeline">
@@ -179,11 +194,11 @@
 
       <!-- Room Status Overview -->
       <div class="col-12 col-lg-6">
-        <q-card>
+        <q-card class="full-height">
           <q-card-section>
             <div class="text-h6 q-mb-md">Room Status Overview</div>
-            <div class="row q-gutter-md room-status-grid">
-              <div class="col-6 col-sm-3 col-lg-6">
+            <div class="row q-gutter-sm room-status-grid">
+              <div class="col-6 col-sm-3">
                 <div class="text-center room-status-item">
                   <q-circular-progress
                     :value="roomStats.available"
@@ -198,7 +213,7 @@
                 </div>
               </div>
               
-              <div class="col-6 col-sm-3 col-lg-6">
+              <div class="col-6 col-sm-3">
                 <div class="text-center room-status-item">
                   <q-circular-progress
                     :value="roomStats.occupied"
@@ -213,7 +228,7 @@
                 </div>
               </div>
               
-              <div class="col-6 col-sm-3 col-lg-6">
+              <div class="col-6 col-sm-3">
                 <div class="text-center room-status-item">
                   <q-circular-progress
                     :value="roomStats.cleaning"
@@ -228,7 +243,7 @@
                 </div>
               </div>
               
-              <div class="col-6 col-sm-3 col-lg-6">
+              <div class="col-6 col-sm-3">
                 <div class="text-center room-status-item">
                   <q-circular-progress
                     :value="roomStats.maintenance"
@@ -259,7 +274,12 @@
     </div>
 
     <!-- Quick Check-In Dialog -->
-    <q-dialog v-model="showCheckInDialog">
+    <q-dialog 
+      v-model="showCheckInDialog"
+      transition-show="scale"
+      transition-hide="scale"
+      class="glass-dialog-backdrop"
+    >
       <q-card class="dialog-card">
         <q-card-section>
           <div class="text-h6">Quick Check-In</div>
@@ -280,7 +300,7 @@
           <q-btn flat label="Cancel" @click="showCheckInDialog = false" />
           <q-btn 
             color="primary" 
-            label="Check In" 
+            :label="$t('pages.dashboard.checkIn')" 
             @click="quickCheckIn"
             :disable="!selectedReservation"
           />
@@ -289,7 +309,12 @@
     </q-dialog>
 
     <!-- Quick Check-Out Dialog -->
-    <q-dialog v-model="showCheckOutDialog">
+    <q-dialog 
+      v-model="showCheckOutDialog"
+      transition-show="scale"
+      transition-hide="scale"
+      class="glass-dialog-backdrop"
+    >
       <q-card class="dialog-card">
         <q-card-section>
           <div class="text-h6">Quick Check-Out</div>
@@ -310,7 +335,7 @@
           <q-btn flat label="Cancel" @click="showCheckOutDialog = false" />
           <q-btn 
             color="secondary" 
-            label="Check Out" 
+            :label="$t('pages.dashboard.checkOut')" 
             @click="quickCheckOut"
             :disable="!selectedCheckOut"
           />
@@ -323,10 +348,15 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from 'src/stores/auth'
+import { useI18n } from 'vue-i18n'
 import AutomatedInvoicingDashboard from 'src/components/AutomatedInvoicingDashboard.vue'
+import ConnectionStatus from 'src/components/WebSocket/ConnectionStatus.vue'
+import RealtimeUpdates from 'src/components/WebSocket/RealtimeUpdates.vue'
 import analyticsService from 'src/services/analyticsService'
+import { useRoomUpdates, useReservationUpdates } from 'src/composables/useWebSocket'
 
 const authStore = useAuthStore()
+const { t: $t } = useI18n()
 
 // Reactive data
 const showCheckInDialog = ref(false)
@@ -443,6 +473,21 @@ const formatTime = (date) => {
   return `${days} days ago`
 }
 
+const handleRealtimeAction = (action) => {
+  switch (action.type) {
+    case 'room_details':
+      // Navigate to room details
+      console.log('Navigate to room details:', action.roomId)
+      break
+    case 'reservation_details':
+      // Navigate to reservation details
+      console.log('Navigate to reservation details:', action.reservationId)
+      break
+    default:
+      console.log('Unknown action:', action)
+  }
+}
+
 const quickCheckIn = async () => {
   if (!selectedReservation.value) return
   
@@ -487,6 +532,154 @@ const quickCheckOut = async () => {
 onMounted(async () => {
   await loadDashboardData()
 })
+
+// WebSocket integration for real-time updates
+useRoomUpdates((roomData) => {
+  console.log('Dashboard: Room status changed:', roomData)
+  
+  // Update room stats based on status changes
+  updateRoomStatsFromWebSocket(roomData)
+  
+  // Add to recent activities
+  addRecentActivity({
+    id: `room-${roomData.room_id}-${Date.now()}`,
+    title: `Room ${roomData.room_number} status changed`,
+    description: `${roomData.old_status} → ${roomData.new_status}`,
+    time: new Date(),
+    icon: getRoomStatusIcon(roomData.new_status),
+    color: getRoomStatusColor(roomData.new_status)
+  })
+})
+
+useReservationUpdates((type, reservationData) => {
+  console.log('Dashboard: Reservation update:', type, reservationData)
+  
+  // Update dashboard stats based on reservation changes
+  updateReservationStatsFromWebSocket(type, reservationData)
+  
+  // Add to recent activities
+  const activityConfig = getReservationActivityConfig(type, reservationData)
+  if (activityConfig) {
+    addRecentActivity(activityConfig)
+  }
+})
+
+// WebSocket helper methods
+const updateRoomStatsFromWebSocket = (roomData) => {
+  const { old_status, new_status } = roomData
+  
+  // Decrease old status count
+  if (old_status === 'available') roomStats.value.available--
+  else if (old_status === 'occupied') roomStats.value.occupied--
+  else if (old_status === 'cleaning') roomStats.value.cleaning--
+  else if (old_status === 'maintenance') roomStats.value.maintenance--
+  
+  // Increase new status count
+  if (new_status === 'available') roomStats.value.available++
+  else if (new_status === 'occupied') roomStats.value.occupied++
+  else if (new_status === 'cleaning') roomStats.value.cleaning++
+  else if (new_status === 'maintenance') roomStats.value.maintenance++
+  
+  // Update occupancy percentage
+  const totalRooms = roomStats.value.available + roomStats.value.occupied + 
+                    roomStats.value.cleaning + roomStats.value.maintenance
+  if (totalRooms > 0) {
+    dashboardStats.value.occupancy = Math.round((roomStats.value.occupied / totalRooms) * 100)
+  }
+}
+
+const updateReservationStatsFromWebSocket = (type, reservationData) => {
+  const today = new Date().toDateString()
+  const checkInDate = new Date(reservationData.check_in_date).toDateString()
+  const checkOutDate = new Date(reservationData.check_out_date).toDateString()
+  
+  if (type === 'created') {
+    // If check-in is today, increment arrivals
+    if (checkInDate === today) {
+      dashboardStats.value.arrivals++
+    }
+    
+    // If check-out is today, increment departures
+    if (checkOutDate === today) {
+      dashboardStats.value.departures++
+    }
+    
+    // Update revenue (assuming total_amount is available)
+    if (reservationData.total_amount) {
+      dashboardStats.value.revenue += reservationData.total_amount
+    }
+  } else if (type === 'cancelled') {
+    // Decrease counts if applicable
+    if (checkInDate === today) {
+      dashboardStats.value.arrivals = Math.max(0, dashboardStats.value.arrivals - 1)
+    }
+    if (checkOutDate === today) {
+      dashboardStats.value.departures = Math.max(0, dashboardStats.value.departures - 1)
+    }
+  }
+}
+
+const getRoomStatusIcon = (status) => {
+  const icons = {
+    available: 'check_circle',
+    occupied: 'hotel',
+    cleaning: 'cleaning_services',
+    maintenance: 'build',
+    out_of_order: 'error'
+  }
+  return icons[status] || 'help'
+}
+
+const getRoomStatusColor = (status) => {
+  const colors = {
+    available: 'positive',
+    occupied: 'negative',
+    cleaning: 'warning',
+    maintenance: 'info',
+    out_of_order: 'negative'
+  }
+  return colors[status] || 'grey'
+}
+
+const getReservationActivityConfig = (type, reservationData) => {
+  const configs = {
+    created: {
+      id: `reservation-created-${reservationData.reservation_id}-${Date.now()}`,
+      title: 'New reservation created',
+      description: `${reservationData.guest_name} - Room ${reservationData.room_number}`,
+      time: new Date(),
+      icon: 'event',
+      color: 'primary'
+    },
+    cancelled: {
+      id: `reservation-cancelled-${reservationData.reservation_id}-${Date.now()}`,
+      title: 'Reservation cancelled',
+      description: `${reservationData.guest_name} - ${reservationData.confirmation_number}`,
+      time: new Date(),
+      icon: 'event_busy',
+      color: 'negative'
+    },
+    updated: {
+      id: `reservation-updated-${reservationData.reservation_id}-${Date.now()}`,
+      title: 'Reservation updated',
+      description: `${reservationData.guest_name} - Room ${reservationData.room_number}`,
+      time: new Date(),
+      icon: 'edit',
+      color: 'info'
+    }
+  }
+  return configs[type]
+}
+
+const addRecentActivity = (activity) => {
+  // Add to the beginning of the array
+  recentActivities.value.unshift(activity)
+  
+  // Keep only the latest 10 activities
+  if (recentActivities.value.length > 10) {
+    recentActivities.value = recentActivities.value.slice(0, 10)
+  }
+}
 
 // Methods
 const loadDashboardData = async () => {
@@ -544,21 +737,59 @@ const loadDashboardData = async () => {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+/* Import liquid glass styles */
+@import 'src/css/liquid-glass.scss';
+
 .dashboard-page {
   padding: 16px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  min-height: 100vh;
-}
-
-.welcome-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
   position: relative;
+  min-height: 100vh;
   overflow: hidden;
   
+  /* Animated gradient background */
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      135deg,
+      #667eea 0%,
+      #764ba2 25%,
+      #f093fb 50%,
+      #4facfe 75%,
+      #00f2fe 100%
+    );
+    background-size: 400% 400%;
+    animation: gradientFlow 20s ease infinite;
+    z-index: -1;
+  }
+}
+
+@keyframes gradientFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Welcome Card - Enhanced Liquid Glass Style */
+.welcome-card {
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 24px;
+  box-shadow: 
+    0 20px 60px rgba(102, 126, 234, 0.4),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.4);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Animated gradient overlay */
   &::before {
     content: '';
     position: absolute;
@@ -566,8 +797,41 @@ const loadDashboardData = async () => {
     right: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-    animation: welcomeShimmer 4s ease-in-out infinite;
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.15) 0%,
+      rgba(102, 126, 234, 0.1) 25%,
+      rgba(156, 39, 176, 0.1) 50%,
+      transparent 70%
+    );
+    animation: welcomeShimmer 8s ease-in-out infinite;
+  }
+  
+  /* Colorful accent line */
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      rgba(33, 150, 243, 0.8) 0%,
+      rgba(156, 39, 176, 0.8) 25%,
+      rgba(255, 152, 0, 0.8) 50%,
+      rgba(76, 175, 80, 0.8) 75%,
+      rgba(0, 188, 212, 0.8) 100%
+    );
+    background-size: 200% 100%;
+    animation: accentFlow 5s linear infinite;
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 25px 70px rgba(102, 126, 234, 0.5),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
   }
 }
 
@@ -577,6 +841,15 @@ const loadDashboardData = async () => {
   }
   50% {
     transform: rotate(180deg);
+  }
+}
+
+@keyframes accentFlow {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 0%;
   }
 }
 
@@ -595,16 +868,85 @@ const loadDashboardData = async () => {
   z-index: 1;
 }
 
+/* Stat Cards - Enhanced Liquid Glass with Vibrant Colors */
 .stat-card {
   height: 140px;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  
+  /* Liquid glass effect with color tints */
+  background: rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    0 8px 32px rgba(31, 38, 135, 0.3),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
+  
   position: relative;
   overflow: hidden;
+  
+  /* Color overlay based on stat type */
+  &:nth-child(1) {
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.15), rgba(255, 255, 255, 0.12)) !important;
+    border-color: rgba(33, 150, 243, 0.3);
+    
+    .stat-icon {
+      color: #2196F3;
+      filter: drop-shadow(0 4px 12px rgba(33, 150, 243, 0.5));
+    }
+    
+    .stat-value {
+      color: #2196F3;
+      text-shadow: 0 2px 8px rgba(33, 150, 243, 0.4);
+    }
+  }
+  
+  &:nth-child(2) {
+    background: linear-gradient(135deg, rgba(156, 39, 176, 0.15), rgba(255, 255, 255, 0.12)) !important;
+    border-color: rgba(156, 39, 176, 0.3);
+    
+    .stat-icon {
+      color: #9C27B0;
+      filter: drop-shadow(0 4px 12px rgba(156, 39, 176, 0.5));
+    }
+    
+    .stat-value {
+      color: #9C27B0;
+      text-shadow: 0 2px 8px rgba(156, 39, 176, 0.4);
+    }
+  }
+  
+  &:nth-child(3) {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(255, 255, 255, 0.12)) !important;
+    border-color: rgba(76, 175, 80, 0.3);
+    
+    .stat-icon {
+      color: #4CAF50;
+      filter: drop-shadow(0 4px 12px rgba(76, 175, 80, 0.5));
+    }
+    
+    .stat-value {
+      color: #4CAF50;
+      text-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+    }
+  }
+  
+  &:nth-child(4) {
+    background: linear-gradient(135deg, rgba(255, 152, 0, 0.15), rgba(255, 255, 255, 0.12)) !important;
+    border-color: rgba(255, 152, 0, 0.3);
+    
+    .stat-icon {
+      color: #FF9800;
+      filter: drop-shadow(0 4px 12px rgba(255, 152, 0, 0.5));
+    }
+    
+    .stat-value {
+      color: #FF9800;
+      text-shadow: 0 2px 8px rgba(255, 152, 0, 0.4);
+    }
+  }
   
   &::before {
     content: '';
@@ -613,13 +955,16 @@ const loadDashboardData = async () => {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
     transition: left 0.6s ease;
   }
   
   &:hover {
     transform: translateY(-8px) scale(1.03);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.18) !important;
+    box-shadow: 
+      0 20px 50px rgba(31, 38, 135, 0.4),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.4);
     
     &::before {
       left: 100%;
@@ -627,7 +972,6 @@ const loadDashboardData = async () => {
     
     .stat-icon {
       transform: scale(1.2) rotate(10deg);
-      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
     }
     
     .stat-value {
@@ -640,35 +984,85 @@ const loadDashboardData = async () => {
   }
 }
 
+.stats-grid {
+  margin-bottom: 0;
+}
+
+.full-height {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  
+  /* Liquid glass effect for all cards */
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  box-shadow: 
+    0 8px 32px rgba(31, 38, 135, 0.25),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+      0 12px 40px rgba(31, 38, 135, 0.35),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.35);
+  }
+  
+  .q-card__section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    
+    .text-h6 {
+      color: white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
 .stat-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #64748b;
+  color: rgba(255, 255, 255, 0.9);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .stat-value {
   font-size: 2rem;
   font-weight: 800;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: white;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .stat-icon {
   font-size: 48px;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  opacity: 0.8;
+  opacity: 0.95;
+  filter: drop-shadow(0 2px 6px rgba(255, 255, 255, 0.3));
 }
 
 .quick-actions {
   .q-btn {
     min-height: 56px;
-    border-radius: 12px;
+    border-radius: 14px;
     font-weight: 600;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    
+    /* Glass button effect */
+    background: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    color: white !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     
     &::before {
       content: '';
@@ -677,19 +1071,60 @@ const loadDashboardData = async () => {
       left: 50%;
       width: 0;
       height: 0;
-      background: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.25);
       border-radius: 50%;
       transition: all 0.4s ease;
       transform: translate(-50%, -50%);
     }
     
+    /* Color-specific glows */
+    &:nth-child(1) {
+      border-color: rgba(33, 150, 243, 0.4) !important;
+      box-shadow: 0 4px 16px rgba(33, 150, 243, 0.2);
+      
+      &:hover {
+        box-shadow: 0 8px 32px rgba(33, 150, 243, 0.4);
+        border-color: rgba(33, 150, 243, 0.6) !important;
+      }
+    }
+    
+    &:nth-child(2) {
+      border-color: rgba(156, 39, 176, 0.4) !important;
+      box-shadow: 0 4px 16px rgba(156, 39, 176, 0.2);
+      
+      &:hover {
+        box-shadow: 0 8px 32px rgba(156, 39, 176, 0.4);
+        border-color: rgba(156, 39, 176, 0.6) !important;
+      }
+    }
+    
+    &:nth-child(3) {
+      border-color: rgba(255, 152, 0, 0.4) !important;
+      box-shadow: 0 4px 16px rgba(255, 152, 0, 0.2);
+      
+      &:hover {
+        box-shadow: 0 8px 32px rgba(255, 152, 0, 0.4);
+        border-color: rgba(255, 152, 0, 0.6) !important;
+      }
+    }
+    
+    &:nth-child(4) {
+      border-color: rgba(0, 188, 212, 0.4) !important;
+      box-shadow: 0 4px 16px rgba(0, 188, 212, 0.2);
+      
+      &:hover {
+        box-shadow: 0 8px 32px rgba(0, 188, 212, 0.4);
+        border-color: rgba(0, 188, 212, 0.6) !important;
+      }
+    }
+    
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      background: rgba(255, 255, 255, 0.25) !important;
       
       &::before {
-        width: 200px;
-        height: 200px;
+        width: 300px;
+        height: 300px;
       }
     }
     
@@ -700,10 +1135,16 @@ const loadDashboardData = async () => {
 }
 
 .activity-item {
-  padding: 12px 0;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 12px;
   transition: all 0.3s ease;
   position: relative;
+  margin-bottom: 8px;
+  
+  /* Light glass effect for list items */
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   
   &::after {
     content: '';
@@ -712,14 +1153,59 @@ const loadDashboardData = async () => {
     top: 0;
     bottom: 0;
     width: 0;
-    background: linear-gradient(135deg, var(--q-primary), var(--q-secondary));
     transition: width 0.3s ease;
-    border-radius: 8px 0 0 8px;
+    border-radius: 12px 0 0 12px;
+  }
+  
+  /* Color-coded left border based on activity type */
+  &:nth-child(1) {
+    &::after {
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.6), rgba(76, 175, 80, 0.3));
+    }
+    
+    .q-icon {
+      color: #4CAF50;
+      filter: drop-shadow(0 2px 6px rgba(76, 175, 80, 0.4));
+    }
+  }
+  
+  &:nth-child(2) {
+    &::after {
+      background: linear-gradient(135deg, rgba(33, 150, 243, 0.6), rgba(33, 150, 243, 0.3));
+    }
+    
+    .q-icon {
+      color: #2196F3;
+      filter: drop-shadow(0 2px 6px rgba(33, 150, 243, 0.4));
+    }
+  }
+  
+  &:nth-child(3) {
+    &::after {
+      background: linear-gradient(135deg, rgba(255, 152, 0, 0.6), rgba(255, 152, 0, 0.3));
+    }
+    
+    .q-icon {
+      color: #FF9800;
+      filter: drop-shadow(0 2px 6px rgba(255, 152, 0, 0.4));
+    }
+  }
+  
+  &:nth-child(4) {
+    &::after {
+      background: linear-gradient(135deg, rgba(156, 39, 176, 0.6), rgba(156, 39, 176, 0.3));
+    }
+    
+    .q-icon {
+      color: #9C27B0;
+      filter: drop-shadow(0 2px 6px rgba(156, 39, 176, 0.4));
+    }
   }
   
   &:hover {
-    background: rgba(0, 0, 0, 0.02);
+    background: rgba(255, 255, 255, 0.12);
     transform: translateX(4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     
     &::after {
       width: 4px;
@@ -730,12 +1216,13 @@ const loadDashboardData = async () => {
 .activity-title {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #1e293b;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .activity-description {
   font-size: 0.85rem;
-  color: #64748b;
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .schedule-timeline {
@@ -751,24 +1238,64 @@ const loadDashboardData = async () => {
       top: 0;
       bottom: 0;
       width: 2px;
-      background: linear-gradient(180deg, var(--q-primary), var(--q-secondary));
+      background: linear-gradient(180deg, 
+        rgba(33, 150, 243, 0.6), 
+        rgba(156, 39, 176, 0.6));
       border-radius: 1px;
+      box-shadow: 0 0 10px rgba(33, 150, 243, 0.3);
     }
+    
+    /* Color-coded dots */
+    &:nth-child(1) {
+      .q-timeline__dot {
+        background: rgba(33, 150, 243, 0.3);
+        border-color: #2196F3;
+        box-shadow: 0 0 15px rgba(33, 150, 243, 0.5);
+      }
+    }
+    
+    &:nth-child(2) {
+      .q-timeline__dot {
+        background: rgba(255, 152, 0, 0.3);
+        border-color: #FF9800;
+        box-shadow: 0 0 15px rgba(255, 152, 0, 0.5);
+      }
+    }
+    
+    &:nth-child(3) {
+      .q-timeline__dot {
+        background: rgba(0, 188, 212, 0.3);
+        border-color: #00BCD4;
+        box-shadow: 0 0 15px rgba(0, 188, 212, 0.5);
+      }
+    }
+  }
+  
+  .q-timeline__dot {
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
   }
 }
 
 .schedule-entry {
   margin-bottom: 20px;
   transition: all 0.3s ease;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   
   &:hover {
     transform: translateX(4px);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   }
 }
 
 .schedule-description {
   font-size: 0.9rem;
-  color: #64748b;
+  color: rgba(255, 255, 255, 0.8);
   font-weight: 500;
 }
 
@@ -781,41 +1308,195 @@ const loadDashboardData = async () => {
   padding: 16px;
   text-align: center;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+  
+  /* Color glow effect based on status */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    transition: all 0.4s ease;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+  }
   
   &:hover {
     transform: translateY(-4px);
-    background: rgba(0, 0, 0, 0.02);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    
+    &::before {
+      width: 120%;
+      height: 120%;
+      opacity: 0.1;
+    }
     
     .q-circular-progress {
       transform: scale(1.1);
     }
   }
   
+  /* Available - Green glow */
+  &:nth-child(1) {
+    &::before {
+      background: radial-gradient(circle, rgba(76, 175, 80, 0.4), transparent);
+    }
+    
+    .q-circular-progress {
+      filter: drop-shadow(0 4px 12px rgba(76, 175, 80, 0.3));
+    }
+  }
+  
+  /* Occupied - Red glow */
+  &:nth-child(2) {
+    &::before {
+      background: radial-gradient(circle, rgba(244, 67, 54, 0.4), transparent);
+    }
+    
+    .q-circular-progress {
+      filter: drop-shadow(0 4px 12px rgba(244, 67, 54, 0.3));
+    }
+  }
+  
+  /* Cleaning - Orange glow */
+  &:nth-child(3) {
+    &::before {
+      background: radial-gradient(circle, rgba(255, 152, 0, 0.4), transparent);
+    }
+    
+    .q-circular-progress {
+      filter: drop-shadow(0 4px 12px rgba(255, 152, 0, 0.3));
+    }
+  }
+  
+  /* Maintenance - Blue glow */
+  &:nth-child(4) {
+    &::before {
+      background: radial-gradient(circle, rgba(33, 150, 243, 0.4), transparent);
+    }
+    
+    .q-circular-progress {
+      filter: drop-shadow(0 4px 12px rgba(33, 150, 243, 0.3));
+    }
+  }
+  
   .q-circular-progress {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+  
+  .text-caption {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   }
 }
 
 .dialog-card {
   min-width: 320px;
   max-width: 90vw;
-  border-radius: 16px;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  
+  /* Glass modal effect */
+  background: rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 30px 80px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.4);
+  
+  .text-h6 {
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    font-weight: 700;
+  }
+  
+  .q-field {
+    :deep(.q-field__control) {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    :deep(.q-field__native),
+    :deep(.q-field__label) {
+      color: white;
+    }
+    
+    :deep(.q-field__control):hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+  
+  .q-btn {
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Enhanced Dialog Backdrop */
+:deep(.q-dialog__backdrop) {
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  animation: backdropFadeIn 0.3s ease-out;
+}
+
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+  }
+}
+
+/* Dialog scale animation enhancement */
+:deep(.q-dialog) {
+  .dialog-card {
+    animation: dialogScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+}
+
+@keyframes dialogScaleIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .full-width-mobile {
   width: 100%;
-  border-radius: 12px;
+  border-radius: 14px;
   font-weight: 600;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   
+  /* Glass button */
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  color: white !important;
+  
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   }
 }
 
@@ -823,7 +1504,6 @@ const loadDashboardData = async () => {
 @media (max-width: 768px) {
   .dashboard-page {
     padding: 12px;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   }
   
   .welcome-title {
@@ -836,6 +1516,7 @@ const loadDashboardData = async () => {
   
   .stat-card {
     height: 120px;
+    border-radius: 16px;
     
     &:hover {
       transform: translateY(-4px) scale(1.02);
@@ -857,16 +1538,24 @@ const loadDashboardData = async () => {
   .quick-actions .q-btn {
     font-size: 0.85rem;
     min-height: 48px;
-    border-radius: 10px;
+    border-radius: 12px;
   }
   
-  .room-status-item .q-circular-progress {
-    transform: scale(0.85);
+  .room-status-item {
+    padding: 12px;
+    
+    .q-circular-progress {
+      transform: scale(0.85);
+    }
   }
   
   .dialog-card {
     margin: 20px;
-    border-radius: 12px;
+    border-radius: 16px;
+  }
+  
+  .full-height {
+    border-radius: 16px;
   }
 }
 
@@ -957,7 +1646,16 @@ const loadDashboardData = async () => {
   }
 }
 
-.dashboard-page {
+@keyframes glassShimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.welcome-card {
   animation: fadeInUp 0.6s ease-out;
 }
 
@@ -977,41 +1675,84 @@ const loadDashboardData = async () => {
   animation: slideInRight 0.6s ease-out 0.4s both;
 }
 
-/* Enhanced dark mode support */
+/* Enhanced dark mode support - Liquid Glass */
 .body--dark {
   .dashboard-page {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    &::before {
+      background: linear-gradient(
+        135deg,
+        #1a1a2e 0%,
+        #16213e 25%,
+        #0f3460 50%,
+        #533483 75%,
+        #6a4c93 100%
+      );
+    }
+  }
+  
+  .welcome-card {
+    background: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    
+    .welcome-title {
+      color: white;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+    
+    .welcome-subtitle {
+      color: rgba(255, 255, 255, 0.85);
+    }
   }
   
   .stat-card {
+    background: rgba(0, 0, 0, 0.25) !important;
+    border-color: rgba(255, 255, 255, 0.15);
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.35) !important;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+  }
+  
+  .full-height {
+    background: rgba(0, 0, 0, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.15);
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.3) !important;
+    }
+  }
+  
+  .activity-item {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+  
+  .room-status-item {
     background: rgba(255, 255, 255, 0.05);
     border-color: rgba(255, 255, 255, 0.1);
     
     &:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
     }
   }
   
-  .stat-title {
-    color: #94a3b8;
-  }
-  
-  .activity-title {
-    color: #f1f5f9;
-  }
-  
-  .activity-description {
-    color: #94a3b8;
-  }
-  
-  .schedule-description {
-    color: #94a3b8;
-  }
-  
   .dialog-card {
-    background: rgba(15, 23, 42, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 
+      0 30px 80px rgba(0, 0, 0, 0.6),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+  }
+  
+  :deep(.q-dialog__backdrop) {
+    background: rgba(0, 0, 0, 0.75) !important;
   }
 }
 

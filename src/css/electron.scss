@@ -1,0 +1,214 @@
+// Electron-specific styles
+.electron-app {
+  // Ensure proper spacing for window controls
+  .q-header {
+    padding-top: 40px;
+  }
+  
+  // Enhanced window appearance
+  .q-layout {
+    border-radius: 0;
+    overflow: hidden;
+  }
+  
+  // Platform-specific adjustments
+  &.platform-darwin {
+    .electron-window-controls {
+      .control-buttons {
+        order: -1;
+        gap: 8px;
+      }
+      
+      .control-btn {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        
+        &.close-btn {
+          background: #ff5f57;
+          &:hover {
+            background: #ff3b30;
+          }
+        }
+        
+        &.minimize-btn {
+          background: #ffbd2e;
+          &:hover {
+            background: #ff9500;
+          }
+        }
+        
+        &.maximize-btn {
+          background: #28ca42;
+          &:hover {
+            background: #30d158;
+          }
+        }
+        
+        .q-icon {
+          display: none;
+        }
+      }
+    }
+  }
+  
+  &.platform-win32 {
+    .electron-window-controls {
+      .control-btn {
+        border-radius: 0;
+        width: 46px;
+        height: 32px;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+        
+        &.close-btn:hover {
+          background: #e81123;
+          color: white;
+        }
+      }
+    }
+  }
+  
+  &.platform-linux {
+    .electron-window-controls {
+      .control-buttons {
+        order: 1;
+      }
+      
+      .control-btn {
+        border-radius: 4px;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.15);
+        }
+      }
+    }
+  }
+  
+  // Enhanced focus states for Electron
+  &.window-focused {
+    .electron-window-controls {
+      background: rgba(255, 255, 255, 0.15);
+      border-bottom-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .q-header {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  // Smooth transitions for window state changes
+  .q-layout,
+  .q-header,
+  .electron-window-controls {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  // Enhanced scrollbars for Electron
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.3);
+    }
+  }
+  
+  // Dark mode adjustments for Electron
+  &.body--dark {
+    .electron-window-controls {
+      background: rgba(0, 0, 0, 0.4);
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    &.window-focused {
+      .electron-window-controls {
+        background: rgba(0, 0, 0, 0.6);
+        border-bottom-color: rgba(255, 255, 255, 0.2);
+      }
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
+  
+  // Performance optimizations for Electron
+  .q-page {
+    will-change: transform;
+    transform: translateZ(0);
+  }
+  
+  .q-card,
+  .q-btn {
+    will-change: transform, opacity;
+  }
+  
+  // Prevent text selection in window controls
+  .electron-window-controls {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  
+  // Enhanced animations for Electron
+  @keyframes electronFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .q-layout {
+    animation: electronFadeIn 0.3s ease-out;
+  }
+}
+
+// Hide Electron controls on mobile
+@media (max-width: 768px) {
+  .electron-app {
+    .electron-window-controls {
+      display: none;
+    }
+    
+    .q-header {
+      padding-top: 0;
+    }
+  }
+}
+
+// Print styles for Electron
+@media print {
+  .electron-app {
+    .electron-window-controls {
+      display: none !important;
+    }
+    
+    .q-header {
+      padding-top: 0 !important;
+    }
+  }
+}

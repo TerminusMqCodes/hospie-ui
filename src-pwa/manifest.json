@@ -69,6 +69,53 @@
       "description": "Room management",
       "url": "/rooms",
       "icons": [{ "src": "icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Guests",
+      "short_name": "Guests",
+      "description": "Guest management",
+      "url": "/guests",
+      "icons": [{ "src": "icons/icon-192x192.png", "sizes": "192x192" }]
     }
-  ]
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+hospie",
+      "url": "/?handler=%s"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/import",
+      "accept": {
+        "text/csv": [".csv"],
+        "application/vnd.ms-excel": [".xls"],
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"]
+      }
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "files",
+          "accept": ["image/*", "text/csv", ".pdf"]
+        }
+      ]
+    }
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "handle_links": "preferred",
+  "capture_links": "new-client"
 }
