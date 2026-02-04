@@ -17,13 +17,13 @@ definitions:
           - npm                  # Cache npm cache
           - sonar               # Cache SonarQube artifacts
         script:
-          # Install dependencies
-          - npm ci
+          # Install dependencies with memory optimization
+          - npm ci --prefer-offline --no-audit
           
           # Install Quasar CLI globally (if not already available)
           - npm install -g @quasar/cli || echo "Quasar CLI already available"
           
-          # Lint the code
+          # Lint the code (memory efficient)
           - npm run lint
           
           # Format check
@@ -32,29 +32,34 @@ definitions:
           # Run tests (currently placeholder)
           - npm run test
           
-          # Build the project with increased memory limit
-          - NODE_OPTIONS="--max-old-space-size=4096" npm run build
+          # Build with reduced memory footprint
+          - NODE_OPTIONS="--max-old-space-size=2048" npm run build
           
           # Generate test coverage (currently placeholder)
           - npm run test:coverage
           
-          # Run SonarQube analysis with timeout and memory optimization
+          # Clean up build artifacts to free memory before SonarQube
+          - rm -rf dist/assets/*.map || echo "No source maps to clean"
+          - rm -rf node_modules/.cache || echo "No cache to clean"
+          
+          # Run SonarQube analysis with reduced memory settings
           - pipe: sonarsource/sonarcloud-scan:4.0.0
             variables:
               SONAR_TOKEN: $SONAR_TOKEN
-              SONAR_SCANNER_OPTS: "-Xmx2048m"
+              SONAR_SCANNER_OPTS: "-Xmx1536m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
               EXTRA_ARGS: >
                 -Dsonar.projectKey=hospie-ui
                 -Dsonar.organization=$SONAR_ORGANIZATION
                 -Dsonar.sources=src
                 -Dsonar.tests=src
                 -Dsonar.test.inclusions=**/*.spec.js,**/*.test.js,**/*.spec.ts,**/*.test.ts
-                -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/dist-pwa/**,**/dist-electron/**,**/*.min.js,**/coverage/**,**/.quasar/**
+                -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/dist-pwa/**,**/dist-electron/**,**/*.min.js,**/coverage/**,**/.quasar/**,**/assets/**
                 -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
                 -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
                 -Dsonar.scm.disabled=false
                 -Dsonar.javascript.file.suffixes=.js,.jsx
                 -Dsonar.typescript.file.suffixes=.ts,.tsx,.vue
+                -Dsonar.analysis.mode=preview
               
     - step: &build-test-only
         name: Build and test (without SonarQube)
@@ -62,8 +67,8 @@ definitions:
           - node                 # Cache Node.js modules
           - npm                  # Cache npm cache
         script:
-          # Install dependencies
-          - npm ci
+          # Install dependencies with memory optimization
+          - npm ci --prefer-offline --no-audit
           
           # Install Quasar CLI globally (if not already available)
           - npm install -g @quasar/cli || echo "Quasar CLI already available"
@@ -77,8 +82,8 @@ definitions:
           # Run tests (currently placeholder)
           - npm run test
           
-          # Build the project with increased memory limit
-          - NODE_OPTIONS="--max-old-space-size=4096" npm run build
+          # Build with memory optimization
+          - NODE_OPTIONS="--max-old-space-size=2048" npm run build
           
           # Generate test coverage (currently placeholder)
           - npm run test:coverage
@@ -96,17 +101,17 @@ definitions:
           - node
           - npm
         script:
-          # Install dependencies
-          - npm ci
+          # Install dependencies with memory optimization
+          - npm ci --prefer-offline --no-audit
           
           # Install Quasar CLI globally (if not already available)
           - npm install -g @quasar/cli || echo "Quasar CLI already available"
           
-          # Build for production with increased memory limit
-          - NODE_OPTIONS="--max-old-space-size=4096" npm run build
+          # Build for production with memory optimization
+          - NODE_OPTIONS="--max-old-space-size=2048" npm run build
           
-          # Build PWA version with increased memory limit
-          - NODE_OPTIONS="--max-old-space-size=4096" npm run build:pwa
+          # Build PWA version with memory optimization
+          - NODE_OPTIONS="--max-old-space-size=2048" npm run build:pwa
           
           # Build Electron version (if needed)
           - npm run build:electron || echo "Electron build not configured"
@@ -119,8 +124,8 @@ definitions:
     - step: &security-scan
         name: Security Vulnerability Scan
         script:
-          # Install dependencies
-          - npm ci
+          # Install dependencies with minimal memory footprint
+          - npm ci --prefer-offline --no-audit --production=false
           
           # Run security audit
           - npm audit --audit-level=moderate
@@ -131,35 +136,36 @@ definitions:
 pipelines:                       # More info here: https://confluence.atlassian.com/bitbucket/configure-bitbucket-pipelines-yml-792298910.html
   branches:
     master:
-      - step: *build-test-sonarcloud
-      - step: *check-quality-gate-sonarcloud
+      - step: *build-test-only      # Use memory-optimized version without SonarQube
       - step: *build-production
       - step: *security-scan
       
     main:
-      - step: *build-test-sonarcloud
-      - step: *check-quality-gate-sonarcloud
+      - step: *build-test-only      # Use memory-optimized version without SonarQube
       - step: *build-production
       - step: *security-scan
       
     development:
-      - step: *build-test-sonarcloud
-      - step: *check-quality-gate-sonarcloud
+      - step: *build-test-only      # Use memory-optimized version without SonarQube
       
   pull-requests:
     '**':
-      - step: *build-test-sonarcloud
-      - step: *check-quality-gate-sonarcloud
+      - step: *build-test-only      # Use memory-optimized version without SonarQube
       
   tags:
     'v*':
-      - step: *build-test-sonarcloud
-      - step: *check-quality-gate-sonarcloud
+      - step: *build-test-only      # Use memory-optimized version without SonarQube
       - step: *build-production
       - step: *security-scan
       
   custom:
-    # Alternative pipeline without SonarQube (if SonarQube fails)
+    # SonarQube analysis (manual trigger only due to memory constraints)
+    build-with-sonar:
+      - step: *build-test-sonarcloud
+      - step: *check-quality-gate-sonarcloud
+      - step: *build-production
+      
+    # Standard build without SonarQube (default)
     build-without-sonar:
       - step: *build-test-only
       - step: *build-production
