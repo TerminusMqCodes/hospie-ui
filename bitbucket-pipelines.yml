@@ -1,4 +1,4 @@
-image: node:18                    # Node.js 18 for Vue.js/Quasar development
+image: node:20                    # Node.js 20 LTS for Vue.js/Quasar development (matches package.json engines)
 
 clone:
   depth: full                    # SonarQube Cloud scanner needs the full history to assign issues properly
@@ -31,8 +31,8 @@ definitions:
           # Run tests (currently placeholder)
           - npm run test
           
-          # Build the project
-          - npm run build
+          # Build the project with increased memory limit
+          - NODE_OPTIONS="--max-old-space-size=4096" npm run build
           
           # Generate test coverage (currently placeholder)
           - npm run test:coverage
@@ -70,11 +70,11 @@ definitions:
           # Install Quasar CLI globally (if not already available)
           - npm install -g @quasar/cli || echo "Quasar CLI already available"
           
-          # Build for production
-          - npm run build
+          # Build for production with increased memory limit
+          - NODE_OPTIONS="--max-old-space-size=4096" npm run build
           
-          # Build PWA version
-          - npm run build:pwa
+          # Build PWA version with increased memory limit
+          - NODE_OPTIONS="--max-old-space-size=4096" npm run build:pwa
           
           # Build Electron version (if needed)
           - npm run build:electron || echo "Electron build not configured"
