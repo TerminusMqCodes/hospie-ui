@@ -38,25 +38,25 @@ definitions:
           - npm run test:coverage
           
           # Run SonarQube analysis
-        - pipe: sonarsource/sonarcloud-scan:4.0.0
-          variables:
-            SONAR_TOKEN: $SONAR_TOKEN
-            EXTRA_ARGS: >
-              -Dsonar.projectKey=hospie-ui
-              -Dsonar.organization=$SONAR_ORGANIZATION
-              -Dsonar.sources=src
-              -Dsonar.tests=src
-              -Dsonar.test.inclusions=**/*.spec.js,**/*.test.js,**/*.spec.ts,**/*.test.ts
-              -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.min.js,**/coverage/**
-              -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-              -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
+          - pipe: sonarsource/sonarcloud-scan:4.0.0
+            variables:
+              SONAR_TOKEN: $SONAR_TOKEN
+              EXTRA_ARGS: >
+                -Dsonar.projectKey=hospie-ui
+                -Dsonar.organization=$SONAR_ORGANIZATION
+                -Dsonar.sources=src
+                -Dsonar.tests=src
+                -Dsonar.test.inclusions=**/*.spec.js,**/*.test.js,**/*.spec.ts,**/*.test.ts
+                -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.min.js,**/coverage/**
+                -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+                -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
               
     - step: &check-quality-gate-sonarcloud
         name: Check the Quality Gate on SonarQube Cloud
         script:
-        - pipe: sonarsource/sonarcloud-quality-gate:0.1.6
-          variables:
-            SONAR_TOKEN: $SONAR_TOKEN
+          - pipe: sonarsource/sonarcloud-quality-gate:0.1.6
+            variables:
+              SONAR_TOKEN: $SONAR_TOKEN
             
     - step: &build-production
         name: Build for Production
