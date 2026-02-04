@@ -9,11 +9,10 @@ definitions:
     npm: ~/.npm                  # Cache npm dependencies
     
   steps:
-    - step: &build-test-sonarcloud
-        name: Build, test and analyze on SonarQube Cloud
+    - step: &build-test-sonarcloud-local
+        name: Build, test and analyze on SonarQube Cloud (Local Runner)
         runs-on:
-          - 'self.hosted'        # Lokális runner használata
-          - 'linux'              # Custom label (opcionális)
+          - 'self.hosted'        # Use local runner
         caches:
           - node                 # Cache Node.js modules
           - npm                  # Cache npm cache
@@ -34,7 +33,7 @@ definitions:
           # Run tests
           - npm run test
           
-          # Build the project with full memory (local runner advantage)
+          # Build the project with full memory available
           - NODE_OPTIONS="--max-old-space-size=8192" npm run build
           
           # Generate test coverage
@@ -61,16 +60,16 @@ definitions:
     - step: &check-quality-gate-sonarcloud
         name: Check the Quality Gate on SonarQube Cloud
         runs-on:
-          - 'self.hosted'        # Lokális runner használata
+          - 'self.hosted'        # Use local runner
         script:
           - pipe: sonarsource/sonarcloud-quality-gate:0.1.6
             variables:
               SONAR_TOKEN: $SONAR_TOKEN
             
-    - step: &build-production
-        name: Build for Production
+    - step: &build-production-local
+        name: Build for Production (Local Runner)
         runs-on:
-          - 'self.hosted'        # Lokális runner használata
+          - 'self.hosted'        # Use local runner
         caches:
           - node
           - npm
@@ -81,13 +80,13 @@ definitions:
           # Install Quasar CLI globally
           - npm install -g @quasar/cli
           
-          # Build for production with full memory (local runner)
+          # Build for production with full memory
           - NODE_OPTIONS="--max-old-space-size=8192" npm run build
           
-          # Build PWA version with full memory (local runner)
+          # Build PWA version with full memory
           - NODE_OPTIONS="--max-old-space-size=8192" npm run build:pwa
           
-          # Build Electron version with full memory (local runner)
+          # Build Electron version
           - NODE_OPTIONS="--max-old-space-size=8192" npm run build:electron
           
         artifacts:
@@ -95,88 +94,88 @@ definitions:
           - dist-pwa/**
           - dist-electron/**
           
-    - step: &security-scan
-        name: Security Vulnerability Scan
+    - step: &security-scan-local
+        name: Security Vulnerability Scan (Local Runner)
         runs-on:
-          - 'self.hosted'        # Lokális runner használata
+          - 'self.hosted'        # Use local runner
         script:
           # Install dependencies
           - npm ci
           
-          # Run comprehensive security audit (local runner can handle it)
+          # Run comprehensive security audit
           - npm audit --audit-level=low
           
           # Check for outdated packages
           - npm outdated
           
-          # Additional security checks
+          # Run additional security checks
           - npx audit-ci --config audit-ci.json || echo "Security audit completed"
 
-    - step: &performance-analysis
-        name: Performance Analysis
+    - step: &performance-test-local
+        name: Performance Testing (Local Runner)
         runs-on:
-          - 'self.hosted'        # Lokális runner használata
+          - 'self.hosted'        # Use local runner
         script:
           # Install dependencies
           - npm ci
           
-          # Build with analysis
+          # Build for performance testing
           - NODE_OPTIONS="--max-old-space-size=8192" npm run build
           
-          # Bundle size analysis
+          # Run bundle analyzer
           - npx quasar build --analyze || echo "Bundle analysis completed"
           
-          # Check bundle sizes
+          # Check bundle size
           - du -sh dist/
           - find dist/ -name "*.js" -exec ls -lh {} \; | head -10
 
-pipelines:                       # Optimized for local runner - no memory limits!
+pipelines:                       # Optimized for local runner with full resources
   branches:
     master:
-      - step: *build-test-sonarcloud
+      - step: *build-test-sonarcloud-local
       - step: *check-quality-gate-sonarcloud
-      - step: *build-production
-      - step: *security-scan
-      - step: *performance-analysis
+      - step: *build-production-local
+      - step: *security-scan-local
+      - step: *performance-test-local
       
     main:
-      - step: *build-test-sonarcloud
+      - step: *build-test-sonarcloud-local
       - step: *check-quality-gate-sonarcloud
-      - step: *build-production
-      - step: *security-scan
+      - step: *build-production-local
+      - step: *security-scan-local
       
     develop:
-      - step: *build-test-sonarcloud
+      - step: *build-test-sonarcloud-local
       - step: *check-quality-gate-sonarcloud
       
   pull-requests:
     '**':
-      - step: *build-test-sonarcloud
+      - step: *build-test-sonarcloud-local
       - step: *check-quality-gate-sonarcloud
       
   tags:
     'v*':
-      - step: *build-test-sonarcloud
+      - step: *build-test-sonarcloud-local
       - step: *check-quality-gate-sonarcloud
-      - step: *build-production
-      - step: *security-scan
-      - step: *performance-analysis
+      - step: *build-production-local
+      - step: *security-scan-local
+      - step: *performance-test-local
       
   custom:
-    # Full comprehensive analysis
+    # Full comprehensive pipeline
     full-analysis:
-      - step: *build-test-sonarcloud
+      - step: *build-test-sonarcloud-local
       - step: *check-quality-gate-sonarcloud
-      - step: *build-production
-      - step: *security-scan
-      - step: *performance-analysis
+      - step: *build-production-local
+      - step: *security-scan-local
+      - step: *performance-test-local
       
-    # Quick development build
+    # Quick build for development
     quick-build:
       - step:
-          name: Quick Build
+          name: Quick Build (Local Runner)
           runs-on:
-            - 'self.hosted'      # Lokális runner használata
+            - 'self.hosted'
           script:
             - npm ci
             - npm install -g @quasar/cli
@@ -185,26 +184,26 @@ pipelines:                       # Optimized for local runner - no memory limits
             
     # Manual deployment pipeline
     deploy-staging:
-      - step: *build-test-sonarcloud
+      - step: *build-test-sonarcloud-local
       - step: *check-quality-gate-sonarcloud
-      - step: *build-production
+      - step: *build-production-local
       - step:
-          name: Deploy to Staging
+          name: Deploy to Staging (Local Runner)
           runs-on:
-            - 'self.hosted'      # Lokális runner használata
+            - 'self.hosted'
           deployment: staging
           script:
             - echo "Deploy to staging server"
             # Add your staging deployment commands here
             
     deploy-production:
-      - step: *build-test-sonarcloud
+      - step: *build-test-sonarcloud-local
       - step: *check-quality-gate-sonarcloud
-      - step: *build-production
+      - step: *build-production-local
       - step:
-          name: Deploy to Production
+          name: Deploy to Production (Local Runner)
           runs-on:
-            - 'self.hosted'      # Lokális runner használata
+            - 'self.hosted'
           deployment: production
           trigger: manual
           script:
