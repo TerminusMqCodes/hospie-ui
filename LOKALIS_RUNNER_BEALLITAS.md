@@ -96,7 +96,7 @@ definitions:
         name: Build with Local Runner
         runs-on:
           - 'self.hosted'        # Lokális runner használata
-          - 'local'              # Custom label
+          - 'linux'              # Custom label
         script:
           - echo "Running on local runner"
           - npm ci

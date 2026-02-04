@@ -13,7 +13,7 @@ definitions:
         name: Build, test and analyze on SonarQube Cloud
         runs-on:
           - 'self.hosted'        # Lokális runner használata
-          - 'local'              # Custom label (opcionális)
+          - 'linux'              # Custom label (opcionális)
         caches:
           - node                 # Cache Node.js modules
           - npm                  # Cache npm cache
