@@ -8,14 +8,18 @@
   "private": true,
   "scripts": {
     "lint": "eslint -c ./eslint.config.js \"./src*/**/*.{js,cjs,mjs,vue}\"",
+    "lint:fix": "eslint -c ./eslint.config.js \"./src*/**/*.{js,cjs,mjs,vue}\" --fix",
     "format": "prettier --write \"**/*.{js,vue,scss,html,md,json}\" --ignore-path .gitignore",
     "test": "echo \"No test specified\" && exit 0",
+    "test:unit": "echo \"No unit tests configured\" && exit 0",
+    "test:coverage": "echo \"No coverage tests configured\" && exit 0",
     "dev": "quasar dev",
     "dev:pwa": "quasar dev -m pwa",
     "dev:mobile": "quasar dev -m cordova -T android",
     "dev:ios": "quasar dev -m cordova -T ios",
     "build": "quasar build",
     "build:pwa": "quasar build -m pwa",
+    "build:electron": "quasar build -m electron",
     "build:mobile": "quasar build -m cordova -T android",
     "build:ios": "quasar build -m cordova -T ios",
     "postinstall": "quasar prepare"

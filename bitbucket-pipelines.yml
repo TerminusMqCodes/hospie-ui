@@ -1,0 +1,190 @@
+image: node:20                    # Node.js 20 LTS for Vue.js/Quasar development (matches package.json engines)
+
+clone:
+  depth: full                    # SonarQube Cloud scanner needs the full history to assign issues properly
+
+definitions:
+  caches:
+    sonar: ~/.sonar/cache        # Caching SonarQube Cloud artifacts will speed up your build
+    npm: ~/.npm                  # Cache npm dependencies
+    
+  steps:
+    - step: &build-test-sonarcloud
+        name: Build, test and analyze on SonarQube Cloud
+        size: 2x  # Use larger container for SonarQube analysis
+        caches:
+          - node                 # Cache Node.js modules
+          - npm                  # Cache npm cache
+          - sonar               # Cache SonarQube artifacts
+        script:
+          # Install dependencies
+          - npm ci
+          
+          # Install Quasar CLI globally (if not already available)
+          - npm install -g @quasar/cli || echo "Quasar CLI already available"
+          
+          # Lint the code
+          - npm run lint
+          
+          # Format check
+          - npm run format || echo "Format check completed"
+          
+          # Run tests (currently placeholder)
+          - npm run test
+          
+          # Build the project with increased memory limit
+          - NODE_OPTIONS="--max-old-space-size=4096" npm run build
+          
+          # Generate test coverage (currently placeholder)
+          - npm run test:coverage
+          
+          # Run SonarQube analysis with timeout and memory optimization
+          - pipe: sonarsource/sonarcloud-scan:4.0.0
+            variables:
+              SONAR_TOKEN: $SONAR_TOKEN
+              SONAR_SCANNER_OPTS: "-Xmx2048m"
+              EXTRA_ARGS: >
+                -Dsonar.projectKey=hospie-ui
+                -Dsonar.organization=$SONAR_ORGANIZATION
+                -Dsonar.sources=src
+                -Dsonar.tests=src
+                -Dsonar.test.inclusions=**/*.spec.js,**/*.test.js,**/*.spec.ts,**/*.test.ts
+                -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/dist-pwa/**,**/dist-electron/**,**/*.min.js,**/coverage/**,**/.quasar/**
+                -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+                -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
+                -Dsonar.scm.disabled=false
+                -Dsonar.javascript.file.suffixes=.js,.jsx
+                -Dsonar.typescript.file.suffixes=.ts,.tsx,.vue
+              
+    - step: &build-test-only
+        name: Build and test (without SonarQube)
+        caches:
+          - node                 # Cache Node.js modules
+          - npm                  # Cache npm cache
+        script:
+          # Install dependencies
+          - npm ci
+          
+          # Install Quasar CLI globally (if not already available)
+          - npm install -g @quasar/cli || echo "Quasar CLI already available"
+          
+          # Lint the code
+          - npm run lint
+          
+          # Format check
+          - npm run format || echo "Format check completed"
+          
+          # Run tests (currently placeholder)
+          - npm run test
+          
+          # Build the project with increased memory limit
+          - NODE_OPTIONS="--max-old-space-size=4096" npm run build
+          
+          # Generate test coverage (currently placeholder)
+          - npm run test:coverage
+              
+    - step: &check-quality-gate-sonarcloud
+        name: Check the Quality Gate on SonarQube Cloud
+        script:
+          - pipe: sonarsource/sonarcloud-quality-gate:0.1.6
+            variables:
+              SONAR_TOKEN: $SONAR_TOKEN
+            
+    - step: &build-production
+        name: Build for Production
+        caches:
+          - node
+          - npm
+        script:
+          # Install dependencies
+          - npm ci
+          
+          # Install Quasar CLI globally (if not already available)
+          - npm install -g @quasar/cli || echo "Quasar CLI already available"
+          
+          # Build for production with increased memory limit
+          - NODE_OPTIONS="--max-old-space-size=4096" npm run build
+          
+          # Build PWA version with increased memory limit
+          - NODE_OPTIONS="--max-old-space-size=4096" npm run build:pwa
+          
+          # Build Electron version (if needed)
+          - npm run build:electron || echo "Electron build not configured"
+          
+        artifacts:
+          - dist/**
+          - dist-pwa/**
+          - dist-electron/**
+          
+    - step: &security-scan
+        name: Security Vulnerability Scan
+        script:
+          # Install dependencies
+          - npm ci
+          
+          # Run security audit
+          - npm audit --audit-level=moderate
+          
+          # Check for outdated packages
+          - npm outdated || echo "Some packages may be outdated"
+
+pipelines:                       # More info here: https://confluence.atlassian.com/bitbucket/configure-bitbucket-pipelines-yml-792298910.html
+  branches:
+    master:
+      - step: *build-test-sonarcloud
+      - step: *check-quality-gate-sonarcloud
+      - step: *build-production
+      - step: *security-scan
+      
+    main:
+      - step: *build-test-sonarcloud
+      - step: *check-quality-gate-sonarcloud
+      - step: *build-production
+      - step: *security-scan
+      
+    develop:
+      - step: *build-test-sonarcloud
+      - step: *check-quality-gate-sonarcloud
+      
+  pull-requests:
+    '**':
+      - step: *build-test-sonarcloud
+      - step: *check-quality-gate-sonarcloud
+      
+  tags:
+    'v*':
+      - step: *build-test-sonarcloud
+      - step: *check-quality-gate-sonarcloud
+      - step: *build-production
+      - step: *security-scan
+      
+  custom:
+    # Alternative pipeline without SonarQube (if SonarQube fails)
+    build-without-sonar:
+      - step: *build-test-only
+      - step: *build-production
+      - step: *security-scan
+      
+    # Manual deployment pipeline
+    deploy-staging:
+      - step: *build-test-sonarcloud
+      - step: *check-quality-gate-sonarcloud
+      - step: *build-production
+      - step:
+          name: Deploy to Staging
+          deployment: staging
+          script:
+            - echo "Deploy to staging server"
+            # Add your staging deployment commands here
+            
+    deploy-production:
+      - step: *build-test-sonarcloud
+      - step: *check-quality-gate-sonarcloud
+      - step: *build-production
+      - step:
+          name: Deploy to Production
+          deployment: production
+          trigger: manual
+          script:
+            - echo "Deploy to production server"
+            # Add your production deployment commands here
