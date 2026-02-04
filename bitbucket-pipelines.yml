@@ -11,6 +11,7 @@ definitions:
   steps:
     - step: &build-test-sonarcloud
         name: Build, test and analyze on SonarQube Cloud
+        size: 2x  # Use larger container for SonarQube analysis
         caches:
           - node                 # Cache Node.js modules
           - npm                  # Cache npm cache
@@ -37,19 +38,50 @@ definitions:
           # Generate test coverage (currently placeholder)
           - npm run test:coverage
           
-          # Run SonarQube analysis
+          # Run SonarQube analysis with timeout and memory optimization
           - pipe: sonarsource/sonarcloud-scan:4.0.0
             variables:
               SONAR_TOKEN: $SONAR_TOKEN
+              SONAR_SCANNER_OPTS: "-Xmx2048m"
               EXTRA_ARGS: >
                 -Dsonar.projectKey=hospie-ui
                 -Dsonar.organization=$SONAR_ORGANIZATION
                 -Dsonar.sources=src
                 -Dsonar.tests=src
                 -Dsonar.test.inclusions=**/*.spec.js,**/*.test.js,**/*.spec.ts,**/*.test.ts
-                -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.min.js,**/coverage/**
+                -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/dist-pwa/**,**/dist-electron/**,**/*.min.js,**/coverage/**,**/.quasar/**
                 -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
                 -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
+                -Dsonar.scm.disabled=false
+                -Dsonar.javascript.file.suffixes=.js,.jsx
+                -Dsonar.typescript.file.suffixes=.ts,.tsx,.vue
+              
+    - step: &build-test-only
+        name: Build and test (without SonarQube)
+        caches:
+          - node                 # Cache Node.js modules
+          - npm                  # Cache npm cache
+        script:
+          # Install dependencies
+          - npm ci
+          
+          # Install Quasar CLI globally (if not already available)
+          - npm install -g @quasar/cli || echo "Quasar CLI already available"
+          
+          # Lint the code
+          - npm run lint
+          
+          # Format check
+          - npm run format || echo "Format check completed"
+          
+          # Run tests (currently placeholder)
+          - npm run test
+          
+          # Build the project with increased memory limit
+          - NODE_OPTIONS="--max-old-space-size=4096" npm run build
+          
+          # Generate test coverage (currently placeholder)
+          - npm run test:coverage
               
     - step: &check-quality-gate-sonarcloud
         name: Check the Quality Gate on SonarQube Cloud
@@ -127,6 +159,12 @@ pipelines:                       # More info here: https://confluence.atlassian.
       - step: *security-scan
       
   custom:
+    # Alternative pipeline without SonarQube (if SonarQube fails)
+    build-without-sonar:
+      - step: *build-test-only
+      - step: *build-production
+      - step: *security-scan
+      
     # Manual deployment pipeline
     deploy-staging:
       - step: *build-test-sonarcloud
