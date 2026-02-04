@@ -142,7 +142,7 @@ pipelines:                       # More info here: https://confluence.atlassian.
       - step: *build-production
       - step: *security-scan
       
-    develop:
+    development:
       - step: *build-test-sonarcloud
       - step: *check-quality-gate-sonarcloud
       
