@@ -145,7 +145,7 @@ pipelines:                       # Optimized for local runner - no memory limits
       - step: *build-production
       - step: *security-scan
       
-    develop:
+    development:
       - step: *build-test-sonarcloud
       - step: *check-quality-gate-sonarcloud
       
